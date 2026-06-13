@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+
+<head>
+
+
+<title>NIVRA Dashboard</title>
+
+
+<link rel="stylesheet" href="./css/dashboard.css">
+
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+</head>
+
+
+
+<body>
+
+
+
+<header class="topbar">
+
+
+<div>
+
+<h1>
+NIVRA
+</h1>
+
+<span>
+لوحة تحكم المتجر
+</span>
+
+
+</div>
+
+
+
+
+
+<button id="menuToggle" class="menu-toggle">
+
+<i class="fa-solid fa-gear"></i>
+
+</button>
+
+
+
+
+
+<button id="logout">
+
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+
+</button>
+
+
+
+
+</header>
+
+
+
+
+
+
+
+
+
+<main>
+
+
+
+<section class="welcome">
+
+
+<h2>
+
+مرحبا مدير النظام 👋
+
+</h2>
+
+
+<p>
+
+إدارة كاملة لمتجر NIVRA
+
+</p>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section class="cards">
+
+
+
+<div class="card">
+
+
+<i class="fa-solid fa-folder"></i>
+
+
+<h3>
+الأصناف
+</h3>
+
+
+<p id="categoriesCount">
+0
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+
+<i class="fa-solid fa-shirt"></i>
+
+
+<h3>
+المنتجات
+</h3>
+
+
+<p id="productsCount">
+0
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+
+<i class="fa-solid fa-cart-shopping"></i>
+
+
+<h3>
+الطلبات
+</h3>
+
+
+<p id="ordersCount">
+0
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+
+<i class="fa-solid fa-users"></i>
+
+
+<h3>
+الزبائن
+</h3>
+
+
+<p id="customersCount">
+0
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="card">
+
+
+<i class="fa-solid fa-boxes-stacked"></i>
+
+
+<h3>
+المخزون
+</h3>
+
+
+<p id="stockCount">
+0
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+
+<i class="fa-solid fa-bell"></i>
+
+
+<h3>
+طلبات جديدة
+</h3>
+
+
+<p id="newOrders">
+0
+</p>
+
+
+</div>
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<hr>
+
+
+
+
+
+
+
+
+
+<div class="menu">
+
+
+
+
+
+<a href="./pages/categories.html">
+
+<i class="fa-solid fa-folder-open"></i>
+
+إدارة الأصناف
+
+</a>
+
+
+
+
+
+
+
+<a href="./pages/products.html">
+
+
+<i class="fa-solid fa-shirt"></i>
+
+
+إدارة المنتجات
+
+
+</a>
+
+
+
+
+
+
+
+<a href="./pages/variants.html">
+
+
+<i class="fa-solid fa-palette"></i>
+
+
+الألوان والأحجام
+
+
+</a>
+
+
+
+
+
+
+
+<a href="./pages/order-management.html">
+
+
+<i class="fa-solid fa-cart-shopping"></i>
+
+
+إدارة الطلبات
+
+
+</a>
+
+
+
+
+
+
+
+<a href="./pages/customers.html">
+
+
+<i class="fa-solid fa-users"></i>
+
+
+الزبائن
+
+
+</a>
+
+
+
+
+
+
+
+<a href="./pages/inventory.html">
+
+
+<i class="fa-solid fa-box"></i>
+
+
+المخزون
+
+
+</a>
+
+
+
+
+
+
+
+<a href="./pages/users.html">
+
+
+<i class="fa-solid fa-user-shield"></i>
+
+
+المستخدمين
+
+
+</a>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<section class="quick">
+
+
+<h2>
+
+اختصارات
+
+</h2>
+
+
+
+
+
+<button onclick="location.href='./pages/orders.html'">
+
+
+<i class="fa-solid fa-plus"></i>
+
+
+طلب جديد
+
+
+</button>
+
+
+
+
+
+
+<button onclick="location.href='./pages/products.html'">
+
+
+<i class="fa-solid fa-shirt"></i>
+
+
+إضافة منتج
+
+
+</button>
+
+
+
+
+
+
+<button onclick="location.href='./pages/inventory.html'">
+
+
+<i class="fa-solid fa-arrows-rotate"></i>
+
+
+تحديث مخزون
+
+
+</button>
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+</main>
+
+
+
+
+
+
+
+<script type="module" src="./js/dashboard.js"></script>
+
+
+</body>
+
+</html>

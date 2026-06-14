@@ -255,12 +255,40 @@ ${product.price}
 
 
 
-<button class="openProduct"
+<div class="cart-action">
+
+<div class="cart-action">
+
+<button 
+class="openProduct"
 data-id="${product.id}">
 
 🛒 إضافة للسلة
 
 </button>
+
+<button 
+class="removeProduct"
+data-id="${product.id}"
+style="display:none">
+
+❌
+
+</button>
+
+
+<span 
+class="qtyPlus"
+data-id="${product.id}"
+style="display:none">
+
++
+
+</span>
+
+</div>
+
+</div>
 
 
 
@@ -291,7 +319,16 @@ openProduct(btn.dataset.id);
 
 });
 
+document.querySelectorAll(".qtyPlus")
+.forEach(btn=>{
 
+btn.onclick=()=>{
+
+openProduct(btn.dataset.id);
+
+};
+
+});
 
 }
 
@@ -728,18 +765,84 @@ price:Number(selectedProduct.price)
 
 
 
+let exists = cart.find(x =>
+
+x.id === item.id &&
+x.color === item.color &&
+x.size === item.size
+
+);
+
+
+
+if(exists){
+
+
+exists.qty += 1;
+
+
+}else{
+
+
+item.qty = 1;
+
+
 cart.push(item);
 
+
+}
 
 
 updateCart();
 
 
+updateCart();
+
+
+let productBtn =
+document.querySelector(
+`.openProduct[data-id="${selectedProduct.id}"]`
+);
+
+
+let removeBtn =
+document.querySelector(
+`.removeProduct[data-id="${selectedProduct.id}"]`
+);
+
+
+
+if(productBtn){
+
+productBtn.innerHTML="✔ تمت الإضافة";
+
+productBtn.style.background="#25D366";
+
+productBtn.style.color="white";
+
+}
+
+
+if(removeBtn){
+
+removeBtn.style.display="inline-block";
+
+}
+let plus =
+document.querySelector(
+`.qtyPlus[data-id="${selectedProduct.id}"]`
+);
+
+
+if(plus){
+
+plus.style.display="inline-flex";
+
+}
+
+
 
 orderModal.style.display="none";
-
-
-
 };
 
 
@@ -761,7 +864,22 @@ document.getElementById("cartCount")
 .innerText =
 cart.length;
 
+let notify =
+document.getElementById("cartNotify");
 
+
+notify.innerText = cart.length;
+
+
+if(cart.length > 0){
+
+notify.style.display="flex";
+
+}else{
+
+notify.style.display="none";
+
+}
 
 let box =
 document.getElementById("cartContainer");
@@ -779,8 +897,7 @@ let total=0;
 cart.forEach((item,index)=>{
 
 
-total += item.price;
-
+total += item.price * (item.qty || 1);
 
 
 box.innerHTML +=`
@@ -813,8 +930,12 @@ ${item.size}
 
 
 <p>
+الكمية:
+${item.qty || 1}
+<br>
+
 السعر:
-${item.price}
+${item.price * (item.qty || 1)}
 دينار
 </p>
 
@@ -845,7 +966,232 @@ document.getElementById("cartProductsTotal")
 total;
 
 
+cart.forEach(item=>{
 
+
+let btn =
+document.querySelector(
+`.openProduct[data-id="${item.id}"]`
+);
+
+
+let del =
+document.querySelector(
+`.removeProduct[data-id="${item.id}"]`
+);
+
+
+let plus =
+document.querySelector(
+`.qtyPlus[data-id="${item.id}"]`
+);
+
+
+
+if(btn){
+
+btn.innerHTML="✔ تمت الإضافة";
+
+btn.style.background="#25D366";
+
+}
+
+
+
+if(plus){
+
+plus.style.display="inline-flex";
+
+}
+
+
+
+if(del){
+
+del.style.display="inline-block";
+
+}
+
+
+});
+
+
+// فحص المنتجات المحذوفة وترجيعها
+
+document.querySelectorAll(".openProduct")
+.forEach(btn=>{
+
+
+let id = btn.dataset.id;
+
+
+let موجود =
+cart.some(item=>item.id == id);
+
+
+
+let del =
+document.querySelector(
+`.removeProduct[data-id="${id}"]`
+);
+
+
+
+let plus =
+document.querySelector(
+`.qtyPlus[data-id="${id}"]`
+);
+
+
+
+if(!موجود){
+
+
+btn.innerHTML="🛒 إضافة للسلة";
+
+btn.style.background="";
+
+
+if(del){
+
+del.style.display="none";
+
+}
+
+
+if(plus){
+
+plus.style.display="none";
+
+}
+
+
+
+}
+
+
+
+});
+document.querySelectorAll(".removeProduct")
+.forEach(btn=>{
+
+
+btn.onclick=()=>{
+
+
+let id = btn.dataset.id;
+
+
+
+cart = cart.filter(item =>
+
+item.id != id
+
+);
+
+
+
+updateCart();
+
+
+
+let addBtn =
+document.querySelector(
+`.openProduct[data-id="${id}"]`
+);
+
+
+
+if(addBtn){
+
+addBtn.innerHTML="🛒 إضافة للسلة";
+
+addBtn.style.background="";
+let plus =
+document.querySelector(
+`.qtyPlus[data-id="${id}"]`
+);
+
+if(plus){
+
+plus.style.display="none";
+
+}
+
+}
+
+
+
+btn.style.display="none";
+
+
+
+};
+
+
+});
+// ترجيع المنتجات المحذوفة لحالتها الطبيعية
+
+document.querySelectorAll(".openProduct")
+.forEach(btn=>{
+
+
+let id = btn.dataset.id;
+
+
+
+let exists = cart.some(item =>
+
+item.id == id
+
+);
+
+
+
+let del =
+document.querySelector(
+`.removeProduct[data-id="${id}"]`
+);
+
+
+
+if(!exists){
+
+
+btn.innerHTML="🛒 إضافة للسلة";
+
+btn.style.background="";
+
+
+// اخفاء X
+
+if(del){
+
+del.style.display="none";
+
+}
+
+
+// اخفاء الزائد +
+
+let plus =
+document.querySelector(
+`.qtyPlus[data-id="${id}"]`
+);
+
+
+if(plus){
+
+plus.style.display="none";
+
+}
+
+
+}
+
+
+
+});
 calculateCart();
 
 
@@ -860,7 +1206,56 @@ calculateCart();
 
 window.removeItem=function(index){
 
+document.querySelectorAll(".removeProduct")
+.forEach(btn=>{
 
+
+btn.onclick=()=>{
+
+
+let id = btn.dataset.id;
+
+
+cart =
+cart.filter(item=>item.id != id);
+
+
+
+updateCart();
+
+
+
+let addBtn =
+document.querySelector(
+`.openProduct[data-id="${id}"]`
+);
+
+
+btn.style.display="none";
+
+
+if(addBtn){
+
+addBtn.innerHTML="🛒 إضافة للسلة";
+
+addBtn.style.background="";
+let plus =
+document.querySelector(
+`.qtyPlus[data-id="${id}"]`
+);
+
+if(plus){
+
+plus.style.display="none";
+
+}
+}
+
+
+};
+
+
+});
 cart.splice(index,1);
 
 
@@ -868,13 +1263,6 @@ updateCart();
 
 
 };
-
-
-
-
-
-
-
 
 
 // فتح السلة
@@ -891,15 +1279,6 @@ updateCart();
 
 
 };
-
-
-
-
-
-
-
-
-
 
 // المحافظات
 

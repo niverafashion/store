@@ -253,10 +253,6 @@ ${product.price}
 
 </p>
 
-
-
-<div class="cart-action">
-
 <div class="cart-action">
 
 <button 
@@ -330,6 +326,13 @@ openProduct(btn.dataset.id);
 
 });
 
+
+document.querySelectorAll(".qtyPlus")
+.forEach(btn=>{
+
+btn.style.display="none";
+
+});
 }
 
 
@@ -792,10 +795,6 @@ cart.push(item);
 
 }
 
-
-updateCart();
-
-
 updateCart();
 
 
@@ -1046,26 +1045,40 @@ document.querySelector(
 
 if(!موجود){
 
-
 btn.innerHTML="🛒 إضافة للسلة";
 
 btn.style.background="";
+btn.style.color="";
 
 
 if(del){
-
 del.style.display="none";
-
 }
 
 
 if(plus){
-
 plus.style.display="none";
+}
 
+}
+else{
+
+// اذا موجود بالسلة يظهر الزائد
+if(plus){
+plus.style.display="inline-flex";
 }
 
 
+// ويظهر X
+if(del){
+del.style.display="inline-block";
+}
+
+
+// يحول الزر تمت الاضافة
+btn.innerHTML="✔ تمت الإضافة";
+btn.style.background="#25D366";
+btn.style.color="white";
 
 }
 
@@ -1082,24 +1095,21 @@ btn.onclick=()=>{
 let id = btn.dataset.id;
 
 
-
-cart = cart.filter(item =>
-
-item.id != id
-
-);
+// حذف المنتج
+cart = cart.filter(item => item.id != id);
 
 
-
+// تحديث السلة
 updateCart();
 
+updateProductButtons();
 
 
+// رجع زر الإضافة
 let addBtn =
 document.querySelector(
 `.openProduct[data-id="${id}"]`
 );
-
 
 
 if(addBtn){
@@ -1107,10 +1117,23 @@ if(addBtn){
 addBtn.innerHTML="🛒 إضافة للسلة";
 
 addBtn.style.background="";
+
+addBtn.style.color="";
+
+}
+
+
+
+// اخفاء X
+btn.style.display="none";
+
+
+// اخفاء الزائد
 let plus =
 document.querySelector(
 `.qtyPlus[data-id="${id}"]`
 );
+
 
 if(plus){
 
@@ -1118,16 +1141,8 @@ plus.style.display="none";
 
 }
 
-}
-
-
-
-btn.style.display="none";
-
-
 
 };
-
 
 });
 // ترجيع المنتجات المحذوفة لحالتها الطبيعية
@@ -1193,8 +1208,7 @@ plus.style.display="none";
 
 });
 calculateCart();
-
-
+updateProductButtons();
 
 }
 
@@ -1388,7 +1402,50 @@ productsTotal + deliveryPrice;
 
 // حجز واتساب
 
+function updateProductButtons(){
 
+document.querySelectorAll(".qtyPlus").forEach(plus=>{
+
+let id = plus.dataset.id;
+
+let exists = cart.some(item=>item.id == id);
+
+
+if(exists){
+
+plus.style.display="inline-flex";
+
+}else{
+
+plus.style.display="none";
+
+}
+
+});
+
+
+
+document.querySelectorAll(".removeProduct").forEach(del=>{
+
+let id = del.dataset.id;
+
+let exists = cart.some(item=>item.id == id);
+
+
+if(exists){
+
+del.style.display="inline-block";
+
+}else{
+
+del.style.display="none";
+
+}
+
+});
+
+
+}
 document.getElementById("reserveOrder")
 
 .onclick=()=>{

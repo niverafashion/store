@@ -821,12 +821,13 @@ ${item.price}
 
 
 
-<button onclick="removeItem(${index})">
+<button 
+class="delete-btn"
+onclick="removeItem(${index})">
 
 ❌ حذف
 
 </button>
-
 
 </div>
 
@@ -1195,11 +1196,6 @@ behavior:"smooth"
 
 
 };
-
-
-
-
-
 
 
 

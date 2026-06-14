@@ -448,53 +448,47 @@ font-size:18px;
 
 
 
-/* CATEGORY */
+/* ===== CATEGORY CARD ===== */
 
 
 #categories{
 
-
-padding:50px 7%;
-
+padding:40px 7%;
 
 }
 
 
 
-#categorySelect{
+#categories h2{
 
+text-align:center;
 
-width:100%;
+margin-bottom:25px;
 
+font-size:32px;
 
-padding:16px;
-
-
-border-radius:20px;
-
-
-border:2px solid #f7b6c8;
-
-
-background:white;
-
-
-font-size:17px;
-
-
-margin-bottom:30px;
-
-
-box-shadow:0 10px 30px #f7b6c855;
-
+color:#111;
 
 }
 
 
 
 
+/* ===============================
+ CATEGORY FULL CARD
+================================ */
 
-.category-details{
+
+#categories{
+
+padding:40px 7%;
+
+}
+
+
+
+
+.category-card-box{
 
 
 background:white;
@@ -503,16 +497,7 @@ background:white;
 border-radius:35px;
 
 
-padding:30px;
-
-
-display:flex;
-
-
-align-items:center;
-
-
-gap:40px;
+padding:25px;
 
 
 box-shadow:0 15px 40px #f7b6c855;
@@ -522,21 +507,116 @@ box-shadow:0 15px 40px #f7b6c855;
 
 
 
+/* عنوان */
+
+#categories h2{
+
+
+text-align:center;
+
+
+margin-bottom:20px;
+
+
+font-size:30px;
+
+
+color:#111;
+
+
+}
+
+
+
+
+
+/* الكومبو داخل الكارت */
+
+#categorySelect{
+
+
+width:100%;
+
+
+padding:15px 20px;
+
+
+border-radius:20px;
+
+
+border:2px solid #f7b6c8;
+
+
+background:#fff;
+
+
+font-size:16px;
+
+
+font-family:'Cairo',sans-serif;
+
+
+outline:none;
+
+
+margin-bottom:25px;
+
+
+box-shadow:0 8px 20px #f7b6c833;
+
+
+}
+
+
+
+
+
+
+/* تفاصيل الصنف */
+
+
+.category-details{
+
+
+display:flex;
+
+
+align-items:center;
+
+
+gap:25px;
+
+
+background:#fff7fa;
+
+
+border-radius:30px;
+
+
+padding:20px;
+
+
+}
+
+
 
 
 .category-details img{
 
 
-width:320px;
+width:140px;
 
 
-height:320px;
+height:140px;
 
 
 object-fit:cover;
 
 
-border-radius:30px;
+border-radius:25px;
+
+
+flex-shrink:0;
 
 
 }
@@ -549,7 +629,87 @@ border-radius:30px;
 
 flex:1;
 
+
 text-align:right;
+
+
+}
+
+
+
+
+
+.category-details h3{
+
+
+font-size:28px;
+
+
+color:#d987a0;
+
+
+margin-bottom:10px;
+
+
+}
+
+
+
+
+.category-details p{
+
+
+font-size:16px;
+
+
+line-height:2;
+
+
+color:#555;
+
+
+}
+
+
+
+
+
+/* موبايل */
+
+
+@media(max-width:700px){
+
+
+.category-details{
+
+
+flex-direction:column;
+
+
+text-align:center;
+
+
+}
+
+
+
+.category-details img{
+
+
+width:130px;
+
+
+height:130px;
+
+
+}
+
+
+
+.category-details div{
+
+
+text-align:center;
 
 
 }
@@ -559,9 +719,7 @@ text-align:right;
 .category-details h3{
 
 
-font-size:38px;
-
-color:#d987a0;
+font-size:24px;
 
 
 }
@@ -571,14 +729,14 @@ color:#d987a0;
 .category-details p{
 
 
-line-height:2;
-
-font-size:18px;
+font-size:14px;
 
 
 }
 
 
+
+}
 
 
 
@@ -1126,11 +1284,65 @@ margin-top:20px;
 
 
 
-.social-icons i{
+.social-icons a{
 
+width:55px;
+height:55px;
+
+border-radius:50%;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+text-decoration:none;
+
+background:white;
+
+transition:.3s;
+
+}
+
+
+.social-icons i{
 
 font-size:30px;
 
+}
+
+
+
+/* Instagram */
+
+.social-icons a:nth-child(1) i{
+
+color:#E1306C;
+
+}
+
+
+
+/* TikTok */
+
+.social-icons a:nth-child(2) i{
+
+color:#000;
+
+text-shadow:
+2px 2px #25F4EE,
+-2px -2px #FE2C55;
+
+}
+
+
+
+/* WhatsApp */
+
+.social-icons a:nth-child(3) i{
+
+color:#25D366;
 
 }
 
@@ -1138,10 +1350,16 @@ font-size:30px;
 
 
 
+.social-icons a:hover{
+
+transform:translateY(-5px);
+
+}
 
 
 
-/* SCROLL */
+
+
 
 
 .scroll-top{
@@ -1153,7 +1371,7 @@ position:fixed;
 bottom:25px;
 
 
-right:25px;
+left:25px;
 
 
 width:50px;
@@ -1177,8 +1395,39 @@ color:white;
 font-size:22px;
 
 
+display:flex;
+
+
+align-items:center;
+
+
+justify-content:center;
+
+
+cursor:pointer;
+
+
+box-shadow:0 10px 25px #f7b6c855;
+
+
+transition:.3s;
+
+
 }
 
+
+
+
+.scroll-top:hover{
+
+
+transform:translateY(-5px);
+
+
+background:#d987a0;
+
+
+}
 
 
 

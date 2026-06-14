@@ -1,179 +1,107 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Cormorant+Garamond:wght@600;700&display=swap');
+import { supabase } from "./supabase.js";
 
 
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-}
 
+let categories = [];
+let products = [];
+let variants = [];
 
-body{
+let selectedProduct = null;
 
-font-family:'Cairo',sans-serif;
-background:#fff9fb;
-color:#333;
-overflow-x:hidden;
-}
+let cart = [];
+
+let deliveryPrice = 0;
 
 
 
 
-/* BACKGROUND */
 
-body::before,
-body::after{
+// عناصر الصفحة
 
-content:"";
-position:fixed;
-border-radius:50%;
-background:#f7b6c8;
-opacity:.25;
-z-index:-1;
-animation:float 12s infinite alternate;
-
-}
+const categorySelect =
+document.getElementById("categorySelect");
 
 
-body::before{
-
-width:280px;
-height:280px;
-top:100px;
-right:-80px;
-
-}
+const productsContainer =
+document.getElementById("productsContainer");
 
 
-body::after{
 
-width:220px;
-height:220px;
-bottom:80px;
-left:-70px;
-
-}
+const orderModal =
+document.getElementById("orderModal");
 
 
-@keyframes float{
+const cartModal =
+document.getElementById("cartModal");
 
-from{
-transform:translateY(0);
-}
 
-to{
-transform:translateY(80px);
-}
+
+
+
+// تحميل الأصناف
+
+async function loadCategories(){
+
+
+const {data,error}=await supabase
+.from("categories")
+.select("*");
+
+
+if(error){
+
+console.log(error);
+return;
 
 }
 
 
+categories=data;
 
 
 
-/* HEADER */
+categorySelect.innerHTML=
+`
+<option value="">
+اختاري الصنف
+</option>
+`;
 
 
-.top-header{
 
-height:90px;
-background:#f7b6c8;
-padding:0 7%;
-display:flex;
-align-items:center;
-justify-content:space-between;
+data.forEach(cat=>{
+
+
+categorySelect.innerHTML +=`
+
+<option value="${cat.id}">
+${cat.name}
+</option>
+
+`;
+
+});
+
+
+
+
+// اختيار اول صنف
+
+if(data.length){
+
+
+categorySelect.value=data[0].id;
+
+
+showCategory(data[0]);
+
+
+loadProducts(data[0].id);
+
 
 }
 
 
-
-.logo{
-
-font-family:'Cormorant Garamond';
-font-size:60px;
-letter-spacing:5px;
-color:#111;
-
-}
-
-
-
-
-.header-actions{
-
-display:flex;
-gap:15px;
-
-}
-
-
-
-.whatsapp-icon,
-.cart-icon,
-.account-icon{
-
-width:52px;
-height:52px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:22px;
-
-}
-
-
-
-.whatsapp-icon{
-
-background:#25D366;
-color:white;
-
-}
-
-
-
-.cart-icon{
-
-background:white;
-color:#f7b6c8;
-border:none;
-position:relative;
-
-}
-
-
-
-.account-icon{
-
-background:#111;
-color:white;
-text-decoration:none;
-
-}
-
-
-
-
-#cartCount{
-
-position:absolute;
-top:-5px;
-right:-5px;
-
-background:#111;
-color:white;
-
-width:22px;
-height:22px;
-
-border-radius:50%;
-
-font-size:12px;
-
-display:flex;
-align-items:center;
-justify-content:center;
 
 }
 
@@ -183,394 +111,60 @@ justify-content:center;
 
 
 
-/* NAV */
+categorySelect.onchange=()=>{
 
 
-.main-nav{
-
-background:white;
-display:flex;
-justify-content:center;
-gap:45px;
-padding:18px;
-box-shadow:0 5px 20px #0001;
-
-}
-
-
-.main-nav a{
-
-text-decoration:none;
-color:#333;
-font-weight:bold;
-
-}
-
-
-
-
-
-
-/* HERO */
-
-
-.hero{
-
-height:520px;
-
-background:
-linear-gradient(#0005,#0005),
-url("../assets/images/hero.jpg");
-
-background-size:cover;
-background-position:center;
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-text-align:center;
-color:white;
-
-}
-
-
-
-.hero h2{
-
-font-family:'Cormorant Garamond';
-font-size:65px;
-
-}
-
-
-
-.hero p{
-
-font-size:22px;
-margin:15px;
-
-}
-
-
-
-.hero button{
-
-background:#f7b6c8;
-border:none;
-color:white;
-
-padding:15px 45px;
-
-border-radius:40px;
-
-font-size:18px;
-
-}
-
-
-
-
-
-
-
-
-
-/* CATEGORY */
-
-
-#categories,
-#products{
-
-padding:40px 7%;
-
-}
-
-
-
-.category-card-box{
-
-background:white;
-border-radius:35px;
-padding:25px;
-box-shadow:0 15px 40px #f7b6c855;
-
-}
-
-
-
-#categorySelect{
-
-width:100%;
-
-padding:15px;
-
-border-radius:20px;
-
-border:2px solid #f7b6c8;
-
-font-family:'Cairo';
-
-margin-bottom:25px;
-
-}
-
-
-
-
-.category-details{
-
-display:flex;
-
-align-items:center;
-
-gap:25px;
-
-background:#fff7fa;
-
-border-radius:30px;
-
-padding:20px;
-
-}
-
-
-
-.category-details img{
-
-width:140px;
-height:140px;
-
-object-fit:cover;
-
-border-radius:25px;
-
-}
-
-
-
-.category-details h3{
-
-font-size:28px;
-
-color:#d987a0;
-
-}
-
-
-
-.category-details p{
-
-line-height:2;
-
-}
-
-
-
-
-
-
-
-
-
-/* ===== PRODUCTS ===== */
-
-
-#products h2,
-.section-title{
-
-text-align:center;
-
-font-size:32px;
-
-color:#111;
-
-margin-bottom:30px;
-
-}
-
-
-
-.product-card{
-
-background:white;
-
-border-radius:30px;
-
-overflow:hidden;
-
-text-align:center;
-
-box-shadow:0 15px 40px #f7b6c844;
-
-padding-bottom:15px;
-
-transition:.3s;
-
-}
-
-
-
-.product-card:hover{
-
-transform:translateY(-5px);
-
-}
-
-
-
-
-
-.product-card img{
-
-width:100%;
-
-height:340px;
-
-object-fit:cover;
-
-}
-
-
-
-
-
-.product-card h3{
-
-font-size:22px;
-
-margin-top:15px;
-
-color:#222;
-
-}
-
-
-
-
-
-.product-card p{
-
-color:#d987a0;
-
-font-size:20px;
-
-font-weight:bold;
-
-margin:8px;
-
-}
-
-
-
-
-
-.product-card button{
-
-background:linear-gradient(
-135deg,
-#f7b6c8,
-#d987a0
+let cat =
+categories.find(
+x=>x.id == categorySelect.value
 );
 
 
-color:white;
 
-font-family:'Cairo',sans-serif;
-
-font-size:15px;
-
-font-weight:bold;
+if(cat){
 
 
-padding:12px 25px;
+showCategory(cat);
 
 
-border:none;
+loadProducts(cat.id);
 
-border-radius:40px;
-
-
-cursor:pointer;
-
-
-box-shadow:0 8px 20px #d987a055;
-
-
-transition:.3s;
 
 }
 
 
 
-
-
-.product-card button:hover{
-
-transform:scale(1.05);
-
-}
+};
 
 
 
 
 
-/* PRODUCTS MOBILE FIX */
-
-@media(max-width:700px){
-
-
-.products-grid{
-
-grid-template-columns:repeat(2,1fr);
-
-gap:12px;
-
-}
 
 
 
-.product-card{
 
-border-radius:20px;
 
-}
+function showCategory(cat){
 
 
 
-.product-card img{
-
-height:200px;
-
-}
+document.getElementById("categoryImage")
+.src =
+cat.image || "";
 
 
 
-.product-card h3{
-
-font-size:16px;
-
-}
+document.getElementById("categoryTitle")
+.innerText =
+cat.name;
 
 
 
-.product-card p{
+document.getElementById("categoryDescription")
+.innerText =
+cat.description || "";
 
-font-size:15px;
-
-}
-
-
-
-.product-card button{
-
-width:90%;
-
-padding:10px 5px;
-
-font-size:13px;
-
-}
 
 
 }
@@ -579,31 +173,125 @@ font-size:13px;
 
 
 
-/* MODALS */
 
 
-.modal{
 
 
-display:none;
+// المنتجات
+
+async function loadProducts(categoryId){
 
 
-position:fixed;
+
+const {data,error}=await supabase
+
+.from("products")
+
+.select("*")
+
+.eq("category_id",categoryId);
 
 
-inset:0;
 
 
-background:#0008;
+if(error){
+
+console.log("INSERT ERROR:");
+console.log(error);
+
+alert(error.message);
+
+return;
+
+}
 
 
-justify-content:center;
+
+products = data.filter(p => {
+
+if(p.stock === undefined || p.stock === null){
+
+return true;
+
+}
+
+return Number(p.stock) > 0;
+
+});
 
 
-align-items:center;
 
 
-z-index:999;
+productsContainer.innerHTML="";
+
+
+
+products.forEach(product=>{
+
+
+productsContainer.innerHTML +=`
+
+
+<div class="product-card">
+
+
+<img src="${product.image || ''}">
+
+
+<h3>
+
+${product.name}
+
+</h3>
+
+
+
+<p>
+
+${product.price}
+
+دينار
+
+</p>
+
+
+
+<button class="openProduct"
+data-id="${product.id}">
+
+🛒 إضافة للسلة
+
+</button>
+
+
+
+</div>
+
+
+`;
+
+});
+
+
+
+
+
+document.querySelectorAll(".openProduct")
+
+.forEach(btn=>{
+
+
+btn.onclick=()=>{
+
+
+openProduct(btn.dataset.id);
+
+
+};
+
+
+});
+
 
 
 }
@@ -612,34 +300,52 @@ z-index:999;
 
 
 
-.modal-content{
 
 
-background:white;
 
 
-width:430px;
+// فتح مودل المنتج
 
 
-max-height:90vh;
+async function openProduct(id){
 
 
-overflow:auto;
+
+selectedProduct =
+products.find(
+p=>p.id==id
+);
 
 
-border-radius:35px;
+
+if(!selectedProduct)return;
 
 
-padding:35px;
+
+orderModal.style.display="flex";
 
 
-text-align:center;
+
+document.getElementById("orderProductImage")
+.src =
+selectedProduct.image || "";
 
 
-position:relative;
+
+document.getElementById("orderProductName")
+.innerText =
+selectedProduct.name;
 
 
-box-shadow:0 20px 60px #0003;
+
+document.getElementById("productPrice")
+.innerText =
+selectedProduct.price;
+
+
+
+await loadVariants();
+
 
 
 }
@@ -648,36 +354,100 @@ box-shadow:0 20px 60px #0003;
 
 
 
-.close{
 
 
-position:absolute;
 
 
-left:20px;
+async function loadVariants(){
 
 
-top:20px;
+const {data,error}=await supabase
+
+.from("product_variants")
+
+.select("*")
+
+.eq(
+"product_id",
+selectedProduct.id
+);
 
 
-width:40px;
 
-height:40px;
+if(error){
 
+console.log(error);
 
-border-radius:50%;
+return;
 
-
-border:none;
-
-
-background:#f7b6c8;
+}
 
 
-color:white;
 
 
-font-size:25px;
+
+// فقط المتوفر
+
+variants = data.filter(v =>
+
+Number(v.stock_quantity) > 0
+
+);
+
+
+
+
+
+let colorBox =
+document.getElementById("orderColor");
+
+
+let sizeBox =
+document.getElementById("orderSize");
+
+
+
+let productImage =
+document.getElementById("orderProductImage");
+
+
+
+
+
+colorBox.innerHTML="";
+
+sizeBox.innerHTML="";
+
+
+
+
+
+
+
+
+// ======================
+// عرض الألوان
+// ======================
+
+
+function loadColors(selectedSize=""){
+
+
+colorBox.innerHTML="";
+
+
+let filtered = variants;
+
+
+
+if(selectedSize){
+
+
+filtered = variants.filter(v =>
+
+v.size == selectedSize
+
+);
 
 
 }
@@ -686,223 +456,36 @@ font-size:25px;
 
 
 
-.modal-content img{
+let colors = [
 
+...new Set(
 
-width:230px;
+filtered.map(v=>v.color)
 
+)
 
-height:280px;
+];
 
 
-object-fit:cover;
 
 
-border-radius:25px;
 
 
-}
+colors.forEach(color=>{
 
 
+colorBox.innerHTML += `
 
+<option value="${color}">
 
+${color}
 
-.modal-content select,
-.modal-content input{
+</option>
 
+`;
 
-width:100%;
+});
 
-
-padding:14px;
-
-
-border-radius:15px;
-
-
-border:1px solid #ddd;
-
-
-margin:10px 0;
-
-
-}
-
-
-
-
-
-#addToCart,
-#reserveOrder{
-
-
-width:100%;
-
-
-padding:15px;
-
-
-border:none;
-
-
-border-radius:30px;
-
-
-background:#25D366;
-
-
-color:white;
-
-
-font-size:18px;
-
-
-}
-
-
-
-
-
-/* CART */
-
-
-#cartModal .modal-content{
-
-
-width:520px;
-
-
-}
-
-
-
-
-#cartContainer{
-
-
-margin-top:20px;
-
-
-}
-
-
-
-
-.cart-item{
-
-
-background:#fff1f5;
-
-
-border-radius:25px;
-
-
-padding:15px;
-
-
-display:flex;
-
-
-gap:20px;
-
-
-align-items:center;
-
-
-margin-bottom:15px;
-
-
-}
-
-
-
-
-
-.cart-item img{
-
-
-width:100px;
-
-
-height:120px;
-
-
-border-radius:20px;
-
-
-object-fit:cover;
-
-
-}
-
-
-
-.delete-btn{
-
-
-background:#ff6b81;
-
-
-border:none;
-
-
-color:white;
-
-
-border-radius:20px;
-
-
-padding:8px 15px;
-
-
-}
-
-
-
-
-.total-box{
-
-
-background:#fff1f5;
-
-
-border-radius:25px;
-
-
-padding:20px;
-
-
-margin-top:20px;
-
-
-}
-
-
-
-
-
-#continueShopping{
-
-
-width:100%;
-
-
-padding:13px;
-
-
-margin-top:15px;
-
-
-border-radius:30px;
-
-
-background:white;
-
-
-border:2px solid #f7b6c8;
-
-
-color:#d987a0;
 
 
 }
@@ -916,58 +499,31 @@ color:#d987a0;
 
 
 
-/* MOBILE */
+// ======================
+// عرض الأحجام
+// ======================
 
 
-@media(max-width:700px){
+function loadSizes(selectedColor=""){
 
 
-
-body{
-
-font-size:14px;
-
-}
+sizeBox.innerHTML="";
 
 
 
-
-.top-header{
-
-height:70px;
-
-padding:0 15px;
-
-}
+let filtered = variants;
 
 
 
-.logo{
-
-font-size:38px;
-
-}
+if(selectedColor){
 
 
+filtered = variants.filter(v =>
 
+v.color == selectedColor
 
-.header-actions{
+);
 
-gap:8px;
-
-}
-
-
-
-.whatsapp-icon,
-.cart-icon,
-.account-icon{
-
-width:42px;
-
-height:42px;
-
-font-size:17px;
 
 }
 
@@ -975,287 +531,35 @@ font-size:17px;
 
 
 
-.main-nav{
+let sizes = [
 
-gap:15px;
+...new Set(
 
-padding:12px;
+filtered.map(v=>v.size)
 
-overflow-x:auto;
+)
 
-}
+];
 
 
 
 
 
-.hero{
+sizes.forEach(size=>{
 
-height:420px;
 
-}
+sizeBox.innerHTML +=`
 
+<option value="${size}">
 
+${size}
 
-.hero h2{
+</option>
 
-font-size:42px;
+`;
 
-}
+});
 
-
-
-.hero p{
-
-font-size:16px;
-
-}
-
-
-
-
-#categories,
-#products{
-
-padding:25px 15px;
-
-}
-
-
-
-.category-details{
-
-flex-direction:column;
-
-text-align:center;
-
-}
-
-
-
-.category-details img{
-
-width:110px;
-
-height:110px;
-
-}
-
-
-
-.category-details h3{
-
-font-size:22px;
-
-}
-
-
-
-
-
-
-.product-card img{
-
-height:260px;
-
-}
-
-
-
-.product-card h3{
-
-font-size:20px;
-
-}
-
-
-
-.product-card p{
-
-font-size:17px;
-
-}
-
-
-
-
-.modal-content{
-
-width:92%;
-
-padding:25px;
-
-border-radius:25px;
-
-}
-
-
-
-.modal-content img{
-
-width:180px;
-
-height:220px;
-
-}
-
-
-
-
-.close{
-
-width:36px;
-
-height:36px;
-
-font-size:20px;
-
-}
-
-
-
-#cartModal .modal-content{
-
-width:94%;
-
-}
-
-
-
-.cart-item{
-
-flex-direction:column;
-
-text-align:center;
-
-}
-
-
-
-.cart-item img{
-
-width:90px;
-
-height:100px;
-
-}
-
-
-
-}
-
-/* CONTACT */
-
-
-.contact-section{
-
-
-margin-top:50px;
-
-
-padding:50px;
-
-
-background:#f7b6c8;
-
-
-text-align:center;
-
-
-color:white;
-
-
-}
-
-
-
-
-.social-icons{
-
-
-display:flex;
-
-
-justify-content:center;
-
-
-gap:25px;
-
-
-margin-top:20px;
-
-
-}
-
-
-.social-icons a{
-
-width:55px;
-height:55px;
-
-border-radius:50%;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-text-decoration:none;
-
-background:white;
-
-transition:.3s;
-
-}
-
-.social-icons i{
-
-font-size:30px;
-
-}
-
-
-
-/* Instagram */
-
-.social-icons a:nth-child(1) i{
-
-color:#E1306C;
-
-}
-
-
-
-/* TikTok */
-
-.social-icons a:nth-child(2) i{
-
-color:#000;
-
-text-shadow:
-2px 2px #25F4EE,
--2px -2px #FE2C55;
-
-}
-
-
-
-/* WhatsApp */
-
-.social-icons a:nth-child(3) i{
-
-color:#25D366;
-
-}
-
-
-
-
-
-.social-icons a:hover{
-
-transform:translateY(-5px);
 
 }
 
@@ -1265,55 +569,30 @@ transform:translateY(-5px);
 
 
 
-.scroll-top{
 
 
-position:fixed;
+
+// ======================
+// البداية
+// ======================
 
 
-bottom:25px;
+loadColors();
+
+loadSizes();
 
 
-left:25px;
 
 
-width:50px;
+
+// عرض صورة اول لون
+
+if(variants.length){
 
 
-height:50px;
+productImage.src =
 
-
-border-radius:50%;
-
-
-border:none;
-
-
-background:#f7b6c8;
-
-
-color:white;
-
-
-font-size:22px;
-
-
-display:flex;
-
-
-align-items:center;
-
-
-justify-content:center;
-
-
-cursor:pointer;
-
-
-box-shadow:0 10px 25px #f7b6c855;
-
-
-transition:.3s;
+variants[0].image || selectedProduct.main_image;
 
 
 }
@@ -1321,14 +600,610 @@ transition:.3s;
 
 
 
-.scroll-top:hover{
 
 
-transform:translateY(-5px);
 
 
-background:#d987a0;
+
+// ======================
+// عند تغيير اللون
+// ======================
+
+
+colorBox.onchange = ()=>{
+
+
+let color = colorBox.value;
+
+
+
+
+
+// تحديث الأحجام
+
+loadSizes(color);
+
+
+
+
+
+
+
+// تحديث الصورة حسب اللون
+
+let variant = variants.find(v =>
+
+v.color == color
+
+);
+
+
+
+
+
+if(variant && variant.image){
+
+
+productImage.src = variant.image;
 
 
 }
 
+
+
+};
+
+
+
+
+
+
+
+
+
+// ======================
+// عند تغيير الحجم
+// ======================
+
+
+sizeBox.onchange = ()=>{
+
+
+let size = sizeBox.value;
+
+
+
+
+
+// تحديث الألوان حسب الحجم
+
+loadColors(size);
+
+
+
+
+
+};
+
+
+
+
+
+}
+
+// اضافة للسلة
+
+
+document.getElementById("addToCart")
+.onclick=()=>{
+
+
+
+let item={
+
+
+id:selectedProduct.id,
+
+
+name:selectedProduct.name,
+
+
+image:
+variants.find(v=>
+v.color === document.getElementById("orderColor").value
+)?.image || selectedProduct.main_image,
+
+color:
+document.getElementById("orderColor").value,
+
+
+size:
+document.getElementById("orderSize").value,
+
+
+price:Number(selectedProduct.price)
+
+
+
+};
+
+
+
+cart.push(item);
+
+
+
+updateCart();
+
+
+
+orderModal.style.display="none";
+
+
+
+};
+
+
+
+
+
+
+
+
+
+// تحديث السلة
+
+
+function updateCart(){
+
+
+
+document.getElementById("cartCount")
+.innerText =
+cart.length;
+
+
+
+let box =
+document.getElementById("cartContainer");
+
+
+
+box.innerHTML="";
+
+
+
+let total=0;
+
+
+
+cart.forEach((item,index)=>{
+
+
+total += item.price;
+
+
+
+box.innerHTML +=`
+
+<div class="cart-item">
+
+
+<img src="${item.image || './assets/images/no-image.jpg'}" width="90">
+
+
+
+<h3>
+${item.name}
+</h3>
+
+
+
+<p>
+اللون:
+${item.color}
+</p>
+
+
+
+<p>
+الحجم:
+${item.size}
+</p>
+
+
+
+<p>
+السعر:
+${item.price}
+دينار
+</p>
+
+
+
+<button 
+class="delete-btn"
+onclick="removeItem(${index})">
+
+❌ 
+
+</button>
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+
+
+document.getElementById("cartProductsTotal")
+.innerText =
+total;
+
+
+
+calculateCart();
+
+
+
+}
+
+
+
+
+
+
+
+window.removeItem=function(index){
+
+
+cart.splice(index,1);
+
+
+updateCart();
+
+
+};
+
+
+
+
+
+
+
+
+
+// فتح السلة
+
+
+document.getElementById("cartButton")
+.onclick=()=>{
+
+
+cartModal.style.display="flex";
+
+
+updateCart();
+
+
+};
+
+
+
+
+
+
+
+
+
+
+// المحافظات
+
+
+async function loadGovernorates(){
+
+
+
+const {data,error}=await supabase
+
+.from("governorates")
+
+.select("*");
+
+
+
+if(error)return;
+
+
+
+let box =
+document.getElementById("customerGovernorate");
+
+
+
+data.forEach(g=>{
+
+
+box.innerHTML +=`
+
+<option value="${g.delivery_price}">
+
+${g.name}
+
+</option>
+
+`;
+
+});
+
+
+
+
+box.onchange=()=>{
+
+
+deliveryPrice =
+Number(box.value);
+
+
+
+document.getElementById("cartDelivery")
+.innerText =
+deliveryPrice;
+
+
+
+document.getElementById("cartDeliveryTotal")
+.innerText =
+deliveryPrice;
+
+
+
+calculateCart();
+
+
+};
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function calculateCart(){
+
+
+let productsTotal =
+Number(
+document.getElementById("cartProductsTotal").innerText
+);
+
+
+
+document.getElementById("cartFinalTotal")
+.innerText =
+
+productsTotal + deliveryPrice;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// حجز واتساب
+
+
+document.getElementById("reserveOrder")
+
+.onclick=()=>{
+
+
+
+let phone =
+document.getElementById("customerPhone").value;
+
+
+
+if(phone.length !== 11){
+
+alert("رقم الهاتف يجب ان يكون 11 رقم");
+
+return;
+
+}
+
+
+
+
+let msg = `
+
+مرحبا NIVRA 🌸
+
+طلب جديد:
+
+`;
+
+
+
+
+cart.forEach(item=>{
+
+
+msg +=`
+
+المنتج:
+${item.name}
+
+اللون:
+${item.color}
+
+الحجم:
+${item.size}
+
+السعر:
+${item.price}
+
+`;
+
+});
+
+
+
+msg +=`
+
+الاسم:
+
+${customerName.value}
+
+
+
+الهاتف:
+
+${phone}
+
+
+
+المحافظة:
+
+${customerGovernorate.options[
+customerGovernorate.selectedIndex
+].text}
+
+
+
+المنطقة:
+
+${customerArea.value}
+
+
+
+العنوان:
+
+${customerAddress.value}
+
+
+
+المجموع:
+
+${cartFinalTotal.innerText}
+
+دينار
+
+`;
+
+
+
+
+
+window.open(
+
+"https://wa.me/?text="+
+encodeURIComponent(msg)
+
+);
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+// اغلاق المودلات
+
+
+document.getElementById("closeOrderModal")
+.onclick=()=>{
+
+orderModal.style.display="none";
+
+};
+
+
+
+document.getElementById("closeCartModal")
+.onclick=()=>{
+
+cartModal.style.display="none";
+
+};
+
+
+
+
+
+
+document.getElementById("continueShopping")
+.onclick=()=>{
+
+
+cartModal.style.display="none";
+
+
+window.scrollTo({
+
+top:
+document.getElementById("products").offsetTop,
+
+behavior:"smooth"
+
+});
+
+
+};
+
+
+
+
+
+
+
+document.getElementById("scrollTop")
+.onclick=()=>{
+
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+
+};
+
+
+
+
+
+
+
+
+loadCategories();
+
+loadGovernorates();

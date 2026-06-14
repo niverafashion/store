@@ -1520,7 +1520,7 @@ min-width:45px;
 
 border-radius:50%;
 
-display:inline-flex !important;
+display:none;
 
 align-items:center;
 justify-content:center;
@@ -1540,7 +1540,6 @@ color:white;
 padding:0 !important;
 
 }
-
 
 .deleteProduct{
 

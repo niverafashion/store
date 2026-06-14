@@ -235,8 +235,7 @@ productsContainer.innerHTML +=`
 <div class="product-card">
 
 
-<img src="${product.image || ''}">
-
+<img src="${product.main_image || product.image || './assets/images/no-image.jpg'}">
 
 <h3>
 
@@ -328,7 +327,7 @@ orderModal.style.display="flex";
 
 document.getElementById("orderProductImage")
 .src =
-selectedProduct.image || "";
+selectedProduct.main_image || selectedProduct.image || "./assets/images/no-image.jpg ";
 
 
 

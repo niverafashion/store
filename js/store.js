@@ -193,14 +193,17 @@ const {data,error}=await supabase
 
 
 
+
 if(error){
 
+console.log("INSERT ERROR:");
 console.log(error);
+
+alert(error.message);
 
 return;
 
 }
-
 
 
 
@@ -355,8 +358,6 @@ await loadVariants();
 
 
 
-// جلب الاحجام والالوان
-
 async function loadVariants(){
 
 
@@ -383,10 +384,17 @@ return;
 
 
 
-// هنا الفلترة الصحيحة
-variants = data.filter(v => 
+
+
+// فقط المتوفر
+
+variants = data.filter(v =>
+
 Number(v.stock_quantity) > 0
+
 );
+
+
 
 
 
@@ -399,57 +407,79 @@ document.getElementById("orderSize");
 
 
 
-colorBox.innerHTML = "";
-
-sizeBox.innerHTML = "";
-
+let productImage =
+document.getElementById("orderProductImage");
 
 
-if(variants.length === 0){
 
 
-colorBox.innerHTML = `
-<option>
-لا يوجد لون متوفر
-</option>
-`;
+
+colorBox.innerHTML="";
+
+sizeBox.innerHTML="";
 
 
-sizeBox.innerHTML = `
-<option>
-لا يوجد حجم متوفر
-</option>
-`;
 
-return;
+
+
+
+
+
+// ======================
+// عرض الألوان
+// ======================
+
+
+function loadColors(selectedSize=""){
+
+
+colorBox.innerHTML="";
+
+
+let filtered = variants;
+
+
+
+if(selectedSize){
+
+
+filtered = variants.filter(v =>
+
+v.size == selectedSize
+
+);
+
 
 }
+
+
 
 
 
 let colors = [
+
 ...new Set(
-variants.map(v=>v.color)
+
+filtered.map(v=>v.color)
+
 )
+
 ];
 
 
-let sizes = [
-...new Set(
-variants.map(v=>v.size)
-)
-];
 
 
 
 
-colors.forEach(c=>{
+colors.forEach(color=>{
 
 
 colorBox.innerHTML += `
 
-<option value="${c}">
-${c}
+<option value="${color}">
+
+${color}
+
 </option>
 
 `;
@@ -458,14 +488,72 @@ ${c}
 
 
 
+}
 
-sizes.forEach(s=>{
 
 
-sizeBox.innerHTML += `
 
-<option value="${s}">
-${s}
+
+
+
+
+
+
+// ======================
+// عرض الأحجام
+// ======================
+
+
+function loadSizes(selectedColor=""){
+
+
+sizeBox.innerHTML="";
+
+
+
+let filtered = variants;
+
+
+
+if(selectedColor){
+
+
+filtered = variants.filter(v =>
+
+v.color == selectedColor
+
+);
+
+
+}
+
+
+
+
+
+let sizes = [
+
+...new Set(
+
+filtered.map(v=>v.size)
+
+)
+
+];
+
+
+
+
+
+sizes.forEach(size=>{
+
+
+sizeBox.innerHTML +=`
+
+<option value="${size}">
+
+${size}
+
 </option>
 
 `;
@@ -475,6 +563,133 @@ ${s}
 
 }
 
+
+
+
+
+
+
+
+
+
+// ======================
+// البداية
+// ======================
+
+
+loadColors();
+
+loadSizes();
+
+
+
+
+
+// عرض صورة اول لون
+
+if(variants.length){
+
+
+productImage.src =
+
+variants[0].image || selectedProduct.main_image;
+
+
+}
+
+
+
+
+
+
+
+
+
+// ======================
+// عند تغيير اللون
+// ======================
+
+
+colorBox.onchange = ()=>{
+
+
+let color = colorBox.value;
+
+
+
+
+
+// تحديث الأحجام
+
+loadSizes(color);
+
+
+
+
+
+
+
+// تحديث الصورة حسب اللون
+
+let variant = variants.find(v =>
+
+v.color == color
+
+);
+
+
+
+
+
+if(variant && variant.image){
+
+
+productImage.src = variant.image;
+
+
+}
+
+
+
+};
+
+
+
+
+
+
+
+
+
+// ======================
+// عند تغيير الحجم
+// ======================
+
+
+sizeBox.onchange = ()=>{
+
+
+let size = sizeBox.value;
+
+
+
+
+
+// تحديث الألوان حسب الحجم
+
+loadColors(size);
+
+
+
+
+
+};
+
+
+
+
+
+}
 
 // اضافة للسلة
 
@@ -493,8 +708,10 @@ id:selectedProduct.id,
 name:selectedProduct.name,
 
 
-image:selectedProduct.image,
-
+image:
+variants.find(v=>
+v.color === document.getElementById("orderColor").value
+)?.image || selectedProduct.main_image,
 
 color:
 document.getElementById("orderColor").value,

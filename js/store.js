@@ -208,15 +208,36 @@ return;
 
 
 
-products = data.filter(p => {
+// جلب القياسات المتوفرة لكل المنتجات
+const {data: variantsData, error: variantsError} = await supabase
+.from("product_variants")
+.select("product_id, stock_quantity");
 
-if(p.stock === undefined || p.stock === null){
 
-return true;
+
+if(variantsError){
+
+console.log(variantsError);
+return;
 
 }
 
-return Number(p.stock) > 0;
+
+
+// عرض فقط المنتجات التي لها قياس متوفر
+products = data.filter(product => {
+
+
+let hasVariant = variantsData.some(v =>
+
+v.product_id == product.id &&
+Number(v.stock_quantity) > 0
+
+);
+
+
+return hasVariant;
+
 
 });
 

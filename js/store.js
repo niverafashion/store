@@ -38,6 +38,7 @@ document.getElementById("cartModal");
 
 
 
+
 // تحميل الأصناف
 
 async function loadCategories(){
@@ -1454,20 +1455,58 @@ del.style.display="none";
 
 
 }
-document.getElementById("reserveOrder")
+document.getElementById("reserveOrder").onclick = ()=>{
 
-.onclick=()=>{
 
+let name =
+document.getElementById("customerName").value.trim();
+
+
+let phoneInput =
+document.getElementById("customerPhone");
 
 
 let phone =
-document.getElementById("customerPhone").value;
+phoneInput.value
+.replace(/\s+/g,"")
+.replace(/-/g,"");
 
 
 
-if(phone.length !== 11){
+let governorate =
+document.getElementById("customerGovernorate");
 
-alert("رقم الهاتف يجب ان يكون 11 رقم");
+
+let area =
+document.getElementById("customerArea").value.trim();
+
+
+let addressInput =
+document.getElementById("customerAddress");
+
+
+let address = "";
+
+if(addressInput){
+
+address = addressInput.value.trim();
+
+}
+
+
+// الاسم
+if(name === ""){
+
+alert("يرجى ادخال الاسم");
+
+return;
+
+}
+
+
+if(name.length > 150){
+
+alert("الاسم يجب ان لا يتجاوز 150 حرف");
 
 return;
 
@@ -1476,96 +1515,134 @@ return;
 
 
 
-let msg = `
+// تنظيف الرقم وعرضه مرتب
+phoneInput.value = phone;
 
-مرحبا NIVRA 🌸
 
-طلب جديد:
 
+// رقم الهاتف
+let phoneRegex =
+/^(077|078|079|075)[0-9]{8}$/;
+
+
+
+if(!phoneRegex.test(phone)){
+
+
+alert("رقم الهاتف يجب ان يبدأ 077 او 078 او 079 او 075 ويكون 11 رقم");
+
+
+return;
+
+}
+
+
+
+
+// المحافظة
+
+if(governorate.value === ""){
+
+
+alert("يرجى اختيار المحافظة");
+
+
+return;
+
+}
+
+
+
+
+
+// المنطقة
+
+if(area === ""){
+
+
+alert("يرجى ادخال المنطقة");
+
+
+return;
+
+}
+
+
+
+
+
+// أقرب نقطة دالة
+let nearestInput = document.querySelector("#nearestPoint");
+
+if(!nearestInput){
+    console.log("nearestPoint غير موجود");
+    alert("خطأ: حقل أقرب نقطة دالة غير موجود");
+    return;
+}
+
+let nearest = nearestInput.value.trim();
+
+if(nearest === ""){
+
+
+alert("يرجى ادخال أقرب نقطة دالة");
+
+
+return;
+
+}
+
+
+
+
+
+let msg = 
+`مرحبا NIVRA الرجاء تثبيت الحجز
+
+-المعلومات الشخصية-
+----------------
+الاسم:${name}
+الهاتف:${phone}
+المحافظة:${governorate.options[governorate.selectedIndex].text}
+المنطقة:${area}
+أقرب نقطة دالة:${nearest}
+
+-المنتجات-
 `;
-
-
-
-
 cart.forEach(item=>{
-
-
-msg +=`
-
-المنتج:
-${item.name}
-
-اللون:
-${item.color}
-
-الحجم:
-${item.size}
-
-السعر:
-${item.price}
-
+msg +=`----------------
+المنتج:${item.name}
+اللون:${item.color}
+المقاس:${item.size}
+الكمية:${item.qty}
+السعر:${item.price} دينار
 `;
 
 });
 
 
 
-msg +=`
+msg +=
+`
+-المجموع النهائي-
+----------------
+${cartFinalTotal.innerText} دينار مع التوصيل
 
-الاسم:
-
-${customerName.value}
-
-
-
-الهاتف:
-
-${phone}
-
-
-
-المحافظة:
-
-${customerGovernorate.options[
-customerGovernorate.selectedIndex
-].text}
-
-
-
-المنطقة:
-
-${customerArea.value}
-
-
-
-العنوان:
-
-${customerAddress.value}
-
-
-
-المجموع:
-
-${cartFinalTotal.innerText}
-
-دينار
-
+شكراً لاختياركم NIVRA
 `;
-
-
 
 
 
 window.open(
 
-"https://wa.me/?text="+
+"https://wa.me/9647741478145?text="
++
 encodeURIComponent(msg)
 
 );
 
-
-
 };
+
 
 
 

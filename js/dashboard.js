@@ -43,15 +43,41 @@ document
 .onclick = async ()=>{
 
 
+try{
+
+
 await supabase.auth.signOut();
 
 
-window.location.href =
-"../login.html";
+// حذف أي جلسة محفوظة
+
+localStorage.clear();
+
+sessionStorage.clear();
+
+
+
+// منع الرجوع
+
+window.location.replace("./login.html");
+
+
+
+}
+
+catch(error){
+
+
+console.log(error);
+
+
+alert("حدث خطأ أثناء تسجيل الخروج");
+
+
+}
 
 
 };
-
 
 
 

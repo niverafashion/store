@@ -348,7 +348,6 @@ border-radius:25px;
 }
 
 
-
 .category-details h3{
 
 font-size:28px;
@@ -518,71 +517,6 @@ transition:.3s;
 transform:scale(1.05);
 
 }
-
-
-
-
-
-/* PRODUCTS MOBILE FIX */
-
-@media(max-width:700px){
-
-
-.products-grid{
-
-grid-template-columns:repeat(2,1fr);
-
-gap:12px;
-
-}
-
-
-
-.product-card{
-
-border-radius:20px;
-
-}
-
-
-
-.product-card img{
-
-height:200px;
-
-}
-
-
-
-.product-card h3{
-
-font-size:16px;
-
-}
-
-
-
-.product-card p{
-
-font-size:15px;
-
-}
-
-
-
-.product-card button{
-
-width:90%;
-
-padding:10px 5px;
-
-font-size:13px;
-
-}
-
-
-}
-
 
 
 
@@ -791,22 +725,7 @@ margin-top:20px;
 
 
 
-.cart-item img{
 
-
-width:100px;
-
-
-height:120px;
-
-
-border-radius:20px;
-
-
-object-fit:cover;
-
-
-}
 
 .delete-btn{
 
@@ -878,235 +797,6 @@ color:#d987a0;
 
 }
 
-
-
-
-
-
-
-
-
-
-/* MOBILE */
-
-
-@media(max-width:700px){
-
-
-
-body{
-
-font-size:14px;
-
-}
-
-
-
-
-.top-header{
-
-height:70px;
-
-padding:0 15px;
-
-}
-
-
-
-.logo{
-
-font-size:38px;
-
-}
-
-
-
-
-.header-actions{
-
-gap:8px;
-
-}
-
-
-
-.whatsapp-icon,
-.cart-icon,
-.account-icon{
-
-width:42px;
-
-height:42px;
-
-font-size:17px;
-
-}
-
-
-
-
-
-.main-nav{
-
-gap:15px;
-
-padding:12px;
-
-overflow-x:auto;
-
-}
-
-
-
-
-
-.hero{
-
-height:420px;
-
-}
-
-
-
-.hero h2{
-
-font-size:42px;
-
-}
-
-
-
-.hero p{
-
-font-size:16px;
-
-}
-
-
-
-
-#categories,
-#products{
-
-padding:25px 15px;
-
-}
-
-
-
-.category-details{
-
-flex-direction:column;
-
-text-align:center;
-
-}
-
-
-
-.category-details img{
-
-width:110px;
-
-height:110px;
-
-}
-
-
-
-.category-details h3{
-
-font-size:22px;
-
-}
-
-
-
-
-
-
-.product-card img{
-
-height:260px;
-
-}
-
-
-
-.product-card h3{
-
-font-size:20px;
-
-}
-
-
-
-.product-card p{
-
-font-size:17px;
-
-}
-
-
-
-
-.modal-content{
-
-width:92%;
-
-padding:25px;
-
-border-radius:25px;
-
-}
-
-
-
-.modal-content img{
-
-width:180px;
-
-height:220px;
-
-}
-
-
-
-
-.close{
-
-width:36px;
-
-height:36px;
-
-font-size:20px;
-
-}
-
-
-
-#cartModal .modal-content{
-
-width:94%;
-
-}
-
-
-
-
-
-
-.cart-item img{
-
-width:90px;
-
-height:100px;
-
-}
-
-
-
-}
 
 /* CONTACT */
 
@@ -1224,61 +914,43 @@ transform:translateY(-5px);
 }
 
 
-
-
-
-
-
 .scroll-top{
-
 
 position:fixed;
 
-
 bottom:25px;
-
 
 left:25px;
 
-
 width:50px;
-
 
 height:50px;
 
-
 border-radius:50%;
-
 
 border:none;
 
-
 background:#f7b6c8;
-
 
 color:white;
 
-
 font-size:22px;
-
 
 display:flex;
 
-
 align-items:center;
-
 
 justify-content:center;
 
-
 cursor:pointer;
-
 
 box-shadow:0 10px 25px #f7b6c855;
 
-
 transition:.3s;
 
+bottom:25px;
+
+left:25px;
 
 }
 
@@ -1295,70 +967,160 @@ background:#d987a0;
 
 
 }
+
+
+/* ===== FINAL MOBILE RESPONSIVE ===== */
+
 @media(max-width:700px){
 
 
-.products-grid{
+body{
 
-grid-template-columns:repeat(2,1fr);
-
-gap:12px;
+font-size:14px;
 
 }
 
 
-.product-card img{
+/* HEADER */
 
-height:200px;
+.top-header{
+
+height:70px;
+
+padding:0 15px;
 
 }
 
 
-.product-card h3{
+.logo{
+
+font-size:38px;
+
+}
+
+
+.header-actions{
+
+gap:8px;
+
+}
+
+
+.whatsapp-icon,
+.cart-icon,
+.account-icon{
+
+width:42px;
+
+height:42px;
+
+font-size:17px;
+
+}
+
+
+
+
+
+/* NAV */
+
+.main-nav{
+
+gap:15px;
+
+padding:12px;
+
+overflow-x:auto;
+
+}
+
+
+
+
+/* HERO */
+
+.hero{
+
+height:420px;
+
+}
+
+
+.hero h2{
+
+font-size:42px;
+
+}
+
+
+.hero p{
 
 font-size:16px;
 
 }
 
 
-.product-card p{
 
-font-size:15px;
+
+
+/* CATEGORY + PRODUCTS */
+
+#categories,
+#products{
+
+padding:25px 15px;
+
+}
+
+
+
+.category-details{
+
+flex-direction:column;
+
+text-align:center;
 
 }
 
 
-.product-card button{
 
-width:90%;
+.category-details img{
 
-padding:10px 5px;
+width:110px;
 
-font-size:13px;
-
-}
+height:110px;
 
 }
-/* FINAL PRODUCTS MOBILE FIX */
 
-@media(max-width:700px){
+
+
+
+
+/* PRODUCTS */
 
 #productsContainer.products-grid{
 
 display:grid;
-grid-template-columns:repeat(2, minmax(0, 1fr));
+
+grid-template-columns:repeat(2,minmax(0,1fr));
+
 gap:12px;
+
 width:100%;
 
 }
+
+
 
 
 #productsContainer .product-card{
 
 width:100%;
+
 border-radius:20px;
 
 }
+
 
 
 #productsContainer .product-card img{
@@ -1368,11 +1130,13 @@ height:190px;
 }
 
 
+
 #productsContainer .product-card h3{
 
 font-size:15px;
 
 }
+
 
 
 #productsContainer .product-card p{
@@ -1382,15 +1146,153 @@ font-size:14px;
 }
 
 
+
 #productsContainer .product-card button{
 
 width:90%;
+
 font-size:12px;
+
 padding:10px 3px;
 
 }
 
+
+
+
+
+/* MODAL */
+
+
+.modal-content{
+
+width:92%;
+
+padding:25px;
+
+border-radius:25px;
+
 }
+
+
+
+.modal-content img{
+
+width:180px;
+
+height:220px;
+
+}
+
+
+
+.close{
+
+width:36px;
+
+height:36px;
+
+font-size:20px;
+
+}
+
+
+
+
+#cartModal .modal-content{
+
+width:94%;
+
+}
+
+
+
+
+
+/* CART */
+
+
+.cart-item img{
+
+width:120px;
+
+height:140px;
+
+}
+
+
+
+
+.cart-item h3{
+
+font-size:18px;
+
+}
+
+
+
+
+@media(max-width:700px){
+
+.cart-item p:nth-of-type(1),
+.cart-item p:nth-of-type(2),
+.cart-item p:nth-of-type(3){
+
+font-size:11px;
+
+padding:6px 8px;
+
+margin:3px;
+
+}
+
+}
+
+
+
+
+.delete-btn{
+
+width:40px;
+
+height:40px;
+
+padding:8px;
+
+border-radius:50%;
+
+}
+
+
+
+
+/* زر + */
+
+.qtyPlus{
+
+width:40px !important;
+
+height:40px !important;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:22px;
+
+padding:0 !important;
+
+}
+
+
+
+
+
+}
+
+
 html{
     -webkit-text-size-adjust:100%;
     text-size-adjust:100%;
@@ -1426,17 +1328,6 @@ font-weight:bold;
 }
 
 
-.scroll-top{
-
-position:fixed;
-
-bottom:25px;
-
-left:25px;
-
-position:fixed;
-
-}
 .product-description{
 
 color:#000000;
@@ -1445,24 +1336,6 @@ margin:8px;
 
 }
 
-
-.removeProduct{
-
-background:#25D366;
-
-color:white;
-
-border:none;
-
-padding:12px 20px;
-
-border-radius:30px;
-
-font-family:Cairo;
-
-margin:5px;
-
-}
 
 
 
@@ -1501,12 +1374,31 @@ padding:0 !important;
 background:#ff3b30;
 
 }
+
+{
+
+.cart-item h3{
+
+font-size:14px;
+
+}
+
+
+.delete-btn{
+
+padding:8px;
+width:40px;
+height:40px;
+border-radius:50%;
+
+}
+
+
 .qtyPlus{
 
-width:45px !important;
-height:45px !important;
+width:40px !important;
+height:40px !important;
 
-display:inline-flex;
 
 align-items:center;
 justify-content:center;
@@ -1531,55 +1423,6 @@ cursor:pointer;
 
 box-sizing:border-box;
 display:flex;
-    align-items:center;
-    justify-content:center;
-    line-height:1;
-    padding-bottom:3px !important;}
-@media(max-width:700px){
-
-.cart-item{
-
-flex-direction:row;
-align-items:center;
-justify-content:space-between;
-text-align:right;
-gap:10px;
-padding:10px;
-
-}
-
-
-.cart-item img{
-
-width:70px;
-height:80px;
-
-}
-
-
-.cart-item h3{
-
-font-size:14px;
-
-}
-
-
-.delete-btn{
-
-padding:8px;
-width:40px;
-height:40px;
-border-radius:50%;
-
-}
-
-
-.qtyPlus{
-
-width:40px !important;
-height:40px !important;
-
-font-size:22px;
 
 }
 
@@ -1597,24 +1440,6 @@ font-size:22px;
     flex-direction:column;
 
     gap:18px;
-
-}
-
-
-
-.cart-item{
-
-    background:#fff7fa;
-
-    border-radius:30px;
-
-    padding:20px;
-
-    position:relative;
-
-    text-align:center;
-
-    box-shadow:0 10px 30px #f7b6c855;
 
 }
 
@@ -1696,34 +1521,37 @@ font-size:22px;
 
 
 
-/* اللون والحجم والكمية */
+/* اللون والحجم والكمية بسطر واحد */
 
 .cart-item p:nth-of-type(1),
 .cart-item p:nth-of-type(2),
 .cart-item p:nth-of-type(3){
 
+display:inline-flex;
 
-    display:inline-block;
+align-items:center;
 
-    background:#f8f8f8;
+justify-content:center;
 
-    color:#111;
+background:#f8f8f8;
 
-    padding:8px 15px;
+color:#111;
 
-    border-radius:20px;
+padding:6px 12px;
 
-    font-size:14px;
+border-radius:20px;
 
-    margin:5px;
+font-size:13px;
 
-    font-weight:600;
+margin:4px;
 
-    border:1px solid #eee;
+font-weight:600;
+
+border:1px solid #eee;
+
+white-space:nowrap;
 
 }
-
-
 
 /* السعر */
 
@@ -1868,41 +1696,6 @@ font-size:22px;
 }
 
 
-
-
-
-
-@media(max-width:700px){
-
-
-.cart-item img{
-
-    width:120px;
-
-    height:140px;
-
-}
-
-
-.cart-item h3{
-
-    font-size:18px;
-
-}
-
-
-.cart-item p:nth-of-type(1),
-.cart-item p:nth-of-type(2),
-.cart-item p:nth-of-type(3){
-
-    font-size:12px;
-
-    padding:7px 10px;
-
-}
-
-
-}
 /* ترتيب زر الإضافة + الازرار */
 
 .product-controls{

@@ -654,26 +654,50 @@ ${size}
 // ======================
 
 
-loadColors();
+// اختيار أول حجم متوفر
+let firstSize = variants[0]?.size;
 
+
+// تحميل الأحجام
 loadSizes();
 
 
+// تحديد أول حجم
+if(firstSize){
 
-
-
-// عرض صورة اول لون
-
-if(variants.length){
-
-
-productImage.src =
-
-variants[0].image || selectedProduct.main_image;
-
+sizeBox.value = firstSize;
 
 }
 
+
+// عرض الألوان حسب الحجم المختار
+loadColors(firstSize);
+
+
+// اختيار أول لون
+let firstColor = colorBox.value;
+
+
+// تحديث الصورة حسب اللون والحجم
+let firstVariant = variants.find(v =>
+
+v.size == firstSize &&
+v.color == firstColor
+
+);
+
+
+if(firstVariant && firstVariant.image){
+
+productImage.src = firstVariant.image;
+
+}
+else if(variants[0]){
+
+productImage.src =
+variants[0].image || selectedProduct.main_image;
+
+}
 
 
 

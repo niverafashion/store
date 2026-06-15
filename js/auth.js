@@ -1,57 +1,61 @@
 import { supabase } from "./supabase.js";
 
 
-// تسجيل الدخول
 export async function login(email,password){
 
 
-const {data,error} =
-await supabase.auth.signInWithPassword({
+const {data,error} = await supabase.auth.signInWithPassword({
 
 email: email,
+
 password: password
 
-})
+});
+
 
 
 if(error){
 
-console.log(error.message)
-return false
+
+if(error.message.includes("Invalid login credentials")){
+
+
+return {
+
+success:false,
+
+message:"الإيميل أو كلمة السر غير صحيحة"
+
+};
+
 
 }
 
 
-return data
+return {
+
+success:false,
+
+message:error.message
+
+};
+
+
 
 }
 
 
 
-// تسجيل الخروج
-export async function logout(){
-
-await supabase.auth.signOut()
-
-window.location.href="login.html"
-
-}
+return {
 
 
+success:true,
 
-// فحص المستخدم
-export async function checkAuth(){
-
-
-const {data} =
-await supabase.auth.getUser()
+user:data.user
 
 
-if(!data.user){
+};
 
-window.location.href="login.html"
-
-}
 
 
 }

@@ -1481,11 +1481,11 @@ left:25px;
 position:fixed;
 
 }
-.product-desc{
+.product-description{
 
-font-size:14px;
-color:#777;
-line-height:1.8;
+color:#000000;
+font-size:16px;
+margin:8px;
 
 }
 

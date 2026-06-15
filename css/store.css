@@ -1579,3 +1579,53 @@ display:flex;
     justify-content:center;
     line-height:1;
     padding-bottom:3px !important;}
+@media(max-width:700px){
+
+.cart-item{
+
+flex-direction:row;
+align-items:center;
+justify-content:space-between;
+text-align:right;
+gap:10px;
+padding:10px;
+
+}
+
+
+.cart-item img{
+
+width:70px;
+height:80px;
+
+}
+
+
+.cart-item h3{
+
+font-size:14px;
+
+}
+
+
+.delete-btn{
+
+padding:8px;
+width:40px;
+height:40px;
+border-radius:50%;
+
+}
+
+
+.qtyPlus{
+
+width:40px !important;
+height:40px !important;
+
+font-size:22px;
+
+}
+
+
+}

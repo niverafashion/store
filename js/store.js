@@ -1461,6 +1461,7 @@ productsTotal + deliveryPrice;
 // حجز واتساب
 
 function updateProductButtons(){
+    
 
 document.querySelectorAll(".qtyPlus").forEach(plus=>{
 
@@ -1692,13 +1693,10 @@ ${cartFinalTotal.innerText} دينار مع التوصيل
 
 
 
-window.open(
-
-"https://wa.me/9647741478145?text="
+window.location.href =
+"https://wa.me/9647741478145?text=" 
 +
-encodeURIComponent(msg)
-
-);
+encodeURIComponent(msg);
 
 };
 

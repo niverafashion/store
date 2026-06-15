@@ -796,31 +796,9 @@ margin-top:20px;
 
 
 
-.cart-item{
 
 
-background:#fff1f5;
 
-
-border-radius:25px;
-
-
-padding:15px;
-
-
-display:flex;
-
-
-gap:20px;
-
-
-align-items:center;
-
-
-margin-bottom:15px;
-
-
-}
 
 
 
@@ -1130,13 +1108,6 @@ width:94%;
 
 
 
-.cart-item{
-
-flex-direction:column;
-
-text-align:center;
-
-}
 
 
 
@@ -1629,3 +1600,4 @@ font-size:22px;
 
 
 }
+

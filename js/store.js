@@ -263,6 +263,7 @@ ${product.description || ""}
 
 <div class="cart-action">
 
+
 <button 
 class="openProduct"
 data-id="${product.id}">
@@ -271,14 +272,9 @@ data-id="${product.id}">
 
 </button>
 
-<button 
-class="removeProduct"
-data-id="${product.id}"
-style="display:none">
 
-❌
 
-</button>
+<div class="product-controls">
 
 
 <span 
@@ -290,7 +286,20 @@ style="display:none">
 
 </span>
 
+
+
+<button 
+class="removeProduct"
+data-id="${product.id}"
+style="display:none">
+
+❌
+
+</button>
+
+
 </div>
+
 
 </div>
 
@@ -653,46 +662,33 @@ variants[0].image || selectedProduct.main_image;
 
 
 // ======================
-// عند تغيير اللون
+// عند تغيير الحجم فقط
 // ======================
 
-
-colorBox.onchange = ()=>{
-
-
-let color = colorBox.value;
+sizeBox.onchange = ()=>{
 
 
+let size = sizeBox.value;
 
 
+// تحديث الألوان حسب القياس
 
-// تحديث الأحجام
-
-loadSizes(color);
-
+loadColors(size);
 
 
-
-
-
-
-// تحديث الصورة حسب اللون
+// تحديث الصورة حسب القياس + اللون الأول
 
 let variant = variants.find(v =>
 
-v.color == color
+v.size == size
 
 );
 
 
 
-
-
 if(variant && variant.image){
 
-
 productImage.src = variant.image;
-
 
 }
 
@@ -703,30 +699,35 @@ productImage.src = variant.image;
 
 
 
-
-
-
-
-
 // ======================
-// عند تغيير الحجم
+// اللون فقط يغير الصورة
+// بدون تغيير الأحجام
 // ======================
 
+colorBox.onchange = ()=>{
 
-sizeBox.onchange = ()=>{
+
+let color = colorBox.value;
 
 
 let size = sizeBox.value;
 
 
 
+let variant = variants.find(v =>
+
+v.color == color &&
+v.size == size
+
+);
 
 
-// تحديث الألوان حسب الحجم
 
-loadColors(size);
+if(variant && variant.image){
 
+productImage.src = variant.image;
 
+}
 
 
 
@@ -940,8 +941,11 @@ ${item.size}
 <p>
 الكمية:
 ${item.qty || 1}
+</p>
 <br>
+</p>
 
+<p>
 السعر:
 ${item.price * (item.qty || 1)}
 دينار
@@ -1456,6 +1460,16 @@ del.style.display="none";
 
 }
 document.getElementById("reserveOrder").onclick = ()=>{
+
+
+// فحص وجود منتجات بالسلة
+if(cart.length === 0){
+
+alert("الرجاء تحديد منتج واحد على الاقل");
+return;
+
+}
+
 
 
 let name =

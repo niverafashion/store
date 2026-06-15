@@ -653,9 +653,6 @@ box-shadow:0 20px 60px #0003;
 }
 
 
-
-
-
 .close{
 
 
@@ -783,8 +780,6 @@ width:520px;
 }
 
 
-
-
 #cartContainer{
 
 
@@ -792,14 +787,6 @@ margin-top:20px;
 
 
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -820,8 +807,6 @@ object-fit:cover;
 
 
 }
-
-
 
 .delete-btn{
 
@@ -1601,3 +1586,463 @@ font-size:22px;
 
 }
 
+/* ===== CART PROFESSIONAL VERTICAL CARD ===== */
+
+#cartContainer{
+
+    margin-top:20px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+
+
+.cart-item{
+
+    background:#fff7fa;
+
+    border-radius:30px;
+
+    padding:20px;
+
+    position:relative;
+
+    text-align:center;
+
+    box-shadow:0 10px 30px #f7b6c855;
+
+}
+
+
+
+
+
+/* صورة المنتج */
+
+.cart-item img{
+
+    width:150px;
+
+    height:170px;
+
+    object-fit:cover;
+
+    border-radius:25px;
+
+    margin-bottom:12px;
+
+}
+
+
+
+
+
+/* كارت المنتج داخل السلة */
+
+.cart-item{
+
+    position:relative;
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:20px;
+
+    margin-bottom:20px;
+
+    box-shadow:0 10px 30px #0001;
+
+    text-align:center;
+
+}
+
+
+
+/* الصورة */
+
+.cart-item img{
+
+    width:140px;
+
+    height:160px;
+
+    object-fit:cover;
+
+    border-radius:22px;
+
+    margin-bottom:15px;
+
+}
+
+
+
+/* اسم المنتج */
+
+.cart-item h3{
+
+    font-size:21px;
+
+    color:#222;
+
+    margin-bottom:15px;
+
+}
+
+
+
+/* اللون والحجم والكمية */
+
+.cart-item p:nth-of-type(1),
+.cart-item p:nth-of-type(2),
+.cart-item p:nth-of-type(3){
+
+
+    display:inline-block;
+
+    background:#f8f8f8;
+
+    color:#111;
+
+    padding:8px 15px;
+
+    border-radius:20px;
+
+    font-size:14px;
+
+    margin:5px;
+
+    font-weight:600;
+
+    border:1px solid #eee;
+
+}
+
+
+
+/* السعر */
+
+.cart-item p:last-of-type{
+
+
+    display:block;
+
+    margin-top:15px;
+
+    background:#fff0f5;
+
+    color:#d987a0;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    border-radius:18px;
+
+    padding:12px;
+
+
+}
+
+
+
+/* زر الحذف */
+
+.delete-btn{
+
+
+    position:absolute;
+
+    top:12px;
+
+    left:12px;
+
+
+    width:42px;
+
+    height:42px;
+
+
+    border-radius:50%;
+
+
+    border:none;
+
+
+    background:#ff5c7a;
+
+
+    color:white;
+
+
+    font-size:20px;
+
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+
+    cursor:pointer;
+
+
+    box-shadow:0 5px 15px #ff5c7a55;
+
+
+}
+
+
+
+/* بوكس المجموع */
+
+.total-box{
+
+
+    margin-top:25px;
+
+
+    background:#fff1f5;
+
+
+    border-radius:30px;
+
+
+    padding:25px;
+
+
+    text-align:center;
+
+
+    box-shadow:0 10px 30px #f7b6c855;
+
+
+}
+
+
+
+.total-box p{
+
+    margin:10px;
+
+    color:#333;
+
+}
+
+
+
+#cartDeliveryTotal{
+
+    color:#d987a0;
+
+    font-weight:bold;
+
+}
+
+
+
+#cartFinalTotal{
+
+    color:#d987a0;
+
+    font-size:25px;
+
+    font-weight:bold;
+
+}
+
+
+
+/* زر الحجز */
+
+#reserveOrder{
+
+    margin-top:25px;
+
+}
+
+
+
+
+
+
+@media(max-width:700px){
+
+
+.cart-item img{
+
+    width:120px;
+
+    height:140px;
+
+}
+
+
+.cart-item h3{
+
+    font-size:18px;
+
+}
+
+
+.cart-item p:nth-of-type(1),
+.cart-item p:nth-of-type(2),
+.cart-item p:nth-of-type(3){
+
+    font-size:12px;
+
+    padding:7px 10px;
+
+}
+
+
+}
+/* ترتيب زر الإضافة + الازرار */
+
+.product-controls{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:10px;
+
+width:100%;
+
+}
+
+
+/* زر + */
+
+.qtyPlus{
+
+height:45px !important;
+
+width:60% !important;
+
+max-width:180px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+
+background:#00c3ff;
+
+
+color:white;
+
+
+border-radius:40px;
+
+
+font-size:25px;
+
+
+font-weight:bold;
+
+
+cursor:pointer;
+
+
+padding:0 !important;
+
+
+margin:0;
+
+
+box-shadow:0 8px 20px #25D36655;
+
+
+}
+
+
+
+/* زر X */
+
+.removeProduct{
+
+height:45px !important;
+
+
+width:45px !important;
+
+min-width:45px !important;
+
+max-width:45px !important;
+
+
+flex:0 0 45px;
+
+
+border-radius:50%;
+
+
+background:#ff3b30;
+
+
+color:white;
+
+
+border:none;
+
+
+font-size:18px;
+
+
+display:flex;
+
+
+align-items:center;
+
+
+justify-content:center;
+
+
+padding:0 !important;
+
+
+margin:0;
+
+
+box-shadow:0 8px 20px #ff3b3055;
+
+
+}
+
+
+
+/* نخليهم تحت زر اضافة السلة */
+
+.cart-action{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+gap:10px;
+
+}
+
+
+/* زر اضافة للسلة */
+
+.openProduct{
+
+width:90% !important;
+
+height:45px;
+
+}

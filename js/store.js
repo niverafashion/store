@@ -253,6 +253,13 @@ ${product.price}
 
 </p>
 
+
+<div class="product-description">
+
+${product.description || ""}
+
+</div>
+
 <div class="cart-action">
 
 <button 
@@ -794,6 +801,7 @@ cart.push(item);
 
 
 }
+
 
 updateCart();
 

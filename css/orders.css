@@ -80,7 +80,7 @@ color:#d987a0;
 
 position:absolute;
 
-right:25px;
+left:25px;
 
 top:22px;
 
@@ -1040,5 +1040,386 @@ font-size:35px;
 padding:15px;
 
 }
+
+}
+/* معلومات الزبون */
+
+#customerInfo{
+
+display:none;
+
+width:100%;
+
+margin-top:14px;
+
+gap:12px;
+
+direction:rtl;
+
+animation:fadeIn .3s ease;
+
+}
+
+
+#customerInfo.show{
+
+display:flex;
+
+}
+
+
+
+/* الكروت */
+
+.customer-box{
+
+flex:1;
+
+height:58px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+padding:0 20px;
+
+border-radius:18px;
+
+background:linear-gradient(
+135deg,
+#ffffff,
+#f8f8f8
+);
+
+font-weight:800;
+
+font-size:15px;
+
+box-shadow:
+
+0 8px 25px rgba(0,0,0,.10),
+
+inset 0 0 0 1px rgba(0,0,0,.04);
+
+transition:.3s;
+
+overflow:hidden;
+
+position:relative;
+
+}
+
+
+
+.customer-box:hover{
+
+transform:translateY(-3px);
+
+box-shadow:
+
+0 12px 30px rgba(0,0,0,.16);
+
+}
+
+
+
+
+
+/* النص */
+
+.customer-box span{
+
+display:flex;
+
+align-items:center;
+
+gap:6px;
+
+font-size:14px;
+
+}
+
+
+
+.customer-box strong{
+
+font-size:26px;
+
+font-weight:900;
+
+}
+
+
+
+
+
+/* المكتملة */
+
+.completed{
+
+color:#059669;
+
+border-right:6px solid #10b981;
+
+}
+
+
+
+.completed::before{
+
+content:"";
+
+position:absolute;
+
+width:80px;
+
+height:80px;
+
+background:#10b981;
+
+opacity:.08;
+
+border-radius:50%;
+
+left:-20px;
+
+}
+
+
+
+
+
+/* الملغية */
+
+.cancelled{
+
+color:#dc2626;
+
+border-right:6px solid #ef4444;
+
+}
+
+
+
+.cancelled::before{
+
+content:"";
+
+position:absolute;
+
+width:80px;
+
+height:80px;
+
+background:#ef4444;
+
+opacity:.08;
+
+border-radius:50%;
+
+left:-20px;
+
+}
+
+
+
+
+
+/* ظهور ناعم */
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+
+transform:translateY(-8px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+
+
+
+
+/* موبايل */
+
+@media(max-width:600px){
+
+
+#customerInfo{
+
+gap:8px;
+
+}
+
+
+
+.customer-box{
+
+height:52px;
+
+padding:0 25px;
+
+border-radius:30px;
+
+}
+
+
+
+.customer-box span{
+
+font-size:12px;
+
+}
+
+
+
+.customer-box strong{
+
+font-size:21px;
+
+}
+
+
+}
+/* =====================
+ GLOBAL CONTROL
+===================== */
+
+
+/* منع تحديد النصوص */
+
+*{
+
+-webkit-user-select:none;
+
+-moz-user-select:none;
+
+-ms-user-select:none;
+
+user-select:none;
+
+}
+
+
+/* السماح بالكتابة والنسخ داخل الحقول */
+
+input,
+textarea,
+select{
+
+-webkit-user-select:text;
+
+-moz-user-select:text;
+
+-ms-user-select:text;
+
+user-select:text;
+
+}
+
+
+
+
+/* منع سحب الصور */
+
+img{
+
+-webkit-user-drag:none;
+
+user-drag:none;
+
+}
+
+
+
+/* تثبيت الصفحة */
+
+html,
+body{
+
+width:100%;
+
+min-height:100%;
+
+overflow-x:hidden;
+
+touch-action:pan-y;
+
+}
+
+
+
+
+/* منع تأثير الضغط والتكبير بالموبايل */
+
+button,
+input,
+select,
+textarea{
+
+touch-action:manipulation;
+
+}
+
+
+
+
+
+/* منع highlight الأزرق */
+
+*{
+
+-webkit-tap-highlight-color:transparent;
+
+}
+
+
+
+
+/* منع التكبير بالمتصفح القديم */
+
+body{
+
+zoom:1;
+
+}
+
+
+
+
+
+/* ثبات الحاوية */
+
+main{
+
+width:100%;
+
+max-width:1400px;
+
+margin:auto;
+
+}
+
+
+
+
+/* منع double tap zoom */
+
+html{
+
+touch-action:manipulation;
 
 }

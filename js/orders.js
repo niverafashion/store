@@ -343,6 +343,8 @@ color,
 
 size,
 
+image,
+
 products(
 
 name,
@@ -386,6 +388,8 @@ color:v.color,
 
 size:v.size,
 
+image:v.image,
+
 product:v.products.name,
 
 category:v.products.categories.name,
@@ -415,7 +419,6 @@ generateMessage();
 // عرض السلة
 // =====================
 
-
 function renderCart(){
 
 
@@ -428,40 +431,80 @@ let total=0;
 cart.forEach((x,i)=>{
 
 
-total +=
-x.price*x.quantity;
+total += x.price * x.quantity;
 
 
 
 html +=`
 
-<tr>
-
-<td>${x.category}</td>
-
-<td>${x.product}</td>
-
-<td>${x.color}</td>
-
-<td>${x.size}</td>
-
-<td>${x.price}</td>
-
-<td>${x.quantity}</td>
+<div class="cart-item">
 
 
-<td>
+<img src="${x.image || '../images/default.jpg'}">
+
+
+<h3>
+
+${x.product}
+
+</h3>
+
+
+
+<div class="cart-info">
+
+
+<span>
+
+${x.color}
+
+</span>
+
+
+<span>
+
+${x.size}
+
+</span>
+
+
+
+<span>
+
+الكمية: ${x.quantity}
+
+</span>
+
+
+</div>
+
+
+
+
+
+<div class="cart-price">
+
+
+${x.price} دينار
+
+
+</div>
+
+
+
+
 
 <button onclick="removeItem(${i})">
 
+
 حذف
+
 
 </button>
 
-</td>
 
 
-</tr>
+</div>
 
 `;
 
@@ -472,19 +515,17 @@ html +=`
 
 
 
-document.getElementById("cart").innerHTML=html;
+
+document.getElementById("cart").innerHTML = html;
 
 
-document.getElementById("total").innerText=total;
+document.getElementById("total").innerText = total;
 
 
 updateTotal();
 
 
-
 }
-
-
 
 
 window.removeItem=(i)=>{

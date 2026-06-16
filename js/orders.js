@@ -1,234 +1,274 @@
-import {supabase} from "./supabase.js";
+<!DOCTYPE html>
 
+<html lang="ar" dir="rtl">
 
-const urlParams = new URLSearchParams(
-window.location.search
-);
 
-const editId = urlParams.get("id");
+<head>
 
+<meta charset="UTF-8">
 
-const categorySelect =
-document.getElementById("category");
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
-const productSelect =
-document.getElementById("product");
+<title>NIVRA Add Order</title>
 
 
-const variantSelect =
-document.getElementById("variant");
+<link rel="stylesheet" href="../css/orders.css">
 
 
-const governorateSelect =
-document.getElementById("governorate");
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
+</head>
 
-let cart = [];
 
-let deliveryPrice = 0;
 
-let governorates = [];
+<body>
 
 
 
+<header class="topbar">
 
 
-// =====================
-// المحافظات
-// =====================
+<div>
 
-async function loadGovernorates(){
+<h1>
+NIVRA
+</h1>
 
 
-const {data,error}=
+<span>
+إضافة طلب جديد
+</span>
 
-await supabase
 
-.from("governorates")
+</div>
 
-.select("*");
 
 
 
-if(error){
+<button class="back-btn"
+onclick="location.href='../dashboard.html'">
 
-console.log(error);
 
-return;
+<i class="fa-solid fa-arrow-right"></i>
 
-}
 
+</button>
 
 
-governorates=data;
 
+</header>
 
 
-data.forEach(g=>{
 
 
-governorateSelect.innerHTML +=`
 
-<option value="${g.name}">
 
-${g.name}
 
-</option>
+<main>
 
-`;
 
 
-});
 
 
-}
+<section class="welcome">
 
 
+<h2>
 
+<i class="fa-solid fa-cart-plus"></i>
 
+إنشاء طلب جديد
 
-// تغيير المحافظة
+</h2>
 
-governorateSelect.onchange=()=>{
 
+<p>
 
-let g =
-governorates.find(
-x=>x.name === governorateSelect.value
-);
+إضافة طلبات الزبائن وتجهيزها للإرسال
 
+</p>
 
 
-if(g){
+</section>
 
-deliveryPrice =
-Number(g.delivery_price);
 
-updateTotal();
 
-generateMessage();
 
-}
 
 
-}
 
 
 
+<section class="form-box">
 
 
 
+<h2>
 
+<i class="fa-solid fa-user"></i>
 
+بيانات الزبون
 
-// =====================
-// تحميل الأصناف
-// =====================
+</h2>
 
 
-async function loadCategories(){
 
 
-const {data,error}=
 
-await supabase
+<input 
+id="name"
+placeholder="اسم الزبون">
 
-.from("categories")
 
-.select("*");
 
 
 
-if(error)return;
+<input 
+id="phone"
+placeholder="رقم الهاتف">
 
 
 
-data.forEach(c=>{
 
 
-categorySelect.innerHTML +=`
 
-<option value="${c.id}">
+<select id="governorate">
 
-${c.name}
+
+<option value="">
+
+اختار المحافظة
 
 </option>
 
 
-`;
-
-
-});
-
-
-}
+</select>
 
 
 
 
 
 
+<input
 
-// =====================
-// المنتجات حسب الصنف
-// =====================
+id="address"
 
-
-categorySelect.onchange=async()=>{
+placeholder="العنوان / أقرب نقطة دالة">
 
 
-productSelect.innerHTML=
-`
-<option>
+
+
+
+<select id="source">
+
+
+<option value="whatsapp">
+
+واتساب
+
+</option>
+
+
+<option value="instagram">
+
+انستغرام
+
+</option>
+
+
+<option value="website">
+
+الموقع
+
+</option>
+
+
+<option value="store">
+
+المعرض
+
+</option>
+
+
+</select>
+
+
+
+
+
+
+<textarea
+
+id="notes"
+
+placeholder="ملاحظات الطلب">
+
+</textarea>
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section class="form-box">
+
+
+
+<h2>
+
+<i class="fa-solid fa-shirt"></i>
+
+إضافة القطع
+
+</h2>
+
+
+
+
+
+
+
+<select id="category">
+
+
+<option value="">
+
+اختار الصنف
+
+</option>
+
+
+</select>
+
+
+
+
+
+
+
+
+<select id="product">
+
+
+<option value="">
+
 اختار المنتج
-</option>
-`;
-
-
-variantSelect.innerHTML=
-`
-<option>
-اختار التفاصيل
-</option>
-`;
-
-
-
-const {data}=
-
-await supabase
-
-.from("products")
-
-.select("*")
-
-.eq(
-"category_id",
-categorySelect.value
-);
-
-
-
-data.forEach(p=>{
-
-
-productSelect.innerHTML +=`
-
-<option value="${p.id}">
-
-${p.name}
 
 </option>
 
-`;
 
-
-});
-
-
-}
+</select>
 
 
 
@@ -237,243 +277,270 @@ ${p.name}
 
 
 
-
-// =====================
-// تفاصيل المنتج
-// =====================
+<select id="variant">
 
 
-productSelect.onchange=async()=>{
+<option value="">
 
-
-variantSelect.innerHTML=
-
-`
-<option>
 اختار اللون والحجم
-</option>
-`;
-
-
-
-const {data}=
-
-await supabase
-
-.from("product_variants")
-
-.select(`
-
-id,
-color,
-size,
-stock_quantity,
-products(price,name)
-
-`)
-
-.eq(
-"product_id",
-productSelect.value
-);
-
-
-
-data.forEach(v=>{
-
-
-variantSelect.innerHTML +=`
-
-<option value="${v.id}">
-
-${v.color} - ${v.size}
-(متوفر ${v.stock_quantity})
 
 </option>
 
-`;
 
+</select>
 
 
-});
 
 
-}
 
 
 
+<input 
 
+id="qty"
 
+type="number"
 
+placeholder="الكمية">
 
 
-// =====================
-// إضافة للسلة
-// =====================
 
 
-document
-.getElementById("addItem")
-.onclick=async()=>{
 
 
-let id =
-variantSelect.value;
 
+<button id="addItem">
 
 
-let qty =
-Number(
-document.getElementById("qty").value
-);
+<i class="fa-solid fa-plus"></i>
 
+إضافة للطلب
 
 
-const {data:v}=
+</button>
 
-await supabase
 
-.from("product_variants")
+<section class="table-box">
 
-.select(`
+<h2>
 
-stock_quantity,
+<i class="fa-solid fa-list"></i>
 
-color,
+محتويات الطلب
 
-size,
+</h2>
 
-image,
 
-products(
+<div id="cart" class="cart-list">
 
-name,
 
-price,
+<!-- الكروت تنضاف هنا من JS -->
 
-categories(name)
 
-)
+</div>
 
-`)
 
-.eq("id",id)
+</section>
+</section>
 
-.single();
 
 
 
 
-if(qty > v.stock_quantity){
 
 
-alert(
-`المتوفر فقط ${v.stock_quantity}`
-);
 
 
-return;
 
-}
 
 
 
-cart.push({
 
-variant_id:id,
+<section class="form-box">
 
-quantity:qty,
 
-color:v.color,
 
-size:v.size,
+<h2>
 
-image:v.image,
+<i class="fa-solid fa-truck"></i>
 
-product:v.products.name,
+التوصيل
 
-category:v.products.categories.name,
+</h2>
 
-price:v.products.price
 
-});
 
 
 
-renderCart();
+<label>
 
-generateMessage();
 
+<input 
 
-}
+type="radio"
 
+name="delivery"
 
+id="autoDelivery"
 
+checked>
 
 
+تلقائي حسب المحافظة
 
 
+</label>
 
 
-// =====================
-// عرض السلة
-// =====================
 
-function renderCart(){
 
 
-let html="";
+<label>
 
-let total=0;
 
+<input 
 
+type="radio"
 
-cart.forEach((x,i)=>{
+name="delivery"
 
+id="manualDelivery">
 
-total += x.price * x.quantity;
 
+تحديد يدوي
 
 
-html +=`
+</label>
 
-<div class="cart-item">
 
 
-<img src="${x.image || '../images/default.jpg'}">
+
+
+
+
+<div id="manualBox">
+
+
+<input
+
+id="deliveryPrice"
+
+type="number"
+
+placeholder="مبلغ التوصيل">
+
+
+</div>
+
+
+
+
+
 
 
 <h3>
 
-${x.product}
+مجموع القطع:
+
+<span id="total">
+
+0
+
+</span>
+
+دينار
 
 </h3>
 
 
 
-<div class="cart-info">
 
 
-<span>
+<h3>
 
-${x.color}
+المجموع النهائي:
 
-</span>
+<span id="finalTotal">
 
-
-<span>
-
-${x.size}
+0
 
 </span>
 
+دينار
+
+</h3>
 
 
-<span>
 
-الكمية: ${x.quantity}
 
-</span>
+</section>
+
+
+
+
+
+
+
+
+
+<section class="form-box">
+
+
+<h2>
+
+<i class="fa-solid fa-rotate-left"></i>
+الاسترجاع والاستقطاع
+</h2>
+
+
+
+
+
+<label>
+
+<input
+type="checkbox"
+id="hasReturn">
+يوجد استرجاع/تبديل
+
+
+</label>
+
+
+
+
+
+
+
+<label>
+
+
+<input
+
+type="checkbox"
+
+id="hasRefund">
+
+
+استقطاع مبلغ عند رفض الطلب
+
+
+</label>
+
+
+
+
+
+<div id="refundBox">
+
+
+<input
+
+id="refundAmount"
+
+type="number"
+
+placeholder="مبلغ الاستقطاع">
 
 
 </div>
@@ -482,23 +549,79 @@ ${x.size}
 
 
 
-<div class="cart-price">
-
-
-${x.price} دينار
-
-
-</div>
+</section>
 
 
 
 
 
-<button onclick="removeItem(${i})">
 
 
-حذف
 
+
+<section class="form-box">
+
+
+
+<h2>
+
+<i class="fa-brands fa-whatsapp"></i>
+
+رسالة الواتساب
+
+</h2>
+
+
+
+
+
+<textarea
+
+id="whatsappMessage"
+
+rows="10"
+
+placeholder="رسالة الزبون">
+
+</textarea>
+
+
+
+
+
+<div class="order-actions">
+
+
+<button id="saveOrder">
+
+<i class="fa-solid fa-floppy-disk"></i>
+
+حفظ الطلب
+
+</button>
+
+
+
+
+
+<button id="whatsapp">
+
+<i class="fa-brands fa-whatsapp"></i>
+
+إرسال واتساب
+
+</button>
+
+
+
+
+
+
+<button id="saveAndWhatsapp">
+
+<i class="fa-solid fa-check-double"></i>
+
+حفظ وإرسال واتساب
 
 </button>
 
@@ -506,940 +629,28 @@ ${x.price} دينار
 
 </div>
 
-`;
 
+</section>
 
 
-});
 
 
 
 
 
-document.getElementById("cart").innerHTML = html;
 
 
-document.getElementById("total").innerText = total;
+</main>
 
 
-updateTotal();
 
 
-}
 
 
-window.removeItem=(i)=>{
+<script type="module" src="../js/orders.js"></script>
 
 
-cart.splice(i,1);
+</body>
 
-renderCart();
 
-generateMessage();
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// التوصيل
-// =====================
-
-
-document
-.getElementById("autoDelivery")
-.onclick=()=>{
-
-
-document
-.getElementById("manualBox")
-.style.display="none";
-
-
-let g = governorates.find(
-x=>x.name === governorateSelect.value
-);
-
-
-deliveryPrice =
-g ? Number(g.delivery_price):0;
-
-
-
-updateTotal();
-
-
-}
-
-
-
-
-document
-.getElementById("manualDelivery")
-.onclick=()=>{
-
-
-document
-.getElementById("manualBox")
-.style.display="block";
-
-
-}
-
-
-
-
-
-
-document
-.getElementById("deliveryPrice")
-.oninput=()=>{
-
-
-deliveryPrice =
-
-Number(
-document.getElementById("deliveryPrice").value
-);
-
-
-updateTotal();
-
-
-}
-
-
-
-
-
-
-
-function updateTotal(){
-
-
-let items =
-
-Number(
-document.getElementById("total").innerText
-);
-
-
-
-document
-.getElementById("finalTotal")
-.innerText =
-items + deliveryPrice;
-
-
-}
-
-
-
-
-// =====================
-// الاستقطاع
-// =====================
-
-
-document
-.getElementById("hasRefund")
-.onchange = ()=>{
-
-
-let box =
-document.getElementById("refundBox");
-
-
-
-if(
-document.getElementById("hasRefund").checked
-){
-
-
-box.style.display="block";
-
-
-}else{
-
-
-box.style.display="none";
-
-
-document
-.getElementById("refundAmount")
-.value="";
-
-
-}
-
-
-
-generateMessage();
-
-
-}
-
-
-
-
-
-
-document
-
-.getElementById("refundAmount")
-
-.oninput = ()=>{
-
-
-generateMessage();
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// قالب رسالة الواتساب
-// =====================
-
-
-function generateMessage(){
-
-
-
-let items="";
-
-
-
-cart.forEach(x=>{
-
-
-items += `
-
-${x.product}
-
-اللون: ${x.color}
-
-الحجم: ${x.size}
-
-الكمية: ${x.quantity}
-
-السعر: ${x.price} دينار
-
-
-`;
-
-
-
-});
-
-
-
-
-
-
-let message = `
-
-
-مرحبا ${document.getElementById("name").value} 🌸
-
-
-
-تم تثبيت حجزك من NIVRA 🤍
-
-
-
-تفاصيل الطلب:
-
-
-
-${items}
-
-
-
-المحافظة:
-
-${document.getElementById("governorate").value}
-
-
-
-العنوان:
-
-${document.getElementById("address").value}
-
-
-
-رقم الهاتف:
-
-${document.getElementById("phone").value}
-
-
-
-مبلغ التوصيل:
-
-${deliveryPrice} دينار
-
-
-
-المجموع:
-
-${document.getElementById("finalTotal").innerText} دينار
-
-
-
-تاريخ الحجز:
-
-${new Date().toLocaleDateString()}
-
-
-
-`;
-
-
-
-
-
-
-
-// استرجاع
-
-if(
-document.getElementById("hasReturn").checked
-){
-
-
-message += `
-
-
-ملاحظة:
-
-يوجد تبديل/استرجاع قطعة
-
-
-
-`;
-
-
-
-}
-
-
-
-
-
-
-
-// استقطاع
-
-if(
-
-document.getElementById("hasRefund").checked
-
-){
-
-
-let amount =
-
-document.getElementById("refundAmount").value;
-
-
-
-if(amount){
-
-
-message +=`
-
-
-في حال رفض الطلب يوجد استقطاع مبلغ:
-
-${amount} دينار
-
-
-
-`;
-
-
-
-}
-
-
-}
-
-
-
-
-
-
-message +=`
-
-
-شكراً لاختيارك NIVRA 🤍
-
-
-
-`;
-
-
-
-
-
-
-
-document
-
-.getElementById("whatsappMessage")
-
-.value = message;
-
-
-
-}
-
-
-
-
-
-
-
-
-// =====================
-// تحديث الرسالة مباشرة
-// =====================
-
-
-
-[
-
-"name",
-
-"phone",
-
-"address",
-
-"notes",
-
-"refundAmount"
-
-
-].forEach(id=>{
-
-
-document
-
-.getElementById(id)
-
-.oninput = generateMessage;
-
-
-
-});
-
-
-
-
-
-
-document
-
-.getElementById("governorate")
-
-.onchange = generateMessage;
-
-
-
-
-
-document
-
-.getElementById("hasReturn")
-
-.onchange = generateMessage;
-
-
-
-
-
-
-// تحديث بعد التوصيل
-
-
-document
-
-.getElementById("deliveryPrice")
-
-.oninput = ()=>{
-
-
-deliveryPrice =
-
-Number(
-
-document.getElementById("deliveryPrice").value
-
-);
-
-
-updateTotal();
-
-
-generateMessage();
-
-
-
-};
-
-
-// =====================
-// حفظ الطلب
-// =====================
-
-
-document
-.getElementById("saveOrder")
-.onclick=async()=>{
-
-
-const {data:customer}=
-
-await supabase
-
-.from("customers")
-
-.insert({
-
-name:
-name.value,
-
-phone:
-phone.value,
-
-address:
-address.value,
-
-governorate:
-governorate.value
-
-})
-
-.select()
-
-.single();
-
-
-
-
-const {data:order}=
-
-await supabase
-
-.from("orders")
-
-.insert({
-
-customer_id:customer.id,
-
-source:source.value,
-
-customer_name:name.value,
-
-phone:phone.value,
-
-governorate:governorate.value,
-
-address:address.value,
-
-delivery_price:deliveryPrice,
-
-total_price:
-Number(finalTotal.innerText),
-
-notes:notes.value,
-
-has_return:
-hasReturn.checked,
-
-has_partial_refund:
-hasRefund.checked,
-
-refund_amount:
-Number(refundAmount.value || 0)
-
-})
-
-.select()
-
-.single();
-
-
-
-
-
-for(let x of cart){
-
-
-
-await supabase
-
-.from("order_items")
-
-.insert({
-
-order_id:order.id,
-
-variant_id:x.variant_id,
-
-quantity:x.quantity,
-
-price:x.price
-
-});
-
-
-
-
-
-await supabase
-
-.from("stock_movements")
-
-.insert({
-
-variant_id:x.variant_id,
-
-type:"OUT",
-
-quantity:x.quantity,
-
-note:`Order ${order.id}`
-
-});
-
-
-
-
-
-const {data:s}=
-
-await supabase
-
-.from("product_variants")
-
-.select("stock_quantity")
-
-.eq("id",x.variant_id)
-
-.single();
-
-
-
-
-
-await supabase
-
-.from("product_variants")
-
-.update({
-
-stock_quantity:
-s.stock_quantity-x.quantity
-
-})
-
-.eq("id",x.variant_id);
-
-
-
-}
-
-
-
-
-alert("تم حفظ الطلب 🔥");
-
-
-}
-
-// =====================
-// حفظ + ارسال واتساب
-// =====================
-
-
-document
-.getElementById("saveAndWhatsapp")
-.onclick = async ()=>{
-
-
-// أولا حفظ الطلب
-
-await document
-.getElementById("saveOrder")
-.click();
-
-
-
-// انتظار بسيط حتى يكتمل الحفظ
-
-setTimeout(()=>{
-
-
-// بعدها ارسال الواتساب
-
-document
-.getElementById("whatsapp")
-.click();
-
-
-
-},1000);
-
-
-
-};
-
-// =====================
-// زر ارسال واتساب
-// =====================
-
-
-document
-
-.getElementById("whatsapp")
-
-.onclick = ()=>{
-
-
-generateMessage();
-
-
-
-let phone =
-
-document
-
-.getElementById("phone")
-
-.value;
-
-
-
-if(!phone){
-
-
-alert("ادخل رقم الهاتف");
-
-return;
-
-
-}
-
-
-
-
-let text =
-
-document
-
-.getElementById("whatsappMessage")
-
-.value;
-
-
-
-
-window.open(
-
-`https://wa.me/964${phone.substring(1)}?text=${encodeURIComponent(text)}`
-
-);
-
-
-};
-
-
-
-
-
-
-loadGovernorates();
-
-loadCategories();
-
-loadGovernorates();
-
-loadCategories();
-
-
-// =====================
-// تحميل الطلب للتعديل
-// =====================
-
-async function loadOrderForEdit(id){
-
-
-const {data,error}=await supabase
-
-.from("orders")
-
-.select(`
-
-*,
-
-order_items(
-
-quantity,
-
-price,
-
-variant_id,
-
-product_variants(
-
-color,
-
-size,
-
-products(
-
-name,
-
-price,
-
-categories(
-
-name
-
-)
-
-)
-
-)
-
-)
-
-`)
-
-.eq("id",id)
-
-.single();
-
-
-
-if(error){
-
-console.log(error);
-
-return;
-
-}
-
-
-
-document.getElementById("name").value =
-data.customer_name || "";
-
-
-document.getElementById("phone").value =
-data.phone || "";
-
-
-document.getElementById("governorate").value =
-data.governorate || "";
-
-
-document.getElementById("address").value =
-data.address || "";
-
-
-document.getElementById("notes").value =
-data.notes || "";
-
-
-
-deliveryPrice =
-Number(data.delivery_price || 0);
-
-
-
-document.getElementById("deliveryPrice").value =
-deliveryPrice;
-
-
-
-
-cart=[];
-
-
-
-data.order_items.forEach(item=>{
-
-
-cart.push({
-
-variant_id:item.variant_id,
-
-quantity:item.quantity,
-
-color:item.product_variants.color,
-
-size:item.product_variants.size,
-
-product:item.product_variants.products.name,
-
-category:
-item.product_variants.products.categories.name,
-
-price:item.price
-
-
-});
-
-
-});
-
-
-
-renderCart();
-
-generateMessage();
-
-
-
-window.editingOrder = id;
-
-
-
-document.getElementById("saveOrder").innerHTML=`
-
-<i class="fa-solid fa-pen"></i>
-
-تحديث الطلب
-
-`;
-
-
-
-}
-
-
-
-
-
-// تشغيل التعديل اذا موجود ID
-
-if(editId){
-
-loadOrderForEdit(editId);
-
-}
+</html>

@@ -900,11 +900,6 @@ items += `🛍️ ${x.product}
 let message = `✨ NIVRA FASHION ✨
 مرحباً ${document.getElementById("name").value} تم تثبيت حجزك بنجاح 🤍
 
-📦 تفاصيل الطلب:
-━━━━━━━━━━━━━━
-${items}
-━━━━━━━━━━━━━━
-
 👤 معلومات الزبون:
 ━━━━━━━━━━━━━━
 الاسم:${document.getElementById("name").value}
@@ -914,8 +909,9 @@ ${items}
 📅 تاريخ الطلب:${new Date().toLocaleDateString()}
 ━━━━━━━━━━━━━━
 
-💰المبلغ الكلي
+📦 تفاصيل الطلب:
 ━━━━━━━━━━━━━━
+${items}
 🚚 التوصيل:${deliveryPrice} دينار
 💰 المجموع النهائي:${document.getElementById("finalTotal").innerText} دينار
 ━━━━━━━━━━━━━━`;
@@ -961,9 +957,8 @@ message += `
 
 
 message += `
-🛒 زوروا متجرنا الإلكتروني:
-https://niverafashion.github.io/store/index.html
 
+🛒 زوروا متجرنا الإلكتروني:https://niverafashion.github.io/store/index.html
 شكراً لثقتك بـ NIVRA 🤍 نتمنى لك تجربة جميلة ✨`;
 
 

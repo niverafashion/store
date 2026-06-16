@@ -202,7 +202,6 @@ loadCategories();
 saveBtn.onclick = async ()=>{
 
 
-
 let name =
 nameInput.value.trim();
 
@@ -216,12 +215,14 @@ imageInput.value.trim();
 
 
 
-
+// التحقق من الحقول
 
 if(!name){
 
 
 alert("اكتب اسم الصنف");
+
+nameInput.focus();
 
 return;
 
@@ -230,14 +231,85 @@ return;
 
 
 
+if(!description){
+
+
+alert("اكتب وصف الصنف");
+
+descriptionInput.focus();
+
+return;
+
+
+}
 
 
 
+if(!image){
 
+
+alert("ادخل رابط صورة الصنف");
+
+imageInput.focus();
+
+return;
+
+
+}
+
+
+
+// منع الوصف اكثر من 100 حرف
+
+if(description.length > 100){
+
+
+alert("وصف الصنف يجب ان لا يتجاوز 100 حرف");
+
+
+descriptionInput.focus();
+
+
+return;
+
+
+}
+
+
+
+// ==========================
 // تعديل
+// ==========================
 
 
 if(editId){
+
+
+
+const {data:exist}=
+
+await supabase
+
+.from("categories")
+
+.select("id")
+
+.eq("name",name)
+
+.neq("id",editId)
+.maybeSingle();
+
+
+
+
+if(exist){
+
+alert("اسم الصنف موجود مسبقاً");
+
+return;
+
+}
+
 
 
 
@@ -256,7 +328,6 @@ await supabase
 name,
 description,
 image
-
 
 })
 
@@ -304,11 +375,44 @@ saveBtn.innerHTML = `
 
 
 
-
+// ==========================
 // إضافة جديد
+// ==========================
 
 
 else{
+
+
+
+const {data:exist}=
+
+await supabase
+
+.from("categories")
+
+.select("id")
+
+.eq("name",name)
+
+.maybeSingle();
+
+
+
+
+
+if(exist){
+
+
+alert("هذا الصنف موجود مسبقاً");
+
+return;
+
+
+}
+
+
+
+
 
 
 
@@ -331,6 +435,7 @@ description,
 image
 
 });
+
 
 
 
@@ -359,7 +464,6 @@ alert("تمت إضافة الصنف");
 
 
 
-
 clearForm();
 
 
@@ -368,7 +472,6 @@ loadCategories();
 
 
 };
-
 
 
 
@@ -501,6 +604,60 @@ return;
 
 
 
+// فحص المنتجات المرتبطة
+
+const {data:products,error:checkError}=
+
+await supabase
+
+.from("products")
+
+.select("id")
+
+.eq(
+"category_id",
+id
+)
+
+.limit(1);
+
+
+
+
+
+
+if(checkError){
+
+console.log(checkError);
+
+return;
+
+}
+
+
+
+
+
+if(products.length > 0){
+
+
+alert(
+"لا يمكن حذف هذا الصنف لأنه يحتوي على منتجات مرتبطة"
+);
+
+
+return;
+
+
+}
+
+
+
+
+
+
+
+// حذف الصنف
 
 const {
 
@@ -523,13 +680,17 @@ id
 
 
 
+
 if(error){
 
 console.log(error);
 
+alert("حدث خطأ أثناء الحذف");
+
 return;
 
 }
+
 
 
 
@@ -570,3 +731,77 @@ imageInput.value="";
 
 
 }
+// ==========================
+// SCROLL TOP BUTTON
+// ==========================
+
+
+const scrollBtn =
+document.getElementById("scrollTop");
+
+
+
+window.addEventListener("scroll",()=>{
+
+
+if(window.scrollY > 300){
+
+
+scrollBtn.innerHTML = `
+
+<i class="fa-solid fa-arrow-up"></i>
+
+`;
+
+
+
+}else{
+
+
+scrollBtn.innerHTML = `
+
+<i class="fa-solid fa-arrow-down"></i>
+
+`;
+
+
+}
+
+
+});
+
+
+
+
+
+scrollBtn.onclick=()=>{
+
+
+if(window.scrollY > 300){
+
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+
+}else{
+
+
+window.scrollTo({
+
+top:document.body.scrollHeight,
+
+behavior:"smooth"
+
+});
+
+
+}
+
+
+};

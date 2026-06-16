@@ -128,8 +128,25 @@ placeholder="اسم الزبون">
 
 <input 
 id="phone"
-placeholder="رقم الهاتف">
+placeholder="رقم الهاتف"
+maxlength="11">
 
+
+<div id="customerInfo" class="customer-card" >
+
+    <div class="customer-box completed">
+        <span>✅ المكتملة</span>
+        <strong id="completedCount">0</strong>
+    </div>
+
+
+    <div class="customer-box cancelled">
+        <span>❌ الملغية</span>
+        <strong id="cancelledCount">0</strong>
+    </div>
+
+</div>
+<br>
 
 
 
@@ -178,6 +195,12 @@ placeholder="العنوان / أقرب نقطة دالة">
 
 </option>
 
+
+<option value="tiltok">
+
+تيك توك
+
+</option>
 
 <option value="website">
 
@@ -345,19 +368,6 @@ placeholder="الكمية">
 </section>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 <section class="form-box">
 
 
@@ -369,8 +379,6 @@ placeholder="الكمية">
 التوصيل
 
 </h2>
-
-
 
 
 
@@ -420,20 +428,14 @@ id="manualDelivery">
 
 
 
-<div id="manualBox">
-
+<div id="manualBox" style="display:none;">
 
 <input
-
 id="deliveryPrice"
-
 type="number"
-
 placeholder="مبلغ التوصيل">
 
-
 </div>
-
 
 
 
@@ -532,8 +534,7 @@ id="hasRefund">
 
 
 
-
-<div id="refundBox">
+<div id="refundBox" style="display:none;">
 
 
 <input
@@ -546,8 +547,6 @@ placeholder="مبلغ الاستقطاع">
 
 
 </div>
-
-
 
 
 
@@ -636,23 +635,11 @@ placeholder="رسالة الزبون">
 
 
 
-
-
-
-
-
-
 </main>
 
 
 
-
-
-
-<script type="module" src="../js/orders.js"></script>
-
-
 </body>
-
+<script type="module" src="../js/orders.js"></script>
 
 </html>

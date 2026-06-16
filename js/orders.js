@@ -294,7 +294,80 @@ ${p.name}
 }
 
 
+// =====================
+// Scroll Button
+// =====================
 
+const scrollBtn = document.getElementById("scrollTop");
+
+
+window.addEventListener("scroll", ()=>{
+
+
+if(window.scrollY > 300){
+
+
+scrollBtn.innerHTML =
+`
+<i class="fa-solid fa-arrow-up"></i>
+`;
+
+
+}else{
+
+
+scrollBtn.innerHTML =
+`
+<i class="fa-solid fa-arrow-down"></i>
+`;
+
+
+}
+
+
+
+});
+
+
+
+
+
+scrollBtn.onclick = ()=>{
+
+
+if(window.scrollY > 300){
+
+
+// يطلع لفوك
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+
+}else{
+
+
+// ينزل لجوه
+
+window.scrollTo({
+
+top:document.body.scrollHeight,
+
+behavior:"smooth"
+
+});
+
+
+}
+
+
+
+};
 
 productSelect.onchange=async()=>{
 
@@ -328,11 +401,16 @@ await supabase
 
 .from("product_variants")
 
-.select("size")
+.select("size, stock_quantity")
 
 .eq(
 "product_id",
 productSelect.value
+)
+
+.gt(
+"stock_quantity",
+0
 );
 
 
@@ -409,8 +487,12 @@ productSelect.value
 .eq(
 "size",
 sizeSelect.value
-);
+)
 
+.gt(
+"stock_quantity",
+0
+);
 
 
 
@@ -587,16 +669,15 @@ document
 .style.display="block";
 
 
-
-deliveryPrice =
-
-Number(
+// تصفير القيمة القديمة القادمة من المحافظة
 
 document
 .getElementById("deliveryPrice")
-.value || 0
+.value = "";
 
-);
+
+
+deliveryPrice = 0;
 
 
 
@@ -607,8 +688,6 @@ generateMessage();
 
 
 };
-
-
 
 
 // =====================
@@ -735,22 +814,72 @@ return;
 
 
 
+if(v.stock_quantity <= 0){
 
-if(qty > v.stock_quantity){
-
-
-alert(
-`المتوفر فقط ${v.stock_quantity}`
-);
-
+alert("هذا اللون غير متوفر حاليا");
 
 return;
 
+}
+
+
+// الكمية الموجودة حالياً بالكارت لنفس القياس واللون
+let cartQty = cart
+.filter(item =>
+    item.variant_id == id
+)
+.reduce((sum,item)=> sum + item.quantity ,0);
+
+
+// المتوفر الحقيقي بعد حساب الكارت
+let available = v.stock_quantity - cartQty;
+
+
+if(available <= 0){
+
+alert("تمت إضافة كل الكمية المتوفرة مسبقاً");
+
+return;
 
 }
 
 
 
+if(qty > available){
+
+alert(
+`المتبقي فقط ${available} قطعة`
+);
+
+return;
+
+}
+
+
+
+
+
+// فحص اذا نفس المنتج + اللون + الحجم موجود
+
+let existing = cart.find(item =>
+
+item.product === v.products.name &&
+
+item.color === v.color &&
+
+item.size === v.size
+
+);
+
+
+
+if(existing){
+
+
+existing.quantity += qty;
+
+
+}else{
 
 
 cart.push({
@@ -772,6 +901,9 @@ category:v.products.categories.name,
 price:v.products.price
 
 });
+
+
+}
 
 
 
@@ -1575,14 +1707,26 @@ await supabase
 
 
 
+let newStock =
+s.stock_quantity - x.quantity;
+
+
+if(newStock < 0){
+
+alert("الكمية المطلوبة غير متوفرة بالمخزون");
+
+return;
+
+}
+
+
 await supabase
 
 .from("product_variants")
 
 .update({
 
-stock_quantity:
-s.stock_quantity-x.quantity
+stock_quantity:newStock
 
 })
 
@@ -1593,11 +1737,9 @@ s.stock_quantity-x.quantity
 }
 
 
-
-
 alert("تم حفظ الطلب 🔥");
 
-
+clearOrderForm();
 }
 
 // =====================
@@ -1869,3 +2011,88 @@ loadOrderForEdit(editId);
 
 }
 
+function clearOrderForm(){
+
+
+// بيانات الزبون
+
+document.getElementById("name").value = "";
+
+document.getElementById("phone").value = "";
+
+document.getElementById("address").value = "";
+
+document.getElementById("notes").value = "";
+
+
+// الاختيارات
+
+document.getElementById("category").value = "";
+
+document.getElementById("product").innerHTML = `
+<option>
+اختار المنتج
+</option>
+`;
+
+document.getElementById("size").innerHTML = `
+<option>
+اختار الحجم
+</option>
+`;
+
+document.getElementById("color").innerHTML = `
+<option>
+اختار اللون
+</option>
+`;
+
+
+// الكمية
+
+document.getElementById("qty").value = "";
+
+
+// السلة
+
+cart = [];
+
+renderCart();
+
+
+// التوصيل
+
+deliveryPrice = 0;
+
+document.getElementById("deliveryPrice").value = "";
+
+document.getElementById("finalTotal").innerText = "0";
+
+document.getElementById("total").innerText = "0";
+
+
+// الاسترجاع
+
+document.getElementById("hasReturn").checked = false;
+
+document.getElementById("hasRefund").checked = false;
+
+
+document.getElementById("refundBox").style.display="none";
+
+document.getElementById("refundAmount").value="";
+
+
+// رسالة الواتساب
+
+document.getElementById("whatsappMessage").value="";
+
+
+// عدادات الزبون
+
+document
+.getElementById("customerInfo")
+.classList.remove("show");
+
+
+}

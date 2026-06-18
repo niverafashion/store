@@ -1,15 +1,18 @@
-import {supabase} from "./supabase.js";
+import { supabase } from "./supabase.js";
 
 
 // =========================
-// عناصر الصفحة
+// العناصر
 // =========================
+
 
 const category =
 document.getElementById("category");
 
+
 const product =
 document.getElementById("product");
+
 
 const variant =
 document.getElementById("variant");
@@ -17,6 +20,7 @@ document.getElementById("variant");
 
 const variantInfo =
 document.getElementById("variantInfo");
+
 
 
 const movementType =
@@ -35,43 +39,59 @@ const saveMovement =
 document.getElementById("saveMovement");
 
 
+
 const inventoryList =
 document.getElementById("inventoryList");
+
 
 
 const movementList =
 document.getElementById("movementList");
 
 
-const search =
-document.getElementById("search");
 
+const searchSKU =
+document.getElementById("searchSKU");
 
 const stockFilter =
 document.getElementById("stockFilter");
 
+const stockCategory =
+document.getElementById("stockCategory");
 
+const stockProduct =
+document.getElementById("stockProduct");
 
-let variants=[];
+const stockSize =
+document.getElementById("stockSize");
+
+const stockColor =
+document.getElementById("stockColor");
 
 let inventory=[];
 
+let variants=[];
+
+
+
 
 
 // =========================
-// تحميل الأصناف
+// الأصناف
 // =========================
+
 
 async function loadCategories(){
 
 
-const {data,error}=
-
-await supabase
+const {data,error}=await supabase
 
 .from("categories")
 
-.select("*");
+.select("*")
+
+.order("created_at",{ascending:false});
+
 
 
 if(error){
@@ -81,6 +101,18 @@ console.log(error);
 return;
 
 }
+
+
+
+category.innerHTML=`
+
+<option value="">
+
+اختار الصنف
+
+</option>
+
+`;
 
 
 
@@ -97,7 +129,6 @@ ${c.name}
 
 `;
 
-
 });
 
 
@@ -108,34 +139,42 @@ ${c.name}
 
 
 
+
+
+
 // =========================
-// تحميل المنتجات
+// المنتجات
 // =========================
 
 
 category.onchange = async ()=>{
 
 
-product.innerHTML =
-`
-<option>
+product.innerHTML=`
+
+<option value="">
+
 اختار المنتج
+
 </option>
+
 `;
 
 
-variant.innerHTML =
-`
-<option>
+
+variant.innerHTML=`
+
+<option value="">
+
 اختار التفاصيل
+
 </option>
+
 `;
 
 
 
-const {data,error}=
-
-await supabase
+const {data,error}=await supabase
 
 .from("products")
 
@@ -163,13 +202,9 @@ ${p.name}
 
 </option>
 
-
 `;
 
-
-
 });
-
 
 
 };
@@ -183,31 +218,34 @@ ${p.name}
 
 
 // =========================
-// تحميل التفاصيل
+// التفاصيل
 // =========================
 
 
 product.onchange = async ()=>{
 
 
-variant.innerHTML =
-`
+variant.innerHTML=`
+
 <option>
+
 اختار التفاصيل
+
 </option>
+
 `;
 
 
 
-const {data,error}=
-
-await supabase
+const {data,error}=await supabase
 
 .from("product_variants")
 
 .select(`
 
 id,
+
+sku,
 
 color,
 
@@ -219,17 +257,26 @@ products(
 
 name,
 
-price,
-
-categories(name)
+price
 
 )
 
 `)
 
 .eq(
+
 "product_id",
+
 product.value
+
+)
+
+.gt(
+
+"stock_quantity",
+
+0
+
 );
 
 
@@ -249,18 +296,11 @@ variant.innerHTML +=`
 
 <option value="${v.id}">
 
-${v.color}
-
--
-
-${v.size}
+${v.color} - ${v.size}
 
 </option>
 
-
 `;
-
-
 
 });
 
@@ -283,11 +323,9 @@ ${v.size}
 variant.onchange=()=>{
 
 
-let v=
+const v = variants.find(
 
-variants.find(
-
-x=>x.id==variant.value
+x=>x.id == variant.value
 
 );
 
@@ -299,7 +337,7 @@ if(!v)return;
 
 variantInfo.innerHTML=`
 
-<div class="stock-card">
+<div class="stock-info-box">
 
 
 <h3>
@@ -311,27 +349,32 @@ ${v.products.name}
 
 <p>
 
-اللون:
-${v.color}
+اللون : ${v.color}
 
 </p>
 
 
 <p>
 
-القياس:
-${v.size}
+الحجم : ${v.size}
 
 </p>
 
 
+
 <h2>
 
-المتوفر:
-
-${v.stock_quantity}
+المتوفر : ${v.stock_quantity}
 
 </h2>
+
+
+<p>
+
+SKU : ${v.sku ?? "-"}
+
+</p>
+
 
 
 </div>
@@ -350,22 +393,18 @@ ${v.stock_quantity}
 
 
 
-
 // =========================
-// حفظ حركة
+// حفظ الحركة
 // =========================
 
 
-saveMovement.onclick = async ()=>{
+saveMovement.onclick=async()=>{
 
 
-
-let id =
-variant.value;
+const id = variant.value;
 
 
-let qty =
-Number(quantity.value);
+const qty = Number(quantity.value);
 
 
 
@@ -380,10 +419,7 @@ return;
 
 
 
-
-const {data:item,error}=
-
-await supabase
+const {data:item}=await supabase
 
 .from("product_variants")
 
@@ -396,45 +432,35 @@ await supabase
 
 
 
-
-if(error)return;
-
-
-
-let old =
-item.stock_quantity;
-
+let oldStock=item.stock_quantity;
 
 
 let newStock;
 
 
 
-if(
-movementType.value==="IN"
-){
+
+if(movementType.value==="IN"){
 
 
-newStock =
-old + qty;
+newStock=oldStock+qty;
 
 
-}else{
+}
+
+else{
 
 
-if(qty>old){
+if(qty>oldStock){
 
-
-alert("الكمية غير متوفرة");
+alert("الكمية اكبر من المخزون");
 
 return;
 
 }
 
 
-newStock =
-old - qty;
-
+newStock=oldStock-qty;
 
 }
 
@@ -467,8 +493,6 @@ id
 
 
 
-
-
 await supabase
 
 .from("stock_movements")
@@ -488,8 +512,7 @@ note:note.value
 
 
 
-
-alert("تم تحديث المخزون ✅");
+alert("تم تحديث المخزون");
 
 
 
@@ -504,10 +527,7 @@ loadInventory();
 loadMovements();
 
 
-
 };
-
-
 
 
 
@@ -525,17 +545,15 @@ loadMovements();
 async function loadInventory(){
 
 
-
-const {data,error}=
-
-await supabase
+const {data,error}=await supabase
 
 .from("product_variants")
 
 .select(`
 
-
 id,
+
+sku,
 
 color,
 
@@ -543,11 +561,13 @@ size,
 
 stock_quantity,
 
+
 products(
 
 name,
 
 price,
+
 
 categories(
 
@@ -557,8 +577,8 @@ name
 
 )
 
-
 `);
+
 
 
 
@@ -579,16 +599,144 @@ inventory=data;
 renderInventory(inventory);
 
 
-
 updateCards();
-
+loadStockFilters();
 
 
 }
 
 
 
+function loadStockFilters(){
 
+
+let categories = new Set();
+
+let products = new Set();
+
+let sizes = new Set();
+
+let colors = new Set();
+
+
+
+inventory.forEach(v=>{
+
+
+categories.add(
+v.products.categories.name
+);
+
+
+products.add(
+v.products.name
+);
+
+
+sizes.add(
+v.size
+);
+
+
+colors.add(
+v.color
+);
+
+
+});
+
+
+
+
+
+stockCategory.innerHTML =
+`
+<option value="">
+كل الأصناف
+</option>
+`;
+
+categories.forEach(c=>{
+
+stockCategory.innerHTML +=
+`
+<option value="${c}">
+${c}
+</option>
+`;
+
+});
+
+
+
+
+
+stockProduct.innerHTML =
+`
+<option value="">
+كل المنتجات
+</option>
+`;
+
+products.forEach(p=>{
+
+stockProduct.innerHTML +=
+`
+<option value="${p}">
+${p}
+</option>
+`;
+
+});
+
+
+
+
+
+
+stockSize.innerHTML =
+`
+<option value="">
+كل الأحجام
+</option>
+`;
+
+sizes.forEach(s=>{
+
+stockSize.innerHTML +=
+`
+<option value="${s}">
+${s}
+</option>
+`;
+
+});
+
+
+
+
+
+
+stockColor.innerHTML =
+`
+<option value="">
+كل الألوان
+</option>
+`;
+
+colors.forEach(c=>{
+
+stockColor.innerHTML +=
+`
+<option value="${c}">
+${c}
+</option>
+`;
+
+});
+
+
+}
 
 
 
@@ -609,21 +757,15 @@ let html="";
 list.forEach(v=>{
 
 
-let status="";
+
+let status;
 
 
 
 if(v.stock_quantity<=0){
 
 
-status=
-`
-<span class="badge rejected">
-
-نفذ
-
-</span>
-`;
+status="نفذ";
 
 
 }
@@ -631,33 +773,17 @@ status=
 else if(v.stock_quantity<=5){
 
 
-status=
-`
-<span class="badge delayed">
+status="قليل";
 
-قليل
-
-</span>
-`;
 
 }
 
 else{
 
 
-status=
-
-`
-<span class="badge done">
-
-متوفر
-
-</span>
-
-`;
+status="متوفر";
 
 }
-
 
 
 
@@ -717,7 +843,6 @@ ${status}
 
 </tr>
 
-
 `;
 
 
@@ -729,7 +854,6 @@ ${status}
 inventoryList.innerHTML=html;
 
 
-
 }
 
 
@@ -740,37 +864,72 @@ inventoryList.innerHTML=html;
 
 
 
-
-
 // =========================
-// البحث الذكي
+// فلترة المخزون المتقدمة
 // =========================
-
 
 function filterInventory(){
 
 
-
-let text =
-
-search.value.toLowerCase();
+const text =
+searchSKU.value.toLowerCase();
 
 
-
-let filter =
-
-stockFilter.value;
+const categoryValue =
+stockCategory.value;
 
 
+const productValue =
+stockProduct.value;
 
 
-let result =
-
-inventory.filter(v=>{
-
+const sizeValue =
+stockSize.value;
 
 
-let info =
+const colorValue =
+stockColor.value;
+
+
+
+const result = inventory.filter(v=>{
+
+
+const categoryMatch =
+
+!categoryValue ||
+
+v.products.categories.name === categoryValue;
+
+
+
+const productMatch =
+
+!productValue ||
+
+v.products.name === productValue;
+
+
+
+const sizeMatch =
+
+!sizeValue ||
+
+v.size === sizeValue;
+
+
+
+const colorMatch =
+
+!colorValue ||
+
+v.color === colorValue;
+
+
+
+const textMatch =
+
+!text ||
 
 `
 
@@ -778,64 +937,33 @@ ${v.products.name}
 
 ${v.products.categories.name}
 
+${v.size}
+
 ${v.color}
 
-${v.size}
+${v.sku ?? ""}
 
 `
 
-.toLowerCase();
+.toLowerCase()
+
+.includes(text);
 
 
 
+return (
 
+categoryMatch &&
 
-let matchText =
+productMatch &&
 
-info.includes(text);
+sizeMatch &&
 
+colorMatch &&
 
+textMatch
 
-
-
-let matchStock=true;
-
-
-
-if(filter==="available"){
-
-
-matchStock =
-v.stock_quantity>5;
-
-
-}
-
-
-if(filter==="low"){
-
-
-matchStock =
-v.stock_quantity>0 &&
-v.stock_quantity<=5;
-
-
-}
-
-
-
-if(filter==="out"){
-
-
-matchStock =
-v.stock_quantity<=0;
-
-
-}
-
-
-
-return matchText && matchStock;
+);
 
 
 
@@ -843,21 +971,42 @@ return matchText && matchStock;
 
 
 
-
 renderInventory(result);
-
 
 
 }
 
 
 
-search.oninput =
+
+
+
+// تشغيل الفلترة عند أي تغيير
+
+
+searchSKU.oninput=filterInventory;
+
+
+stockCategory.onchange =
 filterInventory;
 
 
-stockFilter.onchange =
+stockProduct.onchange =
 filterInventory;
+
+
+stockSize.onchange =
+filterInventory;
+
+
+stockColor.onchange =
+filterInventory;
+
+
+
+
+searchSKU.oninput=filterInventory;
+stockFilter.onchange=filterInventory;
 
 
 
@@ -868,17 +1017,14 @@ filterInventory;
 
 
 // =========================
-// سجل الحركات
+// الحركات
 // =========================
 
 
 async function loadMovements(){
 
 
-
-const {data,error}=
-
-await supabase
+const {data,error}=await supabase
 
 .from("stock_movements")
 
@@ -925,10 +1071,7 @@ ascending:false
 
 
 
-
-
 if(error)return;
-
 
 
 
@@ -960,21 +1103,7 @@ ${m.product_variants.size}
 
 <td>
 
-
-${
-
-m.type==="IN"
-
-?
-
-"➕ إضافة"
-
-:
-
-"➖ خصم"
-
-}
-
+${m.type==="IN"?"➕ إضافة":"➖ خصم"}
 
 </td>
 
@@ -998,20 +1127,14 @@ ${m.note || "-"}
 
 <td>
 
-${
-
-new Date(m.created_at)
-
-.toLocaleDateString()
-
-}
+${new Date(m.created_at)
+.toLocaleDateString()}
 
 </td>
 
 
 
 </tr>
-
 
 `;
 
@@ -1021,13 +1144,11 @@ new Date(m.created_at)
 
 
 
-
 movementList.innerHTML=html;
 
 
+
 }
-
-
 
 
 
@@ -1046,17 +1167,14 @@ function updateCards(){
 
 
 
-document
-.getElementById("totalItems")
+document.getElementById("totalItems")
 .innerText=
 
 inventory.length;
 
 
 
-
-document
-.getElementById("lowStock")
+document.getElementById("lowStock")
 .innerText=
 
 inventory.filter(
@@ -1068,10 +1186,7 @@ x.stock_quantity<=5
 
 
 
-
-
-document
-.getElementById("outStock")
+document.getElementById("outStock")
 .innerText=
 
 inventory.filter(
@@ -1079,7 +1194,6 @@ inventory.filter(
 x=>x.stock_quantity<=0
 
 ).length;
-
 
 
 }
@@ -1093,6 +1207,7 @@ x=>x.stock_quantity<=0
 
 
 // تشغيل
+
 
 loadCategories();
 

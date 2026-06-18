@@ -38,21 +38,15 @@ let editId = null;
 
 
 
-
-// =====================
+// ==========================
 // تحميل الأصناف
-// =====================
+// ==========================
 
 
 async function loadCategories(){
 
 
-const {
-
-data,
-error
-
-}=
+const {data,error}=
 
 await supabase
 
@@ -74,17 +68,26 @@ return;
 
 
 
+categorySelect.innerHTML=`
+
+<option value="">
+اختار الصنف
+</option>
+
+`;
+
+
+
 data.forEach(cat=>{
 
 
-categorySelect.innerHTML += `
+categorySelect.innerHTML +=`
 
 <option value="${cat.id}">
 
 ${cat.name}
 
 </option>
-
 
 `;
 
@@ -102,25 +105,13 @@ loadCategories();
 
 
 
+categorySelect.onchange=()=>{
 
 
-
-// =====================
-// مراقبة تغيير الصنف
-// =====================
+loadProducts(categorySelect.value);
 
 
-categorySelect.addEventListener(
-"change",
-()=>{
-
-
-loadProducts(
-categorySelect.value
-);
-
-
-});
+};
 
 
 
@@ -129,10 +120,10 @@ categorySelect.value
 
 
 
-// =====================
+
+// ==========================
 // تحميل المنتجات
-// =====================
-
+// ==========================
 
 
 async function loadProducts(categoryId=""){
@@ -168,37 +159,20 @@ ascending:false
 
 
 
-
-
 if(categoryId){
 
-
-query = query.eq(
+query=query.eq(
 "category_id",
 categoryId
 );
-
 
 }
 
 
 
-
-
-
-
-const {
-
-data,
-
-error
-
-}=
+const {data,error}=
 
 await query;
-
-
-
 
 
 
@@ -213,11 +187,7 @@ return;
 
 
 
-
-
 list.innerHTML="";
-
-
 
 
 
@@ -227,20 +197,14 @@ data.forEach(product=>{
 
 
 
-
-
-list.innerHTML += `
+list.innerHTML +=`
 
 
 
 <div class="category-card">
 
 
-
-
-
-<img src="${product.image || '../assets/images/default.jpg'}">
-
+<img src="${product.main_image || '../assets/images/default.jpg'}">
 
 
 
@@ -258,11 +222,15 @@ ${product.name}
 
 
 
+
+
 <p>
 
 ${product.description || ""}
 
 </p>
+
+
 
 
 
@@ -273,6 +241,8 @@ ${product.description || ""}
 ${product.categories?.name || ""}
 
 </p>
+
+
 
 
 
@@ -291,15 +261,11 @@ ${product.price} دينار
 
 
 
-
-
 <div class="card-actions">
 
 
 
-
-
-<button 
+<button
 
 class="edit-btn"
 
@@ -341,31 +307,19 @@ onclick="deleteProduct('${product.id}')">
 
 
 
-
 </div>
-
 
 
 `;
 
 
 
-
-
 });
-
-
 
 
 }
 
 
-
-
-
-
-
-// عرض الكل أول ما تفتح الصفحة
 
 
 loadProducts();
@@ -378,9 +332,219 @@ loadProducts();
 
 
 
-// =====================
-// حفظ / تعديل المنتج
-// =====================
+
+
+// ==========================
+// التحقق من البيانات
+// ==========================
+
+
+function validateProduct(){
+
+
+
+let category =
+categorySelect.value.trim();
+
+
+let name =
+nameInput.value.trim();
+
+
+let description =
+descriptionInput.value.trim();
+
+
+let price =
+priceInput.value.trim();
+
+
+let image =
+imageInput.value.trim();
+
+
+
+
+
+
+if(!category){
+
+
+alert("اختار الصنف");
+
+return false;
+
+
+}
+
+
+
+
+
+if(!name){
+
+
+alert("اكتب اسم المنتج");
+
+nameInput.focus();
+
+return false;
+
+
+}
+
+
+
+
+
+
+
+if(!description){
+
+
+alert("اكتب وصف المنتج");
+
+descriptionInput.focus();
+
+return false;
+
+
+}
+
+
+
+
+
+if(description.length > 100){
+
+
+alert("وصف المنتج يجب ان لا يتجاوز 100 حرف");
+
+descriptionInput.focus();
+
+return false;
+
+
+}
+
+
+
+
+
+
+
+if(!price || Number(price)<=0){
+
+
+alert("ادخل سعر صحيح");
+
+priceInput.focus();
+
+return false;
+
+
+}
+
+
+
+
+
+
+if(!image){
+
+
+alert("ادخل مسار الصورة");
+
+imageInput.focus();
+
+return false;
+
+
+}
+
+
+
+return true;
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// فحص تكرار الاسم
+// ==========================
+
+
+async function checkDuplicateName(){
+
+
+
+const {data,error}=
+
+await supabase
+
+.from("products")
+
+.select("id")
+
+.eq(
+"name",
+nameInput.value.trim()
+)
+
+.maybeSingle();
+
+
+
+
+
+if(error){
+
+return false;
+
+}
+
+
+
+
+
+
+
+if(data && data.id != editId){
+
+
+alert("اسم المنتج موجود مسبقا");
+
+return true;
+
+
+}
+
+
+
+return false;
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// حفظ / تعديل
+// ==========================
 
 
 
@@ -388,70 +552,54 @@ saveBtn.onclick = async ()=>{
 
 
 
+if(!validateProduct())
+return;
 
 
-let product = {
+
+
+
+
+if(await checkDuplicateName())
+return;
+
+
+
+
+
+
+
+let product={
+
 
 
 category_id:
-
 categorySelect.value,
 
 
-name:
 
+name:
 nameInput.value.trim(),
 
 
-description:
 
+description:
 descriptionInput.value.trim(),
 
 
-price:
 
+price:
 Number(priceInput.value),
 
 
-image:
 
+main_image:
 imageInput.value.trim()
 
 
 
 };
 
-
-
-
-
-
-
-if(!product.category_id){
-
-
-alert("اختار الصنف");
-
-return;
-
-
-}
-
-
-
-
-
-
-
-if(!product.name){
-
-
-alert("اكتب اسم المنتج");
-
-return;
-
-
-}
 
 
 
@@ -467,11 +615,7 @@ if(editId){
 
 
 
-const {
-
-error
-
-}=
+const {error}=
 
 await supabase
 
@@ -490,9 +634,11 @@ editId
 
 if(error){
 
-console.log(error);
+
+alert(error.message);
 
 return;
+
 
 }
 
@@ -508,7 +654,7 @@ editId=null;
 
 
 
-saveBtn.innerHTML = `
+saveBtn.innerHTML=`
 
 <i class="fa-solid fa-floppy-disk"></i>
 
@@ -526,7 +672,6 @@ saveBtn.innerHTML = `
 
 
 
-
 // إضافة
 
 
@@ -534,11 +679,7 @@ else{
 
 
 
-const {
-
-error
-
-}=
+const {error}=
 
 await supabase
 
@@ -552,9 +693,11 @@ await supabase
 
 if(error){
 
-console.log(error);
+
+alert(error.message);
 
 return;
+
 
 }
 
@@ -574,14 +717,10 @@ alert("تم إضافة المنتج");
 
 
 
-
 clearForm();
 
 
-
-loadProducts(
-categorySelect.value
-);
+loadProducts(categorySelect.value);
 
 
 
@@ -598,23 +737,16 @@ categorySelect.value
 
 
 
-// =====================
+// ==========================
 // تعديل
-// =====================
-
+// ==========================
 
 
 window.editProduct = async function(id){
 
 
 
-const {
-
-data,
-
-error
-
-}=
+const {data,error}=
 
 await supabase
 
@@ -645,7 +777,6 @@ return;
 
 
 
-
 categorySelect.value =
 data.category_id;
 
@@ -667,8 +798,7 @@ data.price;
 
 
 imageInput.value =
-data.image;
-
+data.main_image;
 
 
 
@@ -679,15 +809,13 @@ editId=id;
 
 
 
-
-saveBtn.innerHTML = `
+saveBtn.innerHTML=`
 
 <i class="fa-solid fa-pen"></i>
 
 تعديل المنتج
 
 `;
-
 
 
 
@@ -714,9 +842,9 @@ behavior:"smooth"
 
 
 
-// =====================
-// حذف
-// =====================
+// ==========================
+// حذف المنتج
+// ==========================
 
 
 
@@ -724,7 +852,7 @@ window.deleteProduct = async function(id){
 
 
 
-let ok =
+let ok=
 
 confirm(
 "هل تريد حذف المنتج ؟"
@@ -739,11 +867,69 @@ return;
 
 
 
-const {
 
-error
 
-}=
+
+
+// فحص الارتباط بالحجم واللون
+
+
+const {data:variants,error:vError}=
+
+await supabase
+
+.from("product_variants")
+
+.select("id")
+
+.eq(
+"product_id",
+id
+)
+
+.limit(1);
+
+
+
+
+
+
+if(vError){
+
+console.log(vError);
+
+return;
+
+}
+
+
+
+
+
+
+if(variants.length > 0){
+
+
+
+alert(
+"لا يمكن حذف المنتج لأنه مرتبط بالأحجام والألوان والمخزون. احذف الارتباطات أولا."
+);
+
+
+return;
+
+
+}
+
+
+
+
+
+
+
+
+
+const {error}=
 
 await supabase
 
@@ -761,12 +947,13 @@ id
 
 
 
-
 if(error){
 
-console.log(error);
+
+alert(error.message);
 
 return;
+
 
 }
 
@@ -778,9 +965,7 @@ alert("تم حذف المنتج");
 
 
 
-loadProducts(
-categorySelect.value
-);
+loadProducts(categorySelect.value);
 
 
 
@@ -795,9 +980,10 @@ categorySelect.value
 
 
 
-// =====================
+
+// ==========================
 // تنظيف
-// =====================
+// ==========================
 
 
 function clearForm(){
@@ -821,3 +1007,77 @@ imageInput.value="";
 
 
 }
+// ==========================
+// SCROLL TOP BUTTON
+// ==========================
+
+
+const scrollBtn =
+document.getElementById("scrollTop");
+
+
+
+window.addEventListener("scroll",()=>{
+
+
+if(window.scrollY > 300){
+
+
+scrollBtn.innerHTML = `
+
+<i class="fa-solid fa-arrow-up"></i>
+
+`;
+
+
+
+}else{
+
+
+scrollBtn.innerHTML = `
+
+<i class="fa-solid fa-arrow-down"></i>
+
+`;
+
+
+}
+
+
+});
+
+
+
+
+
+scrollBtn.onclick=()=>{
+
+
+if(window.scrollY > 300){
+
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+
+}else{
+
+
+window.scrollTo({
+
+top:document.body.scrollHeight,
+
+behavior:"smooth"
+
+});
+
+
+}
+
+
+};

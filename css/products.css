@@ -2,10 +2,15 @@
 
 
 *{
+
 box-sizing:border-box;
+
 margin:0;
+
 padding:0;
+
 }
+
 
 
 body{
@@ -19,6 +24,7 @@ color:#333;
 overflow-x:hidden;
 
 }
+
 
 
 
@@ -85,6 +91,7 @@ color:#d987a0;
 
 .back-btn{
 
+
 position:absolute;
 
 left:25px;
@@ -123,16 +130,20 @@ transform:translateX(5px);
 
 
 
-/* MAIN */
+/* =====================
+ MAIN
+===================== */
 
 
 main{
+
 
 padding:35px 6%;
 
 max-width:1400px;
 
 margin:auto;
+
 
 }
 
@@ -165,6 +176,7 @@ margin-bottom:30px;
 
 .welcome h2{
 
+
 font-size:30px;
 
 display:flex;
@@ -172,6 +184,7 @@ display:flex;
 align-items:center;
 
 gap:10px;
+
 
 }
 
@@ -185,6 +198,7 @@ color:#f7b6c8;
 
 
 
+
 .welcome p{
 
 color:#777;
@@ -192,6 +206,7 @@ color:#777;
 margin-top:10px;
 
 }
+
 
 
 
@@ -223,6 +238,7 @@ margin-bottom:35px;
 
 
 
+
 .form-box h2{
 
 
@@ -241,6 +257,8 @@ margin-bottom:20px;
 
 
 
+
+
 .form-box h2 i{
 
 color:#d987a0;
@@ -252,6 +270,7 @@ color:#d987a0;
 
 
 input,
+select,
 textarea{
 
 
@@ -275,6 +294,7 @@ margin-bottom:15px;
 
 transition:.3s;
 
+
 }
 
 
@@ -282,6 +302,7 @@ transition:.3s;
 
 
 textarea{
+
 
 min-height:130px;
 
@@ -294,9 +315,12 @@ resize:none;
 
 
 input:focus,
+select:focus,
 textarea:focus{
 
+
 box-shadow:0 0 0 4px #f7b6c855;
+
 
 }
 
@@ -304,7 +328,11 @@ box-shadow:0 0 0 4px #f7b6c855;
 
 
 
-/* SAVE BUTTON */
+
+
+/* =====================
+ SAVE BUTTON
+===================== */
 
 
 #save{
@@ -330,15 +358,18 @@ cursor:pointer;
 
 display:flex;
 
-align-items:center;
-
 justify-content:center;
+
+align-items:center;
 
 gap:10px;
 
 transition:.3s;
 
+
 }
+
+
 
 
 
@@ -349,7 +380,9 @@ background:#d987a0;
 
 transform:translateY(-3px);
 
+
 }
+
 
 
 
@@ -377,9 +410,9 @@ font-size:26px;
 
 display:flex;
 
-gap:12px;
-
 align-items:center;
+
+gap:12px;
 
 margin-bottom:25px;
 
@@ -400,12 +433,15 @@ color:#f7b6c8;
 
 
 
+
+
 /* =====================
- CATEGORY CARDS
+ PRODUCT CARDS
 ===================== */
 
 
 .category-list{
+
 
 display:grid;
 
@@ -413,8 +449,8 @@ grid-template-columns:repeat(2,1fr);
 
 gap:20px;
 
-}
 
+}
 
 
 
@@ -434,19 +470,16 @@ border:1px solid #f7b6c8;
 
 box-shadow:0 10px 30px #0001;
 
-text-align:center;
-
-padding-bottom:20px;
-
 transition:.3s;
-
 
 }
 
 
 
 
+
 .category-card:hover{
+
 
 transform:translateY(-6px);
 
@@ -459,14 +492,12 @@ box-shadow:0 18px 40px #f7b6c855;
 
 
 
-
-
 .category-card img{
 
 
 width:100%;
 
-height:220px;
+height:240px;
 
 object-fit:cover;
 
@@ -478,15 +509,12 @@ object-fit:cover;
 
 
 
+.category-info{
 
-.category-card h3{
 
+padding:20px;
 
-color:#d987a0;
-
-font-size:22px;
-
-margin:15px 0 8px;
+text-align:center;
 
 
 }
@@ -495,43 +523,100 @@ margin:15px 0 8px;
 
 
 
-.category-card p{
+.category-info h3{
+
+
+font-size:23px;
+
+color:#d987a0;
+
+margin-bottom:10px;
+
+
+}
+
+
+
+
+
+.category-info p{
 
 
 color:#777;
 
-padding:0 20px;
-
-font-size:14px;
+font-size:15px;
 
 line-height:1.8;
-
 
 }
 
 
 
+
+
+/* السعر */
+
+
+.product-price{
+
+
+background:#f7b6c8;
+
+color:white;
+
+margin:12px 20px;
+
+padding:10px;
+
+border-radius:25px;
+
+font-weight:800;
+
+}
+
+
+
+
+
+/* الصنف */
+
+
+.product-category{
+
+
+display:inline-block;
+
+background:#fff0f5;
+
+color:#d987a0;
+
+padding:7px 18px;
+
+border-radius:20px;
+
+font-size:14px;
+
+}
 
 
 
 
 
 /* =====================
- ACTION BUTTONS
+ BUTTONS
 ===================== */
 
 
-.category-actions{
+.card-actions{
 
 
 display:flex;
 
-justify-content:center;
-
 gap:12px;
 
-margin-top:18px;
+padding:0 20px 20px;
 
+justify-content:center;
 
 }
 
@@ -539,22 +624,37 @@ margin-top:18px;
 
 
 
-.category-actions button{
+.card-actions button{
 
+
+flex:1;
+
+height:45px;
 
 border:none;
-
-padding:10px 25px;
 
 border-radius:25px;
 
 font-family:'Cairo';
 
-cursor:pointer;
+font-weight:700;
+
+font-size:15px;
 
 color:white;
 
+cursor:pointer;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:8px;
+
 transition:.3s;
+
 
 }
 
@@ -562,7 +662,7 @@ transition:.3s;
 
 
 
-.category-actions button:hover{
+.card-actions button:hover{
 
 transform:translateY(-3px);
 
@@ -574,7 +674,17 @@ transform:translateY(-3px);
 
 .edit-btn{
 
-background:#f7b6c8;
+
+background:#5895ff;
+
+
+}
+
+
+
+.edit-btn:hover{
+
+background:#d987a0;
 
 }
 
@@ -584,7 +694,19 @@ background:#f7b6c8;
 
 .delete-btn{
 
+
 background:#ff6b81;
+
+
+}
+
+
+
+.delete-btn:hover{
+
+
+background:#e64f68;
+
 
 }
 
@@ -595,7 +717,7 @@ background:#ff6b81;
 
 
 /* =====================
- SCROLL TOP
+ SCROLL BUTTON
 ===================== */
 
 
@@ -648,12 +770,14 @@ transform:translateY(-5px);
 
 
 
+
 /* =====================
  MOBILE
 ===================== */
 
 
 @media(max-width:768px){
+
 
 
 .topbar{
@@ -672,6 +796,7 @@ font-size:42px;
 
 
 
+
 .topbar span{
 
 font-size:13px;
@@ -680,7 +805,10 @@ font-size:13px;
 
 
 
+
+
 .back-btn{
+
 
 width:42px;
 
@@ -688,50 +816,67 @@ height:42px;
 
 top:17px;
 
+
 }
+
+
 
 
 
 main{
 
+
 padding:20px 15px;
 
+
 }
+
+
 
 
 
 .form-box{
 
+
 padding:20px;
 
 border-radius:25px;
 
+
 }
+
+
 
 
 
 .section-title{
 
+
 font-size:20px;
 
+
 }
+
+
 
 
 
 .category-list{
 
+
 grid-template-columns:repeat(2,1fr);
 
+
 }
+
+
 
 
 
 .category-card img{
 
-height:190px;
 
-}
-
+height:180px;
 
 
 }
@@ -739,277 +884,55 @@ height:190px;
 
 
 
-/* منع zoom */
+
+.card-actions{
+
+
+flex-direction:column;
+
+
+}
+
+
+
+
+
+.card-actions button{
+
+
+width:100%;
+
+
+}
+
+
+}
+
+
+
+
+
+
+/* منع زوم الموبايل */
+
 
 input,
+select,
 textarea,
 button{
 
+
 font-size:16px !important;
 
+
 }
+
 
 
 html{
 
+
 -webkit-text-size-adjust:100%;
-
-}
-/* =====================
- CATEGORY CARDS
-===================== */
-
-
-.category-list{
-
-display:grid;
-
-grid-template-columns:repeat(2,1fr);
-
-gap:20px;
-
-}
-
-
-.category-card{
-
-
-background:white;
-
-border-radius:30px;
-
-overflow:hidden;
-
-box-shadow:0 15px 40px #0001;
-
-border:1px solid #f7b6c8;
-
-transition:.3s;
-
-}
-
-
-
-.category-card:hover{
-
-transform:translateY(-5px);
-
-box-shadow:0 20px 45px #f7b6c855;
-
-}
-
-
-
-
-
-.category-card img{
-
-
-width:100%;
-
-height:220px;
-
-object-fit:cover;
-
-}
-
-
-
-
-
-.category-info{
-
-
-padding:20px;
-
-text-align:center;
-
-}
-
-
-
-.category-info h3{
-
-
-font-size:22px;
-
-color:#d987a0;
-
-margin-bottom:10px;
-
-}
-
-
-
-.category-info p{
-
-
-color:#777;
-
-font-size:15px;
-
-min-height:25px;
-
-}
-
-
-
-
-
-
-/* =====================
- ACTION BUTTONS
-===================== */
-
-
-.card-actions{
-
-
-display:flex;
-
-gap:12px;
-
-padding:0 20px 20px;
-
-justify-content:center;
-
-}
-
-
-
-
-
-.card-actions button{
-
-
-flex:1;
-
-height:45px;
-
-border:none;
-
-border-radius:25px;
-
-font-family:'Cairo';
-
-font-size:15px;
-
-font-weight:700;
-
-color:white;
-
-cursor:pointer;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-gap:8px;
-
-transition:.3s;
-
-}
-
-
-
-
-
-.card-actions button:hover{
-
-transform:translateY(-3px);
-
-}
-
-
-
-
-
-.edit-btn{
-
-
-background:#5895ff;
-
-
-}
-
-
-
-
-
-.edit-btn:hover{
-
-
-background:#ff6b81;
-
-
-}
-
-
-
-
-
-.delete-btn{
-
-
-background:#ff6b81;
-
-
-}
-
-
-
-
-
-.delete-btn:hover{
-
-
-background:#e64f68;
-
-
-}
-
-
-
-
-
-
-/* موبايل */
-
-
-@media(max-width:768px){
-
-
-.category-list{
-
-grid-template-columns:repeat(2,1fr);
-
-}
-
-
-.category-card img{
-
-height:180px;
-
-}
-
-
-
-.card-actions{
-
-flex-direction:column;
-
-}
-
-
-
-.card-actions button{
-
-width:100%;
-
-}
-
 
 
 }

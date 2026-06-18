@@ -12,7 +12,7 @@
 <title>NIVRA Inventory</title>
 
 
-<link rel="stylesheet" href="../css/dashboard.css">
+<link rel="stylesheet" href="../css/inventory.css">
 
 
 <link rel="stylesheet"
@@ -31,10 +31,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <div>
 
-
 <h1>
 
-NIVRA 🤍
+NIVRA
 
 </h1>
 
@@ -70,32 +69,59 @@ href="../dashboard.html">
 
 
 
-
 <main>
 
 
 
 
 
-
-<!-- الاحصائيات -->
+<!-- =====================
+ الاحصائيات
+===================== -->
 
 
 <section class="cards">
 
 
 
-<div class="card">
+<div class="card stat-card">
+
+
+<i class="fa-solid fa-shirt"></i>
+
+
+<h4>
+
+كل المنتجات
+
+</h4>
+
+
+<h2 id="totalProducts">
+
+0
+
+</h2>
+
+
+</div>
+
+
+
+
+
+
+<div class="card stat-card">
 
 
 <i class="fa-solid fa-boxes-stacked"></i>
 
 
-<h3>
+<h4>
 
 كل القطع
 
-</h3>
+</h4>
 
 
 <h2 id="totalItems">
@@ -111,17 +137,19 @@ href="../dashboard.html">
 
 
 
-<div class="card">
+
+
+<div class="card stat-card">
 
 
 <i class="fa-solid fa-triangle-exclamation"></i>
 
 
-<h3>
+<h4>
 
 مخزون قليل
 
-</h3>
+</h4>
 
 
 <h2 id="lowStock">
@@ -138,17 +166,18 @@ href="../dashboard.html">
 
 
 
-<div class="card">
+
+<div class="card stat-card">
 
 
 <i class="fa-solid fa-box-open"></i>
 
 
-<h3>
+<h4>
 
 نفذ المخزون
 
-</h3>
+</h4>
 
 
 <h2 id="outStock">
@@ -173,7 +202,9 @@ href="../dashboard.html">
 
 
 
-<!-- تعديل المخزون -->
+<!-- =====================
+ ادارة + حركة
+===================== -->
 
 
 <section class="card">
@@ -184,7 +215,7 @@ href="../dashboard.html">
 
 <i class="fa-solid fa-sliders"></i>
 
-إدارة القطعة
+إدارة المخزون
 
 </h2>
 
@@ -193,8 +224,6 @@ href="../dashboard.html">
 
 
 <div class="form-grid">
-
-
 
 
 
@@ -236,11 +265,9 @@ href="../dashboard.html">
 
 <label>
 
-
 <i class="fa-solid fa-shirt"></i>
 
 المنتج
-
 
 </label>
 
@@ -266,16 +293,15 @@ href="../dashboard.html">
 
 
 
+
 <div>
 
 
 <label>
 
-
 <i class="fa-solid fa-palette"></i>
 
-اللون والحجم
-
+التفاصيل
 
 </label>
 
@@ -285,7 +311,7 @@ href="../dashboard.html">
 
 <option>
 
-اختار التفاصيل
+اختار اللون والحجم
 
 </option>
 
@@ -297,11 +323,7 @@ href="../dashboard.html">
 
 
 
-
-
 </div>
-
-
 
 
 
@@ -313,29 +335,17 @@ href="../dashboard.html">
 
 class="stock-info">
 
-
 </div>
 
 
 
 
-</section>
+
+
+<hr>
 
 
 
-
-
-
-
-
-
-
-
-
-<!-- حركة المخزون -->
-
-
-<section class="card">
 
 
 
@@ -343,7 +353,6 @@ class="stock-info">
 
 
 <i class="fa-solid fa-arrows-left-right"></i>
-
 
 حركة المخزون
 
@@ -360,6 +369,8 @@ class="stock-info">
 
 
 
+
+
 <select id="movementType">
 
 
@@ -370,6 +381,7 @@ class="stock-info">
 </option>
 
 
+
 <option value="OUT">
 
 ➖ خصم كمية
@@ -377,7 +389,9 @@ class="stock-info">
 </option>
 
 
+
 </select>
+
 
 
 
@@ -390,7 +404,10 @@ id="quantity"
 
 type="number"
 
-placeholder="الكمية">
+placeholder="الكمية"
+
+>
+
 
 
 
@@ -401,7 +418,11 @@ placeholder="الكمية">
 
 id="note"
 
-placeholder="سبب العملية">
+placeholder="سبب العملية"
+
+>
+
+
 
 
 </div>
@@ -436,112 +457,9 @@ placeholder="سبب العملية">
 
 
 
-
-
-
-
-<!-- البحث -->
-
-
-<section class="card">
-
-
-<h2>
-
-
-<i class="fa-solid fa-magnifying-glass"></i>
-
-
-بحث متقدم بالمخزون
-
-
-</h2>
-
-
-
-
-
-<div class="search-box">
-
-
-
-<input
-
-id="search"
-
-placeholder="ابحث باسم المنتج أو اللون أو القياس أو الصنف">
-
-
-
-
-
-<select id="stockFilter">
-
-
-<option value="">
-
-
-كل المخزون
-
-
-</option>
-
-
-
-<option value="available">
-
-
-متوفر
-
-
-</option>
-
-
-
-<option value="low">
-
-
-مخزون قليل
-
-
-</option>
-
-
-
-<option value="out">
-
-
-نفذ
-
-
-</option>
-
-
-
-</select>
-
-
-
-</div>
-
-
-
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- المخزون الحالي -->
+<!-- =====================
+ المخزون الحالي
+===================== -->
 
 
 <section class="card">
@@ -563,6 +481,147 @@ placeholder="ابحث باسم المنتج أو اللون أو القياس أ
 
 
 
+
+
+
+<!-- البحث داخل المخزون -->
+
+
+<div class="inventory-search">
+
+
+
+<input
+
+id="searchSKU"
+
+placeholder="بحث بواسطة SKU"
+
+>
+
+
+
+
+
+
+<select id="stockCategory">
+
+
+<option value="">
+
+كل الأصناف
+
+</option>
+
+
+</select>
+
+
+
+
+
+
+
+<select id="stockProduct">
+
+
+<option value="">
+
+كل المنتجات
+
+</option>
+
+
+</select>
+
+
+
+
+
+
+
+<select id="stockSize">
+
+
+<option value="">
+
+كل الأحجام
+
+</option>
+
+
+</select>
+
+
+
+
+
+
+
+<select id="stockColor">
+
+
+<option value="">
+
+كل الألوان
+
+</option>
+
+
+</select>
+
+
+
+
+
+
+<select id="stockFilter">
+
+
+<option value="">
+
+كل المخزون
+
+</option>
+
+
+<option value="available">
+
+متوفر
+
+</option>
+
+
+<option value="low">
+
+مخزون قليل
+
+</option>
+
+
+<option value="out">
+
+نفذ
+
+</option>
+
+
+
+</select>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
 <div class="table-box">
 
 
@@ -577,13 +636,11 @@ placeholder="ابحث باسم المنتج أو اللون أو القياس أ
 <tr>
 
 
-
 <th>
 
 الصنف
 
 </th>
-
 
 
 <th>
@@ -605,6 +662,14 @@ placeholder="ابحث باسم المنتج أو اللون أو القياس أ
 <th>
 
 الحجم
+
+</th>
+
+
+
+<th>
+
+SKU
 
 </th>
 
@@ -661,12 +726,21 @@ placeholder="ابحث باسم المنتج أو اللون أو القياس أ
 
 
 
+
+
 </section>
 
 
 
-<!-- سجل الحركات -->
 
+
+
+
+
+
+<!-- =====================
+ سجل الحركات
+===================== -->
 
 
 <section class="card">
@@ -702,13 +776,11 @@ placeholder="ابحث باسم المنتج أو اللون أو القياس أ
 <tr>
 
 
-
 <th>
 
 القطعة
 
 </th>
-
 
 
 <th>
@@ -746,7 +818,6 @@ placeholder="ابحث باسم المنتج أو اللون أو القياس أ
 </tr>
 
 
-
 </thead>
 
 
@@ -768,8 +839,10 @@ placeholder="ابحث باسم المنتج أو اللون أو القياس أ
 
 
 
-
 </section>
+
+
+
 
 
 
@@ -789,13 +862,12 @@ placeholder="ابحث باسم المنتج أو اللون أو القياس أ
 
 src="../js/inventory.js">
 
-
 </script>
 
 
 
 
-</body>
 
+</body>
 
 </html>

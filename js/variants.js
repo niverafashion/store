@@ -16,7 +16,8 @@ const saveBtn = document.getElementById("saveVariant");
 
 const variantList = document.getElementById("variantList");
 
-
+const searchInput =
+document.getElementById("searchVariant");
 
 let editMode = false;
 let editId = null;
@@ -181,28 +182,55 @@ saveBtn.onclick = async ()=>{
 
 const product_id = productSelect.value;
 
-
 const color = colorInput.value.trim();
 
 const size = sizeInput.value.trim();
 
-const sku = skuInput.value.trim();
+let sku = skuInput.value.trim();
 
-const stock_quantity =
-Number(stockInput.value);
+let stock_quantity = Number(stockInput.value);
 
-
-
-const image = imageInput.value.trim();
+let image = imageInput.value.trim();
 
 
 
 
 
-if(!product_id || !color || !size){
+// التحقق
+
+if(!product_id){
+
+alert("اختار المنتج");
+
+return;
+
+}
 
 
-alert("اكمل البيانات");
+
+if(!color){
+
+alert("اكتب اللون");
+
+return;
+
+}
+
+
+
+if(!size){
+
+alert("اكتب الحجم");
+
+return;
+
+}
+
+
+
+if(!stock_quantity || stock_quantity <=0){
+
+alert("ادخل كمية صحيحة");
 
 return;
 
@@ -213,14 +241,18 @@ return;
 
 
 
-let result;
 
+
+// ==========================
+// تعديل
+// ==========================
 
 
 if(editMode){
 
 
-result = await supabase
+
+const {error}=await supabase
 
 .from("product_variants")
 
@@ -246,11 +278,179 @@ image
 
 
 
-}else{
+if(error){
+
+console.log(error);
+
+alert(error.message);
+
+return;
+
+}
 
 
 
-result = await supabase
+alert("تم تعديل التفاصيل");
+
+
+
+clearForm();
+
+loadVariants();
+
+
+return;
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// إضافة جديد
+// ==========================
+
+
+// البحث عن نفس المنتج + اللون + الحجم
+
+
+const {data:existing,error:findError}=
+
+await supabase
+
+.from("product_variants")
+
+.select("*")
+
+.eq("product_id",product_id)
+
+.eq("color",color)
+
+.eq("size",size)
+
+.single();
+
+
+
+
+
+if(findError && findError.code !== "PGRST116"){
+
+
+console.log(findError);
+
+return;
+
+}
+
+
+
+
+
+
+// موجود مسبقاً
+
+if(existing){
+
+
+
+const newStock =
+
+Number(existing.stock_quantity)
+
++
+
+stock_quantity;
+
+
+
+
+
+const {error}=await supabase
+
+.from("product_variants")
+
+.update({
+
+stock_quantity:newStock
+
+})
+
+.eq(
+
+"id",
+
+existing.id
+
+);
+
+
+
+
+
+if(error){
+
+console.log(error);
+
+alert(error.message);
+
+return;
+
+}
+
+
+
+
+
+
+alert(
+
+`تم تحديث الكمية، المخزون الحالي ${newStock}`
+
+);
+
+
+
+
+}
+
+
+
+
+
+
+// غير موجود
+
+else{
+
+
+
+// توليد SKU تلقائي
+
+if(!sku){
+
+
+sku =
+
+"NIV-" +
+
+Date.now();
+
+
+
+}
+
+
+
+
+
+
+const {error}=await supabase
 
 .from("product_variants")
 
@@ -272,39 +472,28 @@ image
 
 
 
-}
 
 
+if(error){
 
+console.log(error);
 
-
-
-if(result.error){
-
-
-console.log(result.error);
-
-alert("حدث خطأ");
+alert(error.message);
 
 return;
 
-
 }
 
 
 
 
-alert(
 
-editMode ?
+alert("تمت إضافة التفاصيل");
 
-"تم تعديل التفاصيل"
 
-:
 
-"تمت إضافة التفاصيل"
+}
 
-);
 
 
 
@@ -321,7 +510,109 @@ loadVariants();
 
 
 
+// ==========================
+// جلب SKU والصورة تلقائيا
+// عند وجود نفس المنتج + اللون + الحجم
+// ==========================
 
+
+async function checkExistingVariant(){
+
+
+const product_id = productSelect.value;
+
+const color = colorInput.value.trim();
+
+const size = sizeInput.value.trim();
+
+
+
+
+if(!product_id || !color || !size){
+
+return;
+
+}
+
+
+
+
+
+
+const {data,error}=await supabase
+
+.from("product_variants")
+
+.select("*")
+
+.eq("product_id",product_id)
+
+.eq("color",color)
+
+.eq("size",size)
+
+.single();
+
+
+
+
+
+
+if(error){
+
+// اذا غير موجود نمسح القديم
+
+if(error.code === "PGRST116"){
+
+skuInput.value="";
+
+imageInput.value="";
+
+}
+
+
+return;
+
+}
+
+
+
+
+
+
+// موجود
+
+skuInput.value = data.sku ?? "";
+
+imageInput.value = data.image ?? "";
+
+
+
+}
+
+
+
+
+
+// تشغيل الفحص عند تغيير البيانات
+
+
+productSelect.addEventListener(
+"change",
+checkExistingVariant
+);
+
+
+colorInput.addEventListener(
+"input",
+checkExistingVariant
+);
+
+
+sizeInput.addEventListener(
+"input",
+checkExistingVariant
+);
 
 
 
@@ -391,12 +682,17 @@ let html="";
 data.forEach(item=>{
 
 
+// اخفاء القطع المنتهية
+if(item.stock_quantity <= 0){
+
+return;
+
+}
+
+
 
 html +=`
-
-
 <tr>
-
 
 <td>
 
@@ -476,41 +772,31 @@ ${item.sku ?? ""}
 
 
 
-
-
-<td>
-
+<td class="action-cell">
 
 
 <button
 
 onclick="editVariant('${item.id}')"
 
-class="edit-btn">
+class="icon-edit">
 
-
-تعديل
+<i class="fa-solid fa-pen"></i>
 
 </button>
-
-
-
 
 <button
 
 onclick="deleteVariant('${item.id}')"
 
-class="delete-btn">
+class="icon-delete">
 
-
-حذف
+<i class="fa-solid fa-trash"></i>
 
 </button>
 
 
-
 </td>
-
 
 
 </tr>
@@ -533,17 +819,41 @@ variantList.innerHTML=html;
 }
 
 
+searchInput.addEventListener("input",()=>{
+
+
+let value =
+searchInput.value.toLowerCase();
+
+
+
+document.querySelectorAll("#variantList tr")
+.forEach(row=>{
+
+
+let text =
+row.innerText.toLowerCase();
+
+
+
+row.style.display =
+text.includes(value)
+?
+""
+:
+"none";
+
+
+
+});
+
+
+});
 
 
 
 
 
-
-
-
-// ==========================
-// حذف
-// ==========================
 
 
 window.deleteVariant = async(id)=>{
@@ -555,22 +865,24 @@ return;
 
 
 
-const {error}=await supabase
+
+// جلب بيانات القطعة قبل الحذف
+
+const {data:variant,error:variantError}=await supabase
 
 .from("product_variants")
 
-.delete()
+.select("id,sku")
 
-.eq(
-"id",
-id
-);
+.eq("id",id)
 
+.single();
 
 
-if(error){
 
-console.log(error);
+if(variantError){
+
+console.log(variantError);
 
 return;
 
@@ -578,7 +890,117 @@ return;
 
 
 
+
+
+// فحص الحركات المخزنية
+
+const {data:stockMoves}=await supabase
+
+.from("stock_movements")
+
+.select("id")
+
+.eq("variant_id",id)
+
+.limit(1);
+
+
+
+
+
+
+// فحص الطلبات
+
+const {data:orders}=await supabase
+
+.from("order_items")
+
+.select("id")
+
+.eq("variant_id",id)
+
+.limit(1);
+
+
+
+
+
+
+
+// فحص ارتباط SKU
+
+const {data:skuLinks}=await supabase
+
+.from("product_variants")
+
+.select("id")
+
+.eq("sku",variant.sku)
+
+.limit(1);
+
+
+
+
+
+
+
+if(
+
+(stockMoves && stockMoves.length > 0)
+
+||
+
+(orders && orders.length > 0)
+
+){
+
+alert(
+
+"لا يمكن حذف هذا المنتج لأنه مرتبط بحركات مخزون أو طلبات"
+
+);
+
+return;
+
+}
+
+
+
+
+
+
+
+// اذا ماكو ارتباط يحذف
+
+const {error}=await supabase
+
+.from("product_variants")
+
+.delete()
+
+.eq("id",id);
+
+
+
+
+
+if(error){
+
+console.log(error);
+
+alert(error.message);
+
+return;
+
+}
+
+
+
+alert("تم الحذف");
+
 loadVariants();
+
 
 
 };

@@ -19,16 +19,17 @@ document.querySelector("main");
 
 
 
-menuToggle.onclick = ()=>{
+if(menuToggle){
 
+menuToggle.onclick = ()=>{
 
 menu.classList.toggle("active");
 
-
 main.classList.toggle("shift");
 
-
 };
+
+}
 
 
 
@@ -60,7 +61,6 @@ sessionStorage.clear();
 // منع الرجوع
 
 window.location.replace("./login.html");
-
 
 
 }
@@ -381,15 +381,11 @@ document.addEventListener(
 
 
 if(
-
-menu.classList.contains("active")
-
-&&
-
-!menu.contains(e.target)
-
-&&
-
+menu &&
+menuToggle &&
+main &&
+menu.classList.contains("active") &&
+!menu.contains(e.target) &&
 !menuToggle.contains(e.target)
 
 ){
@@ -397,12 +393,10 @@ menu.classList.contains("active")
 
 menu.classList.remove("active");
 
-
 main.classList.remove("shift");
 
 
 }
-
 
 
 });
@@ -426,3 +420,5 @@ loadStats();
 
 
 },30000);
+
+

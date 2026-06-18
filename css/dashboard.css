@@ -30,7 +30,7 @@ overflow-x:hidden;
 
 .topbar{
 
-height:110px;
+height:160px;
 
 background:white;
 
@@ -64,11 +64,12 @@ text-align:center;
 
 font-family:'Cormorant Garamond',serif;
 
-font-size:75px;
+font-size:100px;
 
 letter-spacing:8px;
 
 line-height:1;
+height:75px;
 
 color:#111;
 
@@ -83,7 +84,7 @@ display:block;
 
 margin-top:5px;
 
-font-size:18px;
+font-size:30px;
 
 color:#d987a0;
 
@@ -101,9 +102,9 @@ color:#d987a0;
 #logout{
 
 
-width:65px;
+width:95px;
 
-height:65px;
+height:95px;
 
 border:none;
 
@@ -115,7 +116,7 @@ align-items:center;
 
 justify-content:center;
 
-font-size:28px;
+font-size:30px;
 
 cursor:pointer;
 
@@ -123,7 +124,7 @@ transition:.3s;
 
 position:fixed;
 
-top:22px;
+top:30px;
 
 z-index:500;
 
@@ -135,7 +136,7 @@ z-index:500;
 
 right:35px;
 
-background:#f7b6c8;
+background:#5895ff;
 
 color:white;
 
@@ -155,7 +156,7 @@ transform:rotate(90deg) scale(1.1);
 
 left:35px;
 
-background:#111;
+background:#ff0000;
 
 color:white;
 
@@ -569,30 +570,48 @@ margin:45px 0;
 
 .topbar{
 
-height:90px;
+height:75px;
 
 }
+
 
 
 .topbar h1{
 
-font-size:55px;
+font-size:42px;
 
 }
 
+
+
+.topbar span{
+
+font-size:100px;
+
+}
+
+
+
+.back-btn{
+
+width:42px;
+
+height:42px;
+
+top:17px;
+
+}
 
 
 
 .menu-toggle,
 #logout{
 
-width:52px;
+width:42px;
 
-height:52px;
+height:42px;
 
-font-size:22px;
-
-top:20px;
+top:17px;
 
 }
 
@@ -613,7 +632,21 @@ left:20px;
 }
 
 
+main{
 
+padding:20px 15px;
+
+}
+
+
+
+.form-box{
+
+padding:20px;
+
+border-radius:25px;
+
+}
 .menu{
 
 width:280px;
@@ -1225,3 +1258,4 @@ font-size:20px;
 
 
 }
+

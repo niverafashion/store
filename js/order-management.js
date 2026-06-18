@@ -2,20 +2,16 @@ import {supabase} from "./supabase.js";
 
 
 // =====================
-// عناصر الصفحة
+// العناصر
 // =====================
 
-
+let currentFilter = "new";
 const table =
 document.getElementById("ordersTable");
 
 
 const search =
 document.getElementById("search");
-
-
-const date =
-document.getElementById("date");
 
 
 const modal =
@@ -30,10 +26,21 @@ const changeStatus =
 document.getElementById("changeStatus");
 
 
+const saveStatus =
+document.getElementById("saveStatus");
+
+
+const close =
+document.getElementById("close");
+
+
 
 let orders=[];
 
 let currentOrder=null;
+
+
+
 
 
 
@@ -45,10 +52,7 @@ let currentOrder=null;
 async function loadOrders(){
 
 
-
-const {data,error}=
-
-await supabase
+const {data,error}=await supabase
 
 .from("orders")
 
@@ -70,22 +74,16 @@ status,
 
 created_at,
 
-notes,
-
 
 order_items(
 
 quantity,
-
-price,
-
 
 product_variants(
 
 color,
 
 size,
-
 
 products(
 
@@ -94,7 +92,6 @@ name
 )
 
 )
-
 
 )
 
@@ -109,7 +106,6 @@ ascending:false
 
 
 
-
 if(error){
 
 console.log(error);
@@ -121,16 +117,15 @@ return;
 
 
 orders=data;
-
-
+console.log(
+"كل الحالات:",
+orders.map(o=>o.status)
+);
 
 renderOrders(orders);
 
 
-updateStats();
-
-
-drawCharts();
+updateStatusCards();
 
 
 }
@@ -142,9 +137,8 @@ drawCharts();
 
 
 
-
 // =====================
-// عرض الجدول
+// عرض الطلبات
 // =====================
 
 
@@ -158,8 +152,7 @@ let html="";
 list.forEach(o=>{
 
 
-let item =
-o.order_items?.[0];
+let item=o.order_items?.[0];
 
 
 let product =
@@ -176,79 +169,34 @@ item?.product_variants?.size || "-";
 
 
 
-html +=`
+html += `
 
 
 <tr>
 
 
-<td>
-
-#${o.id}
-
-</td>
+<td>#${o.id}</td>
 
 
-
-<td>
-
-${o.customer_name}
-
-</td>
+<td>${o.customer_name}</td>
 
 
-
-<td>
-
-${o.phone}
-
-</td>
+<td>${o.phone}</td>
 
 
-
-<td>
-
-${o.governorate}
-
-</td>
+<td>${o.governorate}</td>
 
 
+<td>${product}</td>
 
 
-<td>
-
-${product}
-
-</td>
+<td>${color}</td>
 
 
+<td>${size}</td>
 
 
-<td>
-
-${color}
-
-</td>
-
-
-
-
-<td>
-
-${size}
-
-</td>
-
-
-
-
-<td>
-
-${o.total_price} د.ع
-
-</td>
-
-
+<td>${o.total_price} د.ع</td>
 
 
 
@@ -260,8 +208,8 @@ ${statusName(o.status)}
 
 </span>
 
-</td>
 
+</td>
 
 
 
@@ -269,18 +217,40 @@ ${statusName(o.status)}
 <td>
 
 
-<button
+<button class="action-btn edit-btn"
 
-class="view-btn"
+onclick="editOrder('${o.id}')">
 
-onclick="openOrder('${o.id}')"
-<i class="fa-solid fa-eye"></i>
+<i class="fa-solid fa-pen"></i>
 
 </button>
 
 
-</td>
 
+
+
+<button class="action-btn delete-btn"
+
+onclick="deleteOrder('${o.id}')">
+
+<i class="fa-solid fa-trash"></i>
+
+</button>
+
+
+
+
+
+<button class="action-btn update-btn"
+data-id="${o.id}">
+
+<i class="fa-solid fa-rotate"></i>
+
+</button>
+
+
+
+</td>
 
 
 
@@ -290,16 +260,389 @@ onclick="openOrder('${o.id}')"
 `;
 
 
+
 });
+
 
 
 
 table.innerHTML=html;
 
+document
+.querySelectorAll(".update-btn")
+.forEach(btn=>{
+
+btn.onclick=()=>{
+
+updateOrderStatus(btn.dataset.id);
+
+};
+
+});
+}
+
+
+
+
+
+
+// ==========================
+// SCROLL TOP BUTTON
+// ==========================
+
+
+const scrollBtn =
+document.getElementById("scrollTop");
+
+
+
+window.addEventListener("scroll",()=>{
+
+
+if(window.scrollY > 300){
+
+
+scrollBtn.innerHTML = `
+
+<i class="fa-solid fa-arrow-up"></i>
+
+`;
+
+
+
+}else{
+
+
+scrollBtn.innerHTML = `
+
+<i class="fa-solid fa-arrow-down"></i>
+
+`;
+
 
 }
 
 
+});
+
+
+
+
+
+scrollBtn.onclick=()=>{
+
+
+if(window.scrollY > 300){
+
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+
+}else{
+
+
+window.scrollTo({
+
+top:document.body.scrollHeight,
+
+behavior:"smooth"
+
+});
+
+
+}
+
+
+};
+
+
+// =====================
+// تعديل الطلب
+// =====================
+
+
+window.editOrder=function(id){
+
+
+window.location.href =
+
+`orders.html?id=${id}`;
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+// =====================
+// حذف الطلب
+// =====================
+
+
+window.deleteOrder=async function(id){
+
+
+
+let ok = confirm(
+"هل تريد حذف الطلب؟"
+);
+
+
+
+if(!ok)
+return;
+
+
+
+const {error}=await supabase
+
+.from("orders")
+
+.delete()
+
+.eq(
+"id",
+id
+);
+
+
+
+if(error){
+
+alert("فشل الحذف");
+
+return;
+
+}
+
+
+
+alert("تم حذف الطلب");
+
+
+loadOrders().then(()=>{
+
+renderOrders(
+orders.filter(
+o=>o.status==="new"
+)
+);
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+// =====================
+// تحديث الحالة
+// =====================
+
+window.updateOrderStatus = async function(id){
+
+console.log("1 - دخلت دالة التحديث", id);
+
+
+let order = orders.find(o=>o.id==id);
+
+
+console.log("2 - الطلب الموجود:", order);
+
+
+if(!order){
+
+alert("الطلب غير موجود");
+
+return;
+
+}
+
+
+console.log("3 - حالة الطلب داخل القاعدة:", JSON.stringify(order.status));
+console.log("طول الحالة:", order.status.length);
+
+
+let nextStatus = null;
+
+console.log("الحالة الجديدة بالبداية:", nextStatus);
+
+// جديد -> مجهز
+
+if(order.status === "new"){
+
+
+nextStatus = "prepared";
+
+
+}
+
+
+// مجهز -> توصيل
+
+else if(order.status === "prepared"){
+
+
+nextStatus = "delivery";
+
+
+}
+
+
+// توصيل -> خيارات
+
+else if(order.status === "delivery"){
+
+
+let choice = prompt(
+"اختر الحالة الجديدة:\n\n1 - مكتمل\n2 - مؤجل\n3 - مرفوض"
+);
+
+
+
+if(choice === "1"){
+
+nextStatus="completed";
+
+}
+
+
+else if(choice==="2"){
+
+nextStatus="postponed";
+
+}
+
+
+else if(choice==="3"){
+
+nextStatus="cancelled";
+
+}
+
+
+else{
+
+alert("لم يتم اختيار حالة");
+
+return;
+
+}
+
+
+}
+
+
+
+else{
+
+
+alert("لا يمكن تحديث هذا الطلب");
+
+return;
+
+
+}
+
+
+
+
+
+
+let confirmUpdate = confirm(
+
+`تغيير الحالة من ${statusName(order.status)} إلى ${statusName(nextStatus)} ؟`
+
+);
+
+
+
+if(!confirmUpdate)
+
+return;
+
+
+
+
+
+const {data,error}=await supabase
+
+.from("orders")
+
+.update({
+
+status:nextStatus
+
+})
+
+.eq("id",id)
+
+.select();
+
+
+
+
+
+
+
+if(error){
+
+
+console.log(error);
+
+
+alert(error.message);
+
+
+return;
+
+
+}
+
+
+
+
+console.log(data);
+
+alert("تم تحديث الحالة بنجاح");
+
+
+await loadOrders();
+
+
+renderOrders(
+
+orders.filter(
+
+o=>o.status===currentFilter
+
+)
+
+);
+
+
+}
 
 
 
@@ -312,34 +655,116 @@ table.innerHTML=html;
 // =====================
 
 
-function statusName(s){
+function statusName(status){
 
-
-let map={
-
+const names={
 
 new:"جديد",
 
-ready:"مجهز",
+prepared:"مجهز",
 
 delivery:"قيد التوصيل",
 
-done:"مكتمل",
+completed:"مكتمل",
 
-delayed:"مؤجل",
+postponed:"مؤجل",
 
-rejected:"مرفوض"
-
+cancelled:"مرفوض"
 
 };
 
 
-
-return map[s] || s;
-
+return names[status] || status;
 
 }
 
+
+
+
+
+
+
+
+
+// =====================
+// كروت الحالات
+// =====================
+
+
+function updateStatusCards(){
+
+
+console.log("تحديث الكروت");
+
+
+let states=[
+
+{
+status:"new",
+id:"newCount"
+},
+
+{
+status:"prepared",
+id:"preparedCount"
+},
+
+{
+status:"delivery",
+id:"deliveryCount"
+},
+
+{
+status:"completed",
+id:"completedCount"
+},
+
+{
+status:"postponed",
+id:"postponedCount"
+},
+
+{
+status:"cancelled",
+id:"cancelledCount"
+}
+
+];
+
+
+states.forEach(item=>{
+
+
+let count = orders.filter(o=>{
+
+return o.status === item.status;
+
+}).length;
+
+
+
+console.log(
+item.status,
+count
+);
+
+
+
+let el=document.getElementById(item.id);
+
+
+
+if(el){
+
+el.innerText=count;
+
+}
+
+
+});
+
+
+}
 
 
 
@@ -354,40 +779,31 @@ return map[s] || s;
 
 
 document
+
 .querySelectorAll(".status-card")
+
 .forEach(btn=>{
 
 
 btn.onclick=()=>{
 
 
-let status =
-btn.dataset.status;
+let status = btn.dataset.status;
 
 
-if(status===""){
-
-
-renderOrders(orders);
-
-
-return;
-
-}
-
+currentFilter = status;
 
 
 renderOrders(
 
 orders.filter(
-x=>x.status===status
+o=>o.status===status
 )
 
 );
 
 
-}
-
+};
 
 
 });
@@ -405,53 +821,51 @@ x=>x.status===status
 // =====================
 
 
-function searchOrders(){
+search.oninput=()=>{
+
+
+let value=
+
+search.value.toLowerCase();
 
 
 
-let text =
-search.value;
+let result=
 
-
-
-let selectedDate =
-date.value;
-
-
-
-let result =
 orders.filter(o=>{
 
 
-let matchText =
+return (
 
-o.customer_name.includes(text)
+o.customer_name
+
+.toLowerCase()
+
+.includes(value)
+
+
 
 ||
 
-o.phone.includes(text);
+
+
+o.phone
+
+.includes(value)
 
 
 
-let matchDate = true;
+||
 
 
 
-if(selectedDate){
+String(o.id)
 
-
-matchDate =
-
-o.created_at
-.startsWith(selectedDate);
-
-
-}
+.includes(value)
 
 
 
-return matchText && matchDate;
-
+);
 
 
 });
@@ -467,31 +881,23 @@ renderOrders(result);
 
 
 
-search.oninput=searchOrders;
-
-date.onchange=searchOrders;
-
-
-
-
 
 
 
 
 
 // =====================
-// فتح التفاصيل
+// المودال
 // =====================
 
 
 window.openOrder=function(id){
 
 
-
-currentOrder =
+currentOrder=
 
 orders.find(
-x=>x.id===id
+o=>o.id==id
 );
 
 
@@ -503,55 +909,16 @@ let o=currentOrder;
 details.innerHTML=`
 
 
-<div class="order-info">
+<p>👤 ${o.customer_name}</p>
 
+<p>📱 ${o.phone}</p>
 
-<p>
+<p>📍 ${o.governorate}</p>
 
-👤 الزبون:
-
-${o.customer_name}
-
-</p>
-
-
-<p>
-
-📱 الهاتف:
-
-${o.phone}
-
-</p>
-
-
-
-<p>
-
-📍 المحافظة:
-
-${o.governorate}
-
-</p>
-
-
-
-<p>
-
-🏠 العنوان:
-
-${o.address}
-
-</p>
-
+<p>🏠 ${o.address || "-"}</p>
 
 
 <hr>
-
-
-<h3>
-القطع
-</h3>
-
 
 
 ${
@@ -560,26 +927,21 @@ o.order_items.map(i=>`
 
 <p>
 
-🛍
-
-${i.product_variants.products.name}
+🛍 ${i.product_variants.products.name}
 
 <br>
 
 اللون:
-
 ${i.product_variants.color}
 
 <br>
 
-القياس:
-
+الحجم:
 ${i.product_variants.size}
 
 <br>
 
 الكمية:
-
 ${i.quantity}
 
 </p>
@@ -590,25 +952,16 @@ ${i.quantity}
 }
 
 
+<h3>
 
-<hr>
-
-
-💰 المبلغ:
-
+المبلغ:
 ${o.total_price}
 
-</div>
+</h3>
 
 
 
 `;
-
-
-
-
-
-changeStatus.value=o.status;
 
 
 
@@ -624,339 +977,21 @@ modal.style.display="flex";
 
 
 
-
-// اغلاق
-
-
-document
-.getElementById("close")
-.onclick=()=>{
+close.onclick=()=>{
 
 
 modal.style.display="none";
 
 
-};
+}
 
 
+loadOrders().then(()=>{
 
-
-
-
-
-
-
-// =====================
-// تحديث الحالة
-// =====================
-
-
-document
-.getElementById("saveStatus")
-.onclick=async()=>{
-
-
-
-if(!currentOrder)
-return;
-
-
-
-const {error}=
-
-await supabase
-
-.from("orders")
-
-.update({
-
-status:
-
-changeStatus.value
-
-
-})
-
-.eq(
-
-"id",
-
-currentOrder.id
-
+renderOrders(
+orders.filter(
+o=>o.status==="new"
+)
 );
-
-
-
-
-if(error){
-
-alert("خطأ");
-
-return;
-
-}
-
-
-
-alert("تم تحديث الحالة");
-
-
-
-modal.style.display="none";
-
-
-
-loadOrders();
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// الاحصائيات
-// =====================
-
-
-function updateStats(){
-
-
-
-document
-.getElementById("ordersCount")
-.innerText =
-orders.length;
-
-
-
-
-let sales=0;
-
-
-
-orders.forEach(o=>{
-
-
-sales += Number(o.total_price);
-
 
 });
-
-
-
-
-document
-.getElementById("sales")
-.innerText=sales;
-
-
-
-
-let done =
-
-orders.filter(
-x=>x.status==="done"
-);
-
-
-
-document
-.getElementById("profits")
-.innerText=
-
-done.reduce(
-
-(a,b)=>
-
-a+Number(b.total_price)
-
-,0);
-
-
-
-document
-.getElementById("vipCustomers")
-.innerText=
-
-orders.filter(
-x=>x.total_price>100000
-).length;
-
-
-
-
-
-// الحالات
-
-
-let count={};
-
-
-orders.forEach(o=>{
-
-
-count[o.status]=
-
-(count[o.status]||0)+1;
-
-
-
-});
-
-
-
-for(let x in count){
-
-
-let el=
-
-document
-.getElementById(
-x+"Count"
-);
-
-
-if(el)
-el.innerText=count[x];
-
-
-}
-
-
-
-document
-.getElementById("allCount")
-.innerText=
-
-orders.length;
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================
-// Charts
-// =====================
-
-
-function drawCharts(){
-
-
-
-new Chart(
-
-document
-.getElementById("statusChart"),
-
-{
-
-
-type:"doughnut",
-
-
-data:{
-
-
-labels:[
-
-"جديد",
-
-"مجهز",
-
-"توصيل",
-
-"مكتمل",
-
-"مؤجل",
-
-"مرفوض"
-
-],
-
-
-datasets:[{
-
-
-data:[
-
-countStatus("new"),
-
-countStatus("ready"),
-
-countStatus("delivery"),
-
-countStatus("done"),
-
-countStatus("delayed"),
-
-countStatus("rejected")
-
-]
-
-
-}]
-
-
-}
-
-
-}
-
-);
-
-
-
-}
-
-
-
-
-function countStatus(s){
-
-
-return orders.filter(
-
-x=>x.status===s
-
-).length;
-
-
-}
-
-
-
-document
-.getElementById("editOrder")
-.onclick=()=>{
-
-
-if(!currentOrder)
-return;
-
-
-
-window.location.href =
-
-`orders.html?id=${currentOrder.id}`;
-
-
-
-};
-
-
-
-loadOrders();

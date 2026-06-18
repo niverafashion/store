@@ -8,20 +8,19 @@
 
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
+
 <title>NIVRA Order Management</title>
 
 
-<link rel="stylesheet" href="../css/dashboard.css">
+<link rel="stylesheet" href="../css/order-management.css">
 
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
 </head>
+
 
 
 <body>
@@ -34,12 +33,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <div>
 
 <h1>
-NIVRA 🤍
+NIVRA
 </h1>
 
-
 <span>
-إدارة الطلبات والتحليل الذكي
+إدارة الطلبات
 </span>
 
 
@@ -55,7 +53,10 @@ href="../dashboard.html">
 </a>
 
 
+
 </header>
+
+
 
 
 
@@ -65,24 +66,12 @@ href="../dashboard.html">
 
 
 
+
+
+<!-- حالات الطلبات -->
+
+
 <section class="order-status-cards">
-
-
-
-<button class="status-card all"
-data-status="">
-
-<i class="fa-solid fa-layer-group"></i>
-
-<h3>
-كل الطلبات
-</h3>
-
-<span id="allCount">
-0
-</span>
-
-</button>
 
 
 
@@ -91,36 +80,48 @@ data-status="">
 <button class="status-card new"
 data-status="new">
 
+
 <i class="fa-solid fa-bell"></i>
+
 
 <h3>
 جديد
 </h3>
 
+
 <span id="newCount">
 0
 </span>
 
+
 </button>
+
+
 
 
 
 
 
 <button class="status-card ready"
-data-status="ready">
+data-status="prepared">
+
 
 <i class="fa-solid fa-box"></i>
+
 
 <h3>
 مجهز
 </h3>
 
-<span id="readyCount">
+
+<span id="preparedCount">
 0
 </span>
 
+
 </button>
+
+
 
 
 
@@ -129,74 +130,97 @@ data-status="ready">
 <button class="status-card delivery"
 data-status="delivery">
 
+
 <i class="fa-solid fa-truck"></i>
+
 
 <h3>
 قيد التوصيل
 </h3>
 
+
 <span id="deliveryCount">
 0
 </span>
 
+
 </button>
+
+
 
 
 
 
 
 <button class="status-card done"
-data-status="done">
+data-status="completed">
+
 
 <i class="fa-solid fa-check"></i>
+
 
 <h3>
 مكتمل
 </h3>
 
-<span id="doneCount">
+
+<span id="completedCount">
 0
 </span>
 
 </button>
+
+
 
 
 
 
 
 <button class="status-card delayed"
-data-status="delayed">
+data-status="postponed">
+
 
 <i class="fa-solid fa-clock"></i>
+
 
 <h3>
 مؤجل
 </h3>
 
-<span id="delayedCount">
+
+<span id="postponedCount">
 0
 </span>
 
+
 </button>
+
+
 
 
 
 
 
 <button class="status-card rejected"
-data-status="rejected">
+data-status="cancelled">
+
 
 <i class="fa-solid fa-xmark"></i>
+
 
 <h3>
 مرفوض
 </h3>
 
-<span id="rejectedCount">
+
+<span id="cancelledCount">
 0
 </span>
 
+
 </button>
+
+
 
 
 </section>
@@ -209,15 +233,29 @@ data-status="rejected">
 
 
 
+
+
+
+
+
+<!-- الطلبات -->
+
+
 <section class="card">
 
 
+
 <h2>
+
 <i class="fa-solid fa-cart-shopping"></i>
 
 الطلبات
 
+
 </h2>
+
+
+
 
 
 
@@ -225,19 +263,11 @@ data-status="rejected">
 <div class="search-box">
 
 
-<input id="search"
+<input 
 
-placeholder="بحث باسم الزبون او الرقم">
+id="search"
 
-
-
-
-<input id="date"
-
-type="date">
-
-
-
+placeholder="بحث باسم الزبون او رقم الهاتف او الطلب">
 
 
 </div>
@@ -248,10 +278,18 @@ type="date">
 
 
 
+
+
+<div class="table-box">
+
+
+
 <table>
 
 
+
 <thead>
+
 
 <tr>
 
@@ -261,9 +299,11 @@ type="date">
 </th>
 
 
+
 <th>
 الزبون
 </th>
+
 
 
 <th>
@@ -271,9 +311,11 @@ type="date">
 </th>
 
 
+
 <th>
 المحافظة
 </th>
+
 
 
 <th>
@@ -281,9 +323,11 @@ type="date">
 </th>
 
 
+
 <th>
 اللون
 </th>
+
 
 
 <th>
@@ -291,9 +335,11 @@ type="date">
 </th>
 
 
+
 <th>
 المبلغ
 </th>
+
 
 
 <th>
@@ -301,9 +347,11 @@ type="date">
 </th>
 
 
+
 <th>
-تفاصيل
+إجراءات
 </th>
+
 
 
 </tr>
@@ -313,93 +361,22 @@ type="date">
 
 
 
+
+
+
 <tbody id="ordersTable">
 
 
+
 </tbody>
+
+
 
 
 </table>
 
 
 
-</section>
-
-
-
-
-
-
-
-
-
-<section class="analysis">
-
-
-
-<div class="cards">
-
-
-<div class="card">
-
-<h3>
-الطلبات
-</h3>
-
-<h2 id="ordersCount">
-0
-</h2>
-
-</div>
-
-
-
-
-<div class="card">
-
-<h3>
-المبيعات
-</h3>
-
-<h2 id="sales">
-0
-</h2>
-
-</div>
-
-
-
-
-
-<div class="card">
-
-<h3>
-الأرباح
-</h3>
-
-<h2 id="profits">
-0
-</h2>
-
-</div>
-
-
-
-
-
-<div class="card">
-
-<h3>
-VIP
-</h3>
-
-<h2 id="vipCustomers">
-0
-</h2>
-
-</div>
-
-
 </div>
 
 
@@ -413,58 +390,21 @@ VIP
 
 
 
-<section class="charts">
-
-
-<div class="card">
-
-<h3>
-المبيعات
-</h3>
-
-<canvas id="salesChart"></canvas>
-
-</div>
-
-
-
-<div class="card">
-
-<h3>
-الحالات
-</h3>
-
-<canvas id="statusChart"></canvas>
-
-</div>
-
-
-
-<div class="card">
-
-<h3>
-المحافظات
-</h3>
-
-<canvas id="govChart"></canvas>
-
-</div>
-
-
-</section>
 
 
 
 
 
 
-
+<!-- تعديل الطلب -->
 
 
 <div id="modal">
 
 
+
 <div class="card modal-box">
+
 
 
 <button id="close">
@@ -475,26 +415,26 @@ VIP
 
 
 
+
+
+
 <h2>
+
 تفاصيل الطلب
+
 </h2>
+
+
 
 
 
 <div id="details">
 
+
 </div>
 
 
 
-
-<button id="editOrder">
-
-<i class="fa-solid fa-pen"></i>
-
-تعديل الطلب
-
-</button>
 
 
 
@@ -507,7 +447,7 @@ VIP
 </option>
 
 
-<option value="ready">
+<option value="prepared">
 مجهز
 </option>
 
@@ -517,22 +457,24 @@ VIP
 </option>
 
 
-<option value="done">
+<option value="completed">
 مكتمل
 </option>
 
 
-<option value="delayed">
+<option value="postponed">
 مؤجل
 </option>
 
 
-<option value="rejected">
+<option value="cancelled">
 مرفوض
 </option>
 
 
 </select>
+
+
 
 
 
@@ -555,17 +497,20 @@ VIP
 
 
 
-</main>
 
+<button id="scrollTop" class="scroll-top">
 
+<i class="fa-solid fa-arrow-down"></i>
 
-<script type="module"
-src="../js/order-management.js">
-
-</script>
-
+</button>
 
 
 </body>
+<script type="module"
+
+src="../js/order-management.js">
+
+
+</script>
 
 </html>

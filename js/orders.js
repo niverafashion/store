@@ -1,16 +1,12 @@
 import {supabase} from "./supabase.js";
 
 
-const urlParams = new URLSearchParams(
-window.location.search
-);
-
-const editId = urlParams.get("id");
-
+// =====================
+// العناصر
+// =====================
 
 const categorySelect =
 document.getElementById("category");
-
 
 const productSelect =
 document.getElementById("product");
@@ -18,18 +14,14 @@ document.getElementById("product");
 const sizeSelect =
 document.getElementById("size");
 
-
 const colorSelect =
 document.getElementById("color");
+
 const qtyInput =
 document.getElementById("qty");
 
-const sourceSelect =
-document.getElementById("source");
-
 const governorateSelect =
 document.getElementById("governorate");
-
 
 
 let cart = [];
@@ -47,12 +39,24 @@ let governorates = [];
 
 async function loadCategories(){
 
+
 const {data,error}=await supabase
+
 .from("categories")
-.select("*");
+
+.select("*")
+
+.order("created_at",{ascending:false});
 
 
-if(error) return;
+if(error){
+
+console.log(error);
+
+return;
+
+}
+
 
 
 categorySelect.innerHTML=`
@@ -64,37 +68,53 @@ categorySelect.innerHTML=`
 `;
 
 
+
 data.forEach(c=>{
+
 
 categorySelect.innerHTML +=`
 
 <option value="${c.id}">
+
 ${c.name}
+
 </option>
 
 `;
+
 
 });
 
 
 }
 
+
+
+// =====================
+// التحقق من الهاتف
+// =====================
+
+
 function validatePhone(){
 
 
-let phone=
-document.getElementById("phone").value;
+let phone =
+document.getElementById("phone").value.trim();
 
 
 
-let regex=/^(077|078|079|075)[0-9]{8}$/;
+let regex =
+/^(077|078|079|075)[0-9]{8}$/;
 
 
 
 if(!regex.test(phone)){
 
 
-alert("رقم الهاتف غير صالح يجب ان يبدأ بـ 077 او 078 او 079 او 075");
+alert(
+"رقم الهاتف غير صالح"
+);
+
 
 
 document.getElementById("phone").focus();
@@ -102,8 +122,8 @@ document.getElementById("phone").focus();
 
 return false;
 
-
 }
+
 
 
 return true;
@@ -112,48 +132,53 @@ return true;
 }
 
 
+
 // =====================
-// بحث مباشر عن الزبون
+// البحث عن الزبون
 // =====================
 
-let phoneSearchTimeout = null;
+
+let phoneTimeout;
+
 
 
 document
+
 .getElementById("phone")
-.addEventListener("input", function(){
+
+.addEventListener("input",function(){
 
 
-let phone = this.value.trim();
+let phone=this.value.trim();
 
 
-// اخفاء مباشر اذا ناقص
 
 if(phone.length < 11){
 
+
 document
+
 .getElementById("customerInfo")
+
 .classList.remove("show");
 
+
 return;
+
 
 }
 
 
 
-// انتظار بسيط
-
-clearTimeout(phoneSearchTimeout);
+clearTimeout(phoneTimeout);
 
 
 
-phoneSearchTimeout = setTimeout(async()=>{
+phoneTimeout=setTimeout(async()=>{
 
 
 
-const {data,error}=
-
-await supabase
+const {data,error}=await supabase
 
 .from("customers")
 
@@ -165,13 +190,13 @@ await supabase
 
 
 
-
-
 if(error || !data){
 
 
 document
+
 .getElementById("customerInfo")
+
 .classList.remove("show");
 
 
@@ -184,35 +209,46 @@ return;
 
 
 
-// الاسم
-
 document
+
 .getElementById("name")
-.value =
-data.name || "";
+
+.value=data.name || "";
 
 
 
-// العدادات
 
 document
+
+.getElementById("address")
+
+.value=data.address || "";
+
+
+
+
+
+document
+
 .getElementById("completedCount")
-.innerText =
-data.completed_orders || 0;
+
+.innerText=data.completed_orders || 0;
 
 
 
 document
+
 .getElementById("cancelledCount")
-.innerText =
-data.cancelled_orders || 0;
+
+.innerText=data.cancelled_orders || 0;
 
 
 
-// اظهار
 
 document
+
 .getElementById("customerInfo")
+
 .classList.add("show");
 
 
@@ -221,11 +257,16 @@ generateMessage();
 
 
 
-},300);
+},400);
 
 
 
 });
+
+
+
+
+
 // =====================
 // المنتجات حسب الصنف
 // =====================
@@ -234,34 +275,35 @@ generateMessage();
 categorySelect.onchange=async()=>{
 
 
-productSelect.innerHTML=
-`
+productSelect.innerHTML=`
+
 <option>
 اختار المنتج
 </option>
+
 `;
 
+sizeSelect.innerHTML=`
 
-sizeSelect.innerHTML=
-`
 <option>
 اختار الحجم
 </option>
+
 `;
 
+colorSelect.innerHTML=`
 
-colorSelect.innerHTML=
-`
 <option>
 اختار اللون
 </option>
+
 `;
 
 
 
-const {data}=
 
-await supabase
+
+const {data,error}=await supabase
 
 .from("products")
 
@@ -270,7 +312,16 @@ await supabase
 .eq(
 "category_id",
 categorySelect.value
+)
+
+.eq(
+"status",
+true
 );
+
+
+
+if(error)return;
 
 
 
@@ -291,83 +342,16 @@ ${p.name}
 });
 
 
-}
-
-
-// =====================
-// Scroll Button
-// =====================
-
-const scrollBtn = document.getElementById("scrollTop");
-
-
-window.addEventListener("scroll", ()=>{
-
-
-if(window.scrollY > 300){
-
-
-scrollBtn.innerHTML =
-`
-<i class="fa-solid fa-arrow-up"></i>
-`;
-
-
-}else{
-
-
-scrollBtn.innerHTML =
-`
-<i class="fa-solid fa-arrow-down"></i>
-`;
-
-
-}
-
-
-
-});
-
-
-
-
-
-scrollBtn.onclick = ()=>{
-
-
-if(window.scrollY > 300){
-
-
-// يطلع لفوك
-
-window.scrollTo({
-
-top:0,
-
-behavior:"smooth"
-
-});
-
-
-}else{
-
-
-// ينزل لجوه
-
-window.scrollTo({
-
-top:document.body.scrollHeight,
-
-behavior:"smooth"
-
-});
-
-
-}
-
-
-
 };
+
+
+
+
+
+// =====================
+// الأحجام
+// =====================
+
 
 productSelect.onchange=async()=>{
 
@@ -375,9 +359,7 @@ productSelect.onchange=async()=>{
 sizeSelect.innerHTML=`
 
 <option>
-
 اختار الحجم
-
 </option>
 
 `;
@@ -386,22 +368,21 @@ sizeSelect.innerHTML=`
 colorSelect.innerHTML=`
 
 <option>
-
 اختار اللون
-
 </option>
 
 `;
 
 
 
-const {data}=
 
-await supabase
+const {data}=await supabase
 
 .from("product_variants")
 
-.select("size, stock_quantity")
+.select(
+"size,stock_quantity"
+)
 
 .eq(
 "product_id",
@@ -415,18 +396,26 @@ productSelect.value
 
 
 
+
 let sizes=[];
 
 
-data.forEach(x=>{
 
-if(!sizes.includes(x.size)){
+data.forEach(v=>{
 
-sizes.push(x.size);
+
+if(!sizes.includes(v.size)){
+
+
+sizes.push(v.size);
+
 
 }
 
+
+
 });
+
 
 
 
@@ -447,37 +436,36 @@ ${s}
 });
 
 
-}
+};
+
+
+
+
+
+// =====================
+// الألوان
+// =====================
+
+
 sizeSelect.onchange=async()=>{
 
 
 colorSelect.innerHTML=`
 
 <option>
-
 اختار اللون
-
 </option>
 
 `;
 
 
 
-const {data}=
 
-await supabase
+const {data}=await supabase
 
 .from("product_variants")
 
-.select(`
-
-id,
-
-color,
-
-stock_quantity
-
-`)
+.select("*")
 
 .eq(
 "product_id",
@@ -496,16 +484,16 @@ sizeSelect.value
 
 
 
-data.forEach(c=>{
+
+data.forEach(v=>{
 
 
 colorSelect.innerHTML +=`
 
-<option value="${c.id}">
+<option value="${v.id}">
 
-${c.color}
-
-(متوفر ${c.stock_quantity})
+${v.color}
+(متوفر ${v.stock_quantity})
 
 </option>
 
@@ -515,30 +503,39 @@ ${c.color}
 });
 
 
-}
+};
+
+
+
+
+
+// =====================
+// المحافظات
+// =====================
+
+
 async function loadGovernorates(){
 
+
+
 const {data,error}=await supabase
+
 .from("governorates")
+
 .select("*");
 
 
-if(error){
 
-console.log(error);
-return;
-
-}
-
-
-governorates = data;
+if(error)return;
 
 
 
-const box = governorateSelect;
+governorates=data;
 
 
-box.innerHTML = `
+
+
+governorateSelect.innerHTML=`
 
 <option value="">
 اختار المحافظة
@@ -548,13 +545,17 @@ box.innerHTML = `
 
 
 
+
+
 data.forEach(g=>{
 
 
-box.innerHTML += `
+governorateSelect.innerHTML +=`
 
-<option 
+<option
+
 value="${g.name}"
+
 data-price="${g.delivery_price}">
 
 ${g.name}
@@ -563,83 +564,46 @@ ${g.name}
 
 `;
 
+
+
 });
 
 
 
+}
 
-// =====================
+
+
 // تغيير المحافظة
-// =====================
-
-box.onchange = ()=>{
 
 
-// إذا التوصيل تلقائي
+governorateSelect.onchange=()=>{
+
 
 if(
 document.getElementById("autoDelivery").checked
 ){
 
 
-let price = 0;
+let price =
+governorateSelect
 
-if(box.selectedIndex >= 0){
+.options[governorateSelect.selectedIndex]
 
-    price = box.options[box.selectedIndex].getAttribute("data-price") || 0;
+.dataset.price || 0;
 
-}
 
 
 deliveryPrice =
-Number(price || 0);
-
-
-updateTotal();
-
-generateMessage();
-
-
-}
-
-
-
-};
-
-
-
-
-// =====================
-// تلقائي حسب المحافظة
-// =====================
-
-
-document
-.getElementById("autoDelivery")
-.onchange = ()=>{
-
-
-document
-.getElementById("manualBox")
-.style.display="none";
-
-let price = 0;
-
-if(box.selectedIndex >= 0){
-
-    price = box.options[box.selectedIndex].getAttribute("data-price") || 0;
-
-}
-
-deliveryPrice =
-Number(price || 0);
+Number(price);
 
 
 
 document
+
 .getElementById("deliveryPrice")
-.value =
-deliveryPrice;
+
+.value=deliveryPrice;
 
 
 
@@ -648,76 +612,111 @@ updateTotal();
 generateMessage();
 
 
+}
+
+
 
 };
 
 
 
 
+
 // =====================
-// تحديد يدوي
+// التوصيل اليدوي
 // =====================
+
 
 
 document
+
 .getElementById("manualDelivery")
-.onchange = ()=>{
+
+.onchange=()=>{
 
 
 document
+
 .getElementById("manualBox")
+
 .style.display="block";
 
 
-// تصفير القيمة القديمة القادمة من المحافظة
+deliveryPrice=0;
+
 
 document
+
 .getElementById("deliveryPrice")
-.value = "";
 
-
-
-deliveryPrice = 0;
-
+.value="";
 
 
 updateTotal();
-
-generateMessage();
-
 
 
 };
 
 
-// =====================
-// تغيير سعر التوصيل يدوي
-// =====================
+
 
 
 document
-.getElementById("deliveryPrice")
-.oninput = ()=>{
 
+.getElementById("autoDelivery")
 
-if(
+.onchange=()=>{
+
 
 document
-.getElementById("manualDelivery")
-.checked
 
-){
+.getElementById("manualBox")
+
+.style.display="none";
+
+
+
+let price =
+governorateSelect
+
+.options[governorateSelect.selectedIndex]
+
+?.dataset.price || 0;
 
 
 
 deliveryPrice =
+Number(price);
 
-Number(
+
+
+updateTotal();
+
+
+generateMessage();
+
+
+};
+
+
+
+
 
 document
-.getElementById("deliveryPrice")
-.value || 0
 
+.getElementById("deliveryPrice")
+
+.oninput=()=>{
+
+
+if(
+document.getElementById("manualDelivery").checked
+){
+
+
+deliveryPrice =
+Number(
+document.getElementById("deliveryPrice").value || 0
 );
 
 
@@ -731,52 +730,48 @@ generateMessage();
 
 
 };
-
-
-
-}
-
 // =====================
-// إضافة للسلة
+// إضافة قطعة للسلة
 // =====================
 
 
 document
+
 .getElementById("addItem")
+
 .onclick = async()=>{
 
 
-let qty = Number(qtyInput.value);
+
+let qty =
+Number(qtyInput.value);
+
 
 
 if(
-!categorySelect.value ||
-!productSelect.value ||
-!sizeSelect.value ||
 !colorSelect.value ||
-qty <= 0
+qty <=0
 ){
 
-alert("اكمل اختيار الصنف والمنتج والحجم واللون والكمية");
+
+alert("اكمل بيانات القطعة");
+
+
 return;
+
 
 }
 
 
 
-let id = colorSelect.value;
 
-
-
-const {data:v,error}=
-
-await supabase
+const {data:v,error}=await supabase
 
 .from("product_variants")
 
 .select(`
 
-stock_quantity,
+id,
 
 color,
 
@@ -784,19 +779,22 @@ size,
 
 image,
 
+stock_quantity,
+
 products(
 
 name,
 
-price,
-
-categories(name)
+price
 
 )
 
 `)
 
-.eq("id",id)
+.eq(
+"id",
+colorSelect.value
+)
 
 .single();
 
@@ -806,52 +804,30 @@ categories(name)
 
 if(error || !v){
 
-alert("لا يوجد هذا المنتج بالمخزون");
+
+alert("خطأ بجلب المنتج");
+
+
 return;
+
 
 }
 
 
 
 
-if(v.stock_quantity <= 0){
-
-alert("هذا اللون غير متوفر حاليا");
-
-return;
-
-}
 
 
-// الكمية الموجودة حالياً بالكارت لنفس القياس واللون
-let cartQty = cart
-.filter(item =>
-    item.variant_id == id
-)
-.reduce((sum,item)=> sum + item.quantity ,0);
+if(v.stock_quantity < qty){
 
-
-// المتوفر الحقيقي بعد حساب الكارت
-let available = v.stock_quantity - cartQty;
-
-
-if(available <= 0){
-
-alert("تمت إضافة كل الكمية المتوفرة مسبقاً");
-
-return;
-
-}
-
-
-
-if(qty > available){
 
 alert(
-`المتبقي فقط ${available} قطعة`
+"الكمية غير متوفرة بالمخزون"
 );
 
+
 return;
+
 
 }
 
@@ -859,17 +835,11 @@ return;
 
 
 
-// فحص اذا نفس المنتج + اللون + الحجم موجود
-
-let existing = cart.find(item =>
-
-item.product === v.products.name &&
-
-item.color === v.color &&
-
-item.size === v.size
-
+let existing =
+cart.find(
+x=>x.variant_id===v.id
 );
+
 
 
 
@@ -879,26 +849,33 @@ if(existing){
 existing.quantity += qty;
 
 
+
 }else{
 
 
 cart.push({
 
-variant_id:id,
+
+variant_id:v.id,
+
 
 quantity:qty,
 
-color:v.color,
 
-size:v.size,
+price:v.products.price,
 
-image:v.image,
 
 product:v.products.name,
 
-category:v.products.categories.name,
 
-price:v.products.price
+color:v.color,
+
+
+size:v.size,
+
+
+image:v.image
+
 
 });
 
@@ -909,27 +886,42 @@ price:v.products.price
 
 renderCart();
 
+
 generateMessage();
 
+
 };
+
+
+
+
+
+
 
 // =====================
 // عرض السلة
 // =====================
+
+
 
 function renderCart(){
 
 
 let html="";
 
+
 let total=0;
+
 
 
 
 cart.forEach((x,i)=>{
 
 
-total += x.price * x.quantity;
+
+total +=
+x.price * x.quantity;
+
 
 
 
@@ -966,10 +958,9 @@ ${x.size}
 </span>
 
 
-
 <span>
 
-الكمية: ${x.quantity}
+الكمية ${x.quantity}
 
 </span>
 
@@ -978,31 +969,23 @@ ${x.size}
 
 
 
-
-
 <div class="cart-price">
-
 
 ${x.price} دينار
 
-
 </div>
-
-
 
 
 
 <button onclick="removeItem(${i})">
 
-
-حذف
-
+🗑 حذف
 
 </button>
 
 
-
 </div>
+
 
 `;
 
@@ -1013,88 +996,95 @@ ${x.price} دينار
 
 
 
+document
 
-document.getElementById("cart").innerHTML = html;
+.getElementById("cart")
 
+.innerHTML=html;
 
-document.getElementById("total").innerText = total;
-
-
-updateTotal();
-
-
-}
-
-
-window.removeItem=(i)=>{
-
-
-cart.splice(i,1);
-
-renderCart();
-
-generateMessage();
-
-}
-
-
-
-
-// إذا التلقائي شغال
-if(document.getElementById("autoDelivery").checked){
-
-
-
-let g = governorates.find(
-x=>x.name === governorateSelect.value
-);
-
-
-
-if(g){
-
-
-deliveryPrice =
-Number(g.delivery_price);
 
 
 
 document
-.getElementById("deliveryPrice")
-.value = deliveryPrice;
 
+.getElementById("total")
 
-}
+.innerText=total;
 
 
 
 updateTotal();
 
-generateMessage();
 
 
 }
+
+
+
+
+
+window.removeItem=function(index){
+
+
+cart.splice(index,1);
+
+
+renderCart();
+
+
+generateMessage();
+
+
+};
+
+
+
+
+
+
+
+
+// =====================
+// الحساب النهائي
+// =====================
 
 
 
 function updateTotal(){
 
 
-let items =
+
+let total =
 
 Number(
-document.getElementById("total").innerText
+
+document
+
+.getElementById("total")
+
+.innerText
+
+||0
+
 );
 
 
 
 document
+
 .getElementById("finalTotal")
+
 .innerText =
-items + deliveryPrice;
+
+total + deliveryPrice;
 
 
 }
+
+
+
+
+
 
 
 
@@ -1104,13 +1094,19 @@ items + deliveryPrice;
 // =====================
 
 
+
 document
+
 .getElementById("hasRefund")
-.onchange = ()=>{
+
+.onchange=()=>{
 
 
 let box =
-document.getElementById("refundBox");
+
+document
+
+.getElementById("refundBox");
 
 
 
@@ -1129,7 +1125,9 @@ box.style.display="none";
 
 
 document
+
 .getElementById("refundAmount")
+
 .value="";
 
 
@@ -1140,25 +1138,7 @@ document
 generateMessage();
 
 
-}
-
-
-
-
-
-
-document
-
-.getElementById("refundAmount")
-
-.oninput = ()=>{
-
-
-generateMessage();
-
-
-}
-
+};
 
 
 
@@ -1168,22 +1148,38 @@ generateMessage();
 
 
 // =====================
-// قالب رسالة الواتساب
+// رسالة الواتساب
 // =====================
+
 
 
 function generateMessage(){
 
 
-let items = "";
+
+let items="";
+
+
 
 
 cart.forEach(x=>{
 
 
-items += `🛍️ ${x.product}
-اللون: ${x.color}  الحجم: ${x.size}  الكمية: ${x.quantity}
-السعر: ${x.price} دينار`;
+items +=`
+
+🛍 ${x.product}
+
+اللون: ${x.color}
+
+الحجم: ${x.size}
+
+الكمية: ${x.quantity}
+
+السعر: ${x.price} دينار
+
+
+`;
+
 
 
 });
@@ -1192,78 +1188,132 @@ items += `🛍️ ${x.product}
 
 
 
-let message = `✨ NIVRA FASHION ✨
-مرحباً ${document.getElementById("name").value} تم تثبيت حجزك بنجاح 🤍
 
-👤 معلومات الزبون:
-━━━━━━━━━━━━━━
-الاسم:${document.getElementById("name").value}
-رقم الهاتف:${document.getElementById("phone").value}
-المحافظة:${document.getElementById("governorate").value}
-العنوان:${document.getElementById("address").value}
-📅 تاريخ الطلب:${new Date().toLocaleDateString()}
-━━━━━━━━━━━━━━
+let message=`
 
-📦 تفاصيل الطلب:
-━━━━━━━━━━━━━━
+✨ NIVRA FASHION ✨
+
+
+مرحباً ${document.getElementById("name").value}
+
+
+تم تثبيت طلبك بنجاح 🤍
+
+
+
+👤 بيانات الزبون
+
+━━━━━━━━━━━━
+
+
+الاسم:
+${document.getElementById("name").value}
+
+
+الهاتف:
+${document.getElementById("phone").value}
+
+
+المحافظة:
+${document.getElementById("governorate").value}
+
+
+العنوان:
+${document.getElementById("address").value}
+
+
+
+
+📦 الطلب
+
+
 ${items}
-🚚 التوصيل:${deliveryPrice} دينار
-💰 المجموع النهائي:${document.getElementById("finalTotal").innerText} دينار
-━━━━━━━━━━━━━━`;
-
-// تبديل واسترجاع
-
-if(document.getElementById("hasReturn").checked){
 
 
-message += `
-🔄 تم إرسال قطعتين مع المندوب
-قطعة للاستلام والقطعة الأخرى يتم تسليمها لمندوب الشركة لإرجاعها.
+🚚 التوصيل:
+
+${deliveryPrice} دينار
+
+
+
+💰 المجموع النهائي:
+
+${document.getElementById("finalTotal").innerText} دينار
+
+
+
 `;
 
+
+
+
+
+
+if(
+document.getElementById("hasReturn").checked
+){
+
+
+
+message +=`
+
+🔄 يوجد تبديل / استرجاع
+
+`;
+
+
+
 }
 
 
 
 
 
-// استقطاع
 
-if(document.getElementById("hasRefund").checked){
-
-
-let amount =
-document.getElementById("refundAmount").value;
+if(
+document.getElementById("hasRefund").checked
+){
 
 
-if(amount){
+message +=`
+
+⚠️ استقطاع عند الرفض:
+
+${document.getElementById("refundAmount").value}
+
+دينار
+
+`;
 
 
-message += `
-⚠️ في حال رفض الطلب:سيتم استقطاع مبلغ ${amount} دينار لمندوب الشركة.`;
 
 }
 
 
-}
 
 
 
+message +=`
+
+🛒 المتجر:
+
+https://niverafashion.github.io/store/index.html
 
 
-message += `
+شكراً لثقتكم بـ NIVRA 🤍
 
-🛒 زوروا متجرنا الإلكتروني:https://niverafashion.github.io/store/index.html
-شكراً لثقتك بـ NIVRA 🤍 نتمنى لك تجربة جميلة ✨`;
-
+`;
 
 
 
 
 
 document
+
 .getElementById("whatsappMessage")
-.value = message;
+
+.value=message;
+
 
 
 }
@@ -1273,10 +1323,11 @@ document
 
 
 
-// =====================
-// تحديث الرسالة مباشرة
-// =====================
 
+
+
+
+// تحديث الرسالة تلقائياً
 
 
 [
@@ -1291,32 +1342,21 @@ document
 
 "refundAmount"
 
+]
 
-].forEach(id=>{
+.forEach(id=>{
 
 
 document
 
 .getElementById(id)
 
-.oninput = generateMessage;
+.oninput=
 
+generateMessage;
 
 
 });
-
-
-
-
-
-
-document
-
-.getElementById("governorate")
-
-.onchange = generateMessage;
-
-
 
 
 
@@ -1324,201 +1364,114 @@ document
 
 .getElementById("hasReturn")
 
-.onchange = generateMessage;
+.onchange=
+
+generateMessage;
 
 
 
 
 
 
-// تحديث بعد التوصيل
 
 
-document
-.getElementById("autoDelivery")
-.onchange = ()=>{
+
+// =====================
+// التحقق قبل الحفظ
+// =====================
 
 
-document
-.getElementById("manualBox")
-.style.display="none";
-
-
-let price = 0;
-
-if(box.selectedIndex >= 0){
-
-price =
-box.options[box.selectedIndex]
-.getAttribute("data-price") || 0;
-
-}
-
-
-deliveryPrice = Number(price);
-
-
-updateTotal();
-
-generateMessage();
-
-
-};
 function validateOrder(){
 
 
-const phone =
+
+let phone =
 document.getElementById("phone").value.trim();
 
 
-const governorate =
-document.getElementById("governorate").value.trim();
-
-
-const address =
-document.getElementById("address").value.trim();
-
-
-const source =
-document.getElementById("source").value.trim();
-
-
-
-
-// رقم الهاتف
 
 if(!phone){
 
+
 alert("ادخل رقم الهاتف");
 
-document.getElementById("phone").focus();
 
 return false;
 
-}
-
-
-if(!validatePhone()){
-
-return false;
 
 }
 
 
 
-// المحافظة
+if(!validatePhone())
+return false;
 
-if(!governorate){
+
+
+
+
+
+if(
+!document.getElementById("governorate").value
+){
+
 
 alert("اختار المحافظة");
 
-document.getElementById("governorate").focus();
 
 return false;
+
 
 }
 
 
 
-// العنوان
 
-if(!address){
+
+
+if(
+!document.getElementById("address").value.trim()
+){
+
 
 alert("ادخل العنوان");
 
-document.getElementById("address").focus();
 
 return false;
+
 
 }
 
 
 
 
-// مصدر الطلب
 
-if(!source){
 
-alert("اختار طريقة الطلب");
+if(
+cart.length===0
+){
 
-document.getElementById("source").focus();
+
+alert("ضيف منتج واحد على الاقل");
+
 
 return false;
+
 
 }
 
 
 
 
-// لازم يكون اكو منتج
-
-if(cart.length === 0){
-
-alert("ضيف منتج واحد على الاقل للطلب");
-
-document.getElementById("addItem").focus();
-
-return false;
-
-}
-
-
-
-
-// إذا التوصيل يدوي
 
 if(
 document.getElementById("manualDelivery").checked
+&&
+deliveryPrice<=0
 ){
 
 
-let price =
-document.getElementById("deliveryPrice").value.trim();
-
-
-
-if(!price || Number(price)<=0){
-
-
-alert("ادخل مبلغ التوصيل");
-
-document
-.getElementById("deliveryPrice")
-.focus();
-
-
-return false;
-
-}
-
-
-}
-
-
-
-
-// إذا يوجد استقطاع
-
-if(
-document.getElementById("hasRefund").checked
-){
-
-
-let refund =
-document.getElementById("refundAmount")
-.value
-.trim();
-
-
-
-if(!refund || Number(refund)<=0){
-
-
-alert("ادخل مبلغ الاستقطاع");
-
-document
-.getElementById("refundAmount")
-.focus();
+alert("ادخل سعر التوصيل");
 
 
 return false;
@@ -1527,7 +1480,6 @@ return false;
 }
 
 
-}
 
 
 
@@ -1535,22 +1487,51 @@ return true;
 
 
 }
+
+
+
+
+
+
+
+
+
 // =====================
 // حفظ الطلب
 // =====================
 
 
+
 document
+
 .getElementById("saveOrder")
+
 .onclick=async()=>{
 
 
-if(!validateOrder()) return;
+
+if(!validateOrder())
+return;
 
 
-let {data:customer,error:customerError}=
 
-await supabase
+
+
+let phone =
+
+document.getElementById("phone").value;
+
+
+
+
+
+// =====================
+// العميل
+// =====================
+
+
+
+let {data:customer}=await supabase
 
 .from("customers")
 
@@ -1558,10 +1539,16 @@ await supabase
 
 .eq(
 "phone",
-phone.value
+phone
 )
 
-.single();
+.maybeSingle();
+
+
+
+
+
+let customerType="new";
 
 
 
@@ -1570,338 +1557,36 @@ phone.value
 if(!customer){
 
 
-const {data:newCustomer,error}=
 
-await supabase
+const {data:newCustomer,error}=await supabase
 
 .from("customers")
 
 .insert({
 
-name:name.value,
 
-phone:phone.value,
+name:
 
-address:address.value,
+document.getElementById("name").value,
 
-governorate:governorate.value
+
+phone,
+
+
+address:
+
+document.getElementById("address").value,
+
+
+governorate:
+
+document.getElementById("governorate").value
+
+
 
 })
 
 .select()
-
-.single();
-
-
-customer = newCustomer;
-
-
-}
-
-
-
-
-const {data:order}=
-
-await supabase
-
-.from("orders")
-
-.insert({
-
-customer_id:customer.id,
-
-source:source.value,
-
-customer_name:name.value,
-
-phone:phone.value,
-
-governorate:governorate.value,
-
-address:address.value,
-
-delivery_price:deliveryPrice,
-
-total_price:
-Number(finalTotal.innerText),
-
-notes:notes.value,
-
-has_return:
-hasReturn.checked,
-
-has_partial_refund:
-hasRefund.checked,
-
-refund_amount:
-Number(refundAmount.value || 0)
-
-})
-
-.select()
-
-.single();
-
-
-
-
-
-for(let x of cart){
-
-
-
-await supabase
-
-.from("order_items")
-
-.insert({
-
-order_id:order.id,
-
-variant_id:x.variant_id,
-
-quantity:x.quantity,
-
-price:x.price
-
-});
-
-
-
-
-
-await supabase
-
-.from("stock_movements")
-
-.insert({
-
-variant_id:x.variant_id,
-
-type:"OUT",
-
-quantity:x.quantity,
-
-note:`Order ${order.id}`
-
-});
-
-
-
-
-
-const {data:s}=
-
-await supabase
-
-.from("product_variants")
-
-.select("stock_quantity")
-
-.eq("id",x.variant_id)
-
-.single();
-
-
-
-
-
-let newStock =
-s.stock_quantity - x.quantity;
-
-
-if(newStock < 0){
-
-alert("الكمية المطلوبة غير متوفرة بالمخزون");
-
-return;
-
-}
-
-
-await supabase
-
-.from("product_variants")
-
-.update({
-
-stock_quantity:newStock
-
-})
-
-.eq("id",x.variant_id);
-
-
-
-}
-
-
-alert("تم حفظ الطلب 🔥");
-
-clearOrderForm();
-}
-
-// =====================
-// حفظ + ارسال واتساب
-// =====================
-
-
-document
-.getElementById("saveAndWhatsapp")
-.onclick = async ()=>{
-
-
-if(!validateOrder()) return;
-
-
-// أولا حفظ الطلب
-
-document
-.getElementById("saveOrder")
-.click();
-
-
-
-// انتظار بسيط حتى يكتمل الحفظ
-
-setTimeout(()=>{
-
-
-// بعدها ارسال الواتساب
-
-document
-.getElementById("whatsapp")
-.click();
-
-
-
-},1000);
-
-
-
-};
-
-// =====================
-// زر ارسال واتساب
-// =====================
-
-
-document
-.getElementById("whatsapp")
-.onclick = ()=>{
-
-
-if(!validateOrder()) return;
-
-
-generateMessage();
-
-
-
-let phone =
-
-document
-
-.getElementById("phone")
-
-.value;
-
-
-
-if(!phone){
-
-
-alert("ادخل رقم الهاتف");
-
-return;
-
-
-}
-
-
-
-
-let text =
-
-document
-
-.getElementById("whatsappMessage")
-
-.value;
-
-
-
-
-window.open(
-
-`https://wa.me/964${phone.substring(1)}?text=${encodeURIComponent(text)}`
-
-);
-
-
-};
-
-
-
-
-
-
-loadGovernorates();
-
-loadCategories();
-
-
-// =====================
-// تحميل الطلب للتعديل
-// =====================
-
-async function loadOrderForEdit(id){
-
-
-const {data,error}=await supabase
-
-.from("orders")
-
-.select(`
-
-*,
-
-order_items(
-
-quantity,
-
-price,
-
-variant_id,
-
-product_variants(
-
-color,
-
-size,
-
-products(
-
-name,
-
-price,
-
-categories(
-
-name
-
-)
-
-)
-
-)
-
-)
-
-`)
-
-.eq("id",id)
 
 .single();
 
@@ -1917,182 +1602,869 @@ return;
 
 
 
-document.getElementById("name").value =
-data.customer_name || "";
-
-
-document.getElementById("phone").value =
-data.phone || "";
-
-
-document.getElementById("governorate").value =
-data.governorate || "";
-
-
-document.getElementById("address").value =
-data.address || "";
-
-
-document.getElementById("notes").value =
-data.notes || "";
+customer=newCustomer;
 
 
 
-deliveryPrice =
-Number(data.delivery_price || 0);
+}else{
 
 
+customerType="old";
 
-document.getElementById("deliveryPrice").value =
-deliveryPrice;
+
+}
 
 
 
 
-cart=[];
 
 
 
-data.order_items.forEach(item=>{
+// تحديث العميل
 
 
-cart.push({
+await supabase
 
-variant_id:item.variant_id,
+.from("customers")
 
-quantity:item.quantity,
+.update({
 
-color:item.product_variants.color,
 
-size:item.product_variants.size,
+orders_count:
 
-product:item.product_variants.products.name,
+(customer.orders_count||0)+1,
 
-category:
-item.product_variants.products.categories.name,
 
-price:item.price
+last_order:new Date()
+
+
+
+})
+
+.eq(
+"id",
+customer.id
+);
+
+
+
+
+
+
+
+
+
+
+// =====================
+// الطلب
+// =====================
+
+
+
+const {data:order,error}=await supabase
+
+.from("orders")
+
+.insert({
+
+
+customer_id:customer.id,
+
+
+customer_name:
+
+document.getElementById("name").value,
+
+
+phone,
+
+
+governorate:
+
+document.getElementById("governorate").value,
+
+
+address:
+
+document.getElementById("address").value,
+
+
+nearest_point:
+
+document.getElementById("nearest_point").value || "",
+
+
+
+source:
+
+document.getElementById("source").value,
+
+
+
+notes:
+
+document.getElementById("notes").value,
+
+
+
+delivery_price:
+Number(
+document.getElementById("deliveryPrice")?.value || deliveryPrice || 0
+),
+
+total_price:
+
+Number(
+document.getElementById("finalTotal").innerText
+),
+
+
+
+delivery_type:
+
+document.getElementById("manualDelivery").checked
+?
+"manual"
+:
+"auto",
+
+
+
+has_return:
+
+document.getElementById("hasReturn").checked,
+
+
+
+has_partial_refund:
+
+document.getElementById("hasRefund").checked,
+
+
+
+refund_amount:
+
+Number(
+document.getElementById("refundAmount").value ||0
+),
+
+
+
+customer_type:customerType,
+
+
+payment_method:"cash"
+
+
+
+})
+
+.select()
+
+.single();
+
+
+
+
+
+if(error){
+
+
+alert(error.message);
+
+
+return;
+
+
+}
+
+
+
+
+
+
+
+// سجل الحالة
+
+
+await supabase
+
+.from("order_status_history")
+
+.insert({
+
+
+order_id:order.id,
+
+
+status:"new"
 
 
 });
 
 
+
+
+
+
+
+
+// =====================
+// القطع + المخزون
+// =====================
+
+
+
+for(let x of cart){
+
+
+
+const {data:stock}=await supabase
+
+.from("product_variants")
+
+.select("stock_quantity")
+
+.eq(
+"id",
+x.variant_id
+)
+
+.single();
+
+
+
+
+
+await supabase
+
+.from("order_items")
+
+.insert({
+
+
+order_id:order.id,
+
+
+variant_id:x.variant_id,
+
+
+quantity:x.quantity,
+
+
+price:x.price
+
+
+
 });
 
 
 
-renderCart();
+
+
+
+await supabase
+
+.from("stock_movements")
+
+.insert({
+
+
+variant_id:x.variant_id,
+
+
+type:"OUT",
+
+
+quantity:x.quantity,
+
+
+note:
+
+`طلب رقم ${order.id}`
+
+
+
+});
+
+
+
+
+
+
+
+await supabase
+
+.from("product_variants")
+
+.update({
+
+
+stock_quantity:
+
+stock.stock_quantity-x.quantity
+
+
+
+})
+
+.eq(
+"id",
+x.variant_id
+);
+
+
+
+
+
+
+if(
+document.getElementById("hasReturn").checked
+){
+
+
+
+await supabase
+
+.from("returns")
+
+.insert({
+
+
+order_id:order.id,
+
+
+variant_id:x.variant_id,
+
+
+quantity:1,
+
+
+reason:"تبديل مقاس"
+
+
+
+});
+
+
+
+}
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// log
+
+
+await supabase
+
+.from("activity_logs")
+
+.insert({
+
+
+user_id:
+
+document.getElementById("user_id").value || null,
+
+
+action:"CREATE_ORDER",
+
+
+table_name:"orders",
+
+
+record_id:order.id
+
+
+
+});
+
+
+
+
+
+
+
+
+alert("تم حفظ الطلب 🔥");
+
+
+
+clearOrderForm();
+
+
+
+
+
+};
+// =====================
+// زر واتساب
+// =====================
+
+
+document
+
+.getElementById("whatsapp")
+
+.onclick=()=>{
+
+
+if(!validateOrder())
+return;
+
+
 
 generateMessage();
 
 
 
-window.editingOrder = id;
+let phone =
+
+document
+
+.getElementById("phone")
+
+.value.trim();
 
 
 
-document.getElementById("saveOrder").innerHTML=`
 
-<i class="fa-solid fa-pen"></i>
+let text =
 
-تحديث الطلب
+document
 
-`;
+.getElementById("whatsappMessage")
+
+.value;
 
 
 
-}
 
-// تشغيل التعديل اذا موجود ID
 
-if(editId){
+window.open(
 
-loadOrderForEdit(editId);
+`https://wa.me/964${phone.substring(1)}?text=${encodeURIComponent(text)}`
 
-}
+);
+
+
+
+};
+
+
+
+
+
+
+
+// =====================
+// حفظ + واتساب
+// =====================
+
+
+
+document
+
+.getElementById("saveAndWhatsapp")
+
+.onclick=async()=>{
+
+
+
+if(!validateOrder())
+return;
+
+
+
+// حفظ الطلب
+
+await document
+
+.getElementById("saveOrder")
+
+.click();
+
+
+
+
+
+setTimeout(()=>{
+
+
+document
+
+.getElementById("whatsapp")
+
+.click();
+
+
+
+},1200);
+
+
+
+};
+
+
+
+
+
+
+
+
+
+// =====================
+// تنظيف الفورم
+// =====================
+
+
 
 function clearOrderForm(){
 
 
-// بيانات الزبون
 
-document.getElementById("name").value = "";
-
-document.getElementById("phone").value = "";
-
-document.getElementById("address").value = "";
-
-document.getElementById("notes").value = "";
+// بيانات العميل
 
 
-// الاختيارات
+document
 
-document.getElementById("category").value = "";
+.getElementById("name")
 
-document.getElementById("product").innerHTML = `
+.value="";
+
+
+
+document
+
+.getElementById("phone")
+
+.value="";
+
+
+
+document
+
+.getElementById("address")
+
+.value="";
+
+
+
+document
+
+.getElementById("nearest_point")
+
+.value="";
+
+
+
+document
+
+.getElementById("notes")
+
+.value="";
+
+
+
+
+
+
+// المنتجات
+
+
+categorySelect.value="";
+
+
+
+productSelect.innerHTML=`
+
 <option>
+
 اختار المنتج
+
 </option>
+
 `;
 
-document.getElementById("size").innerHTML = `
+
+
+sizeSelect.innerHTML=`
+
 <option>
+
 اختار الحجم
+
 </option>
+
 `;
 
-document.getElementById("color").innerHTML = `
+
+
+colorSelect.innerHTML=`
+
 <option>
+
 اختار اللون
+
 </option>
+
 `;
 
 
-// الكمية
 
-document.getElementById("qty").value = "";
+qtyInput.value="";
+
+
+
 
 
 // السلة
 
-cart = [];
+
+cart=[];
+
 
 renderCart();
 
 
+
+
+
 // التوصيل
 
-deliveryPrice = 0;
 
-document.getElementById("deliveryPrice").value = "";
+deliveryPrice=0;
 
-document.getElementById("finalTotal").innerText = "0";
 
-document.getElementById("total").innerText = "0";
+document
+
+.getElementById("deliveryPrice")
+
+.value="";
+
+
+
+document
+
+.getElementById("total")
+
+.innerText="0";
+
+
+
+document
+
+.getElementById("finalTotal")
+
+.innerText="0";
+
+
+
 
 
 // الاسترجاع
 
-document.getElementById("hasReturn").checked = false;
-
-document.getElementById("hasRefund").checked = false;
-
-
-document.getElementById("refundBox").style.display="none";
-
-document.getElementById("refundAmount").value="";
-
-
-// رسالة الواتساب
-
-document.getElementById("whatsappMessage").value="";
-
-
-// عدادات الزبون
 
 document
+
+.getElementById("hasReturn")
+
+.checked=false;
+
+
+
+document
+
+.getElementById("hasRefund")
+
+.checked=false;
+
+
+
+
+document
+
+.getElementById("refundBox")
+
+.style.display="none";
+
+
+
+document
+
+.getElementById("refundAmount")
+
+.value="";
+
+
+
+
+
+
+
+// الرسالة
+
+
+document
+
+.getElementById("whatsappMessage")
+
+.value="";
+
+
+
+
+
+// كارد العميل
+
+
+document
+
 .getElementById("customerInfo")
+
 .classList.remove("show");
 
 
+
 }
+
+
+
+
+
+
+
+
+// =====================
+// زر السكرول
+// =====================
+
+
+const scrollBtn =
+
+document
+
+.getElementById("scrollTop");
+
+
+
+
+window.addEventListener("scroll",()=>{
+
+
+
+if(window.scrollY > 300){
+
+
+
+scrollBtn.innerHTML=
+
+`
+<i class="fa-solid fa-arrow-up"></i>
+`;
+
+
+
+}else{
+
+
+scrollBtn.innerHTML=
+
+`
+<i class="fa-solid fa-arrow-down"></i>
+`;
+
+
+
+}
+
+
+});
+
+
+
+
+
+scrollBtn.onclick=()=>{
+
+
+
+if(window.scrollY>300){
+
+
+
+window.scrollTo({
+
+
+top:0,
+
+
+behavior:"smooth"
+
+
+});
+
+
+
+}else{
+
+
+window.scrollTo({
+
+
+top:document.body.scrollHeight,
+
+
+behavior:"smooth"
+
+
+});
+
+
+}
+
+
+
+};
+
+
+
+
+
+
+
+
+
+// =====================
+// تشغيل الصفحة
+// =====================
+
+
+
+async function init(){
+
+
+
+await loadCategories();
+
+
+await loadGovernorates();
+
+
+
+}
+
+
+
+init();

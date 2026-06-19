@@ -143,7 +143,7 @@ padding:35px 6%;
 
 
 /* =====================
- STATUS CARDS
+ PREMIUM STATUS CARDS
 ===================== */
 
 
@@ -153,9 +153,9 @@ display:grid;
 
 grid-template-columns:repeat(3,1fr);
 
-gap:18px;
+gap:22px;
 
-margin-bottom:30px;
+margin-bottom:35px;
 
 }
 
@@ -163,73 +163,87 @@ margin-bottom:30px;
 
 .status-card{
 
+
 border:none;
 
-background:white;
+padding:18px;
 
-border-radius:30px;
+height:150px;
 
-padding:22px;
+border-radius:28px;
 
 cursor:pointer;
-
-font-family:'Cairo';
-
-box-shadow:0 15px 35px #0001;
-
-border:1px solid #f7b6c8;
-
-transition:.3s;
 
 position:relative;
 
 overflow:hidden;
 
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+gap:8px;
+
+font-family:'Cairo';
+
+transition:.35s;
+
+box-shadow:0 12px 35px #0002;
+
+color:#333;
+
+
 }
+
 
 
 
 .status-card:hover{
 
-transform:translateY(-5px);
+
+transform:translateY(-6px) scale(1.02);
+
 
 }
 
 
 
-/* الحالة المختارة */
 
-.status-card.active{
 
-background:#fff0f5;
+/* الاسم */
 
-border:2px solid #d987a0;
 
-box-shadow:0 15px 40px #f7b6c888;
+.status-card h3{
 
-transform:translateY(-5px);
+
+font-size:16px;
+
+font-weight:700;
+
+margin:0;
+
+color:#333;
+
 
 }
 
 
 
-.status-card.active::after{
 
-content:"✓";
 
-position:absolute;
+/* الرقم */
 
-top:10px;
 
-left:15px;
+.status-card span{
 
-width:28px;
 
-height:28px;
+width:45px;
 
-background:#d987a0;
-
-color:white;
+height:45px;
 
 border-radius:50%;
 
@@ -239,49 +253,93 @@ align-items:center;
 
 justify-content:center;
 
-font-weight:bold;
+font-size:16px;
+
+font-weight:600;
+
+background:white;
+
+box-shadow:0 5px 15px #0002;
+
 
 }
 
 
+
+
+
+/* الايقونة */
 
 
 .status-card i{
 
-font-size:30px;
 
-color:#d987a0;
+font-size:25px;
 
-margin-bottom:10px;
+margin-bottom:5px;
+
 
 }
 
 
+.status-card.new span{
 
-.status-card h3{
-
-font-size:15px;
-
-color:#777;
+background:#ffb84d;
+color:white;
 
 }
 
 
+.status-card.ready span{
 
-.status-card span{
-
-font-size:32px;
-
-font-weight:800;
-
-color:#111;
+background:#67b7ff;
+color:white;
 
 }
 
 
-/* =====================
- COLORS
-===================== */
+.status-card.delivery span{
+
+background:#8b7cff;
+color:white;
+
+}
+
+
+.status-card.done span{
+
+background:#65c97a;
+color:white;
+
+}
+
+
+.status-card.delayed span{
+
+background:#d987a0;
+color:white;
+
+}
+
+
+.status-card.rejected span{
+
+background:#ff6b81;
+color:white;
+
+}
+
+
+/* الالوان */
+
+
+.status-card.new{
+
+
+background:#fff0d6;
+
+
+}
 
 
 .status-card.new i{
@@ -292,12 +350,30 @@ color:#ffb84d;
 
 
 
+.status-card.ready{
+
+
+background:#e8f5ff;
+
+
+}
+
+
 .status-card.ready i{
 
 color:#67b7ff;
 
 }
 
+
+
+.status-card.delivery{
+
+
+background:#eeebff;
+
+
+}
 
 
 .status-card.delivery i{
@@ -308,12 +384,47 @@ color:#8b7cff;
 
 
 
+.status-card.done{
+
+
+background:#e9ffef;
+
+
+}
+
+
 .status-card.done i{
 
 color:#65c97a;
 
 }
 
+
+
+.status-card.delayed{
+
+
+background:#fff0f5;
+
+
+}
+
+
+.status-card.delayed i{
+
+color:#d987a0;
+
+}
+
+
+
+.status-card.rejected{
+
+
+background:#fff0f2;
+
+
+}
 
 
 .status-card.rejected i{
@@ -326,56 +437,118 @@ color:#ff6b81;
 
 
 
+/* علامة التحديد */
 
+.status-card.active::after{
 
-/* =====================
- CARD
-===================== */
+content:"✓";
 
+position:absolute;
 
-.card{
+top:12px;
 
+right:12px;
 
-background:white;
+width:30px;
 
-padding:30px;
+height:30px;
 
-border-radius:35px;
+background:#93d987;
 
-box-shadow:0 15px 40px #0001;
+color:rgb(255, 255, 255);
 
-margin-bottom:35px;
-
-
-}
-
-
-
-.card h2{
+border-radius:50%;
 
 display:flex;
 
 align-items:center;
 
+justify-content:center;
+
+font-size:18px;
+
+font-weight:800;
+
+box-shadow:0 5px 15px #d987a055;
+
+}
+
+
+
+.status-card.active::after{
+
+
+content:"✓";
+
+position:absolute;
+
+top:12px;
+
+right:12px;
+
+width:26px;
+
+height:26px;
+
+background:#059000;
+
+color:rgb(255, 255, 255);
+
+border-radius:50%;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:13px;
+
+
+}
+
+
+
+
+
+
+@media(max-width:600px){
+
+
+.order-status-cards{
+
+
+grid-template-columns:repeat(2,1fr);
+
 gap:12px;
 
-font-size:25px;
-
-margin-bottom:25px;
 
 }
 
 
 
-.card h2 i{
+.status-card{
 
-color:#f7b6c8;
+
+height:130px;
+
+border-radius:22px;
+
 
 }
 
 
 
+.status-card i{
 
+
+font-size:22px;
+
+
+}
+
+
+}
 
 
 
@@ -686,7 +859,7 @@ cursor:pointer;
 
 
 
-#editOrder,s
+#editOrder,
 #saveStatus{
 
 
@@ -897,11 +1070,9 @@ position:relative;
 
 
 
+/* رقم الوصل + checkbox */
 
-/* رقم الوصل */
-
-td:nth-child(1){
-
+.order-number{
 
 background:#fff0f5;
 
@@ -913,7 +1084,36 @@ margin-bottom:10px;
 
 font-weight:800;
 
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+direction:rtl;
+
 }
+
+
+.order-number .order-check{
+
+order:2;
+
+margin-right:auto;
+
+}
+
+
+.order-number::before{
+
+content:"وصل رقم";
+
+font-size:12px;
+
+color:#d987a0;
+
+}
+
 
 
 
@@ -932,16 +1132,16 @@ color:#d987a0;
 
 
 
-td{
 
+td{
 
 display:flex;
 
 justify-content:space-between;
 
-align-items:center;
+align-items:flex-start;
 
-padding:2px 2px;
+padding:6px 2px;
 
 border:none;
 
@@ -949,11 +1149,54 @@ font-size:14px;
 
 font-weight:600;
 
-line-height:1.5;
+line-height:1.7;
 
 }
 
 
+/* خانة المنتجات */
+
+.products-cell{
+
+display:block !important;
+
+width:100%;
+
+background:#fafafa;
+
+padding:12px;
+
+border-radius:15px;
+
+margin-top:5px;
+
+}
+
+
+/* كل منتج داخل الطلب */
+
+.products-cell b{
+
+display:block;
+
+color:#d987a0;
+
+font-size:16px;
+
+margin-bottom:5px;
+
+}
+
+
+.products-cell hr{
+
+border:none;
+
+border-top:1px dashed #ddd;
+
+margin:10px 0;
+
+}
 
 
 
@@ -997,29 +1240,16 @@ content:"المحافظة";
 
 td:nth-child(5)::before{
 
-content:"القطعة";
+content:"المنتجات";
 
 }
+
+
+
 
 
 
 td:nth-child(6)::before{
-
-content:"اللون";
-
-}
-
-
-
-td:nth-child(7)::before{
-
-content:"القياس";
-
-}
-
-
-
-td:nth-child(8)::before{
 
 content:"المبلغ";
 
@@ -1029,7 +1259,7 @@ content:"المبلغ";
 
 
 
-td:nth-child(9)::before{
+td:nth-child(7)::before{
 
 content:"الحالة";
 
@@ -1041,7 +1271,7 @@ content:"الحالة";
 
 /* البادج */
 
-td:nth-child(9) .badge{
+td:nth-child(8) .badge{
 
 
 padding:5px 14px;
@@ -1059,7 +1289,7 @@ font-weight:700;
 /* الإجراءات */
 
 
-td:nth-child(10){
+td:nth-child(9){
 
 
 display:flex;
@@ -1197,4 +1427,1396 @@ cursor:pointer;
 box-shadow:0 8px 25px #0003;
 z-index:999;
 transition:.3s;
+}
+/* ============================= */
+/* BULK ACTIONS - تحديد الطلبات */
+/* ============================= */
+
+
+.bulk-actions{
+
+
+display:flex;
+
+align-items:center;
+
+justify-content:flex-start;
+
+gap:18px;
+
+padding:18px 22px;
+
+margin:20px 0;
+
+background:#ffffff;
+
+border-radius:22px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.06);
+
+border:1px solid #f2f2f2;
+
+flex-wrap:wrap;
+
+
+}
+
+
+
+
+/* تحديد الكل */
+
+
+.bulk-actions label{
+
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+font-size:15px;
+
+font-weight:800;
+
+color:#222;
+
+cursor:pointer;
+
+background:#fafafa;
+
+padding:12px 18px;
+
+border-radius:14px;
+
+transition:.3s;
+
+
+}
+
+
+
+.bulk-actions label:hover{
+
+
+background:#fff0d6;
+
+
+}
+
+
+
+
+
+/* checkbox */
+
+
+.bulk-actions input[type="checkbox"],
+
+.order-check{
+
+
+width:20px;
+
+height:20px;
+
+cursor:pointer;
+
+accent-color:#111;
+
+}
+
+
+
+.order-check{
+
+
+transform:scale(1.1);
+
+}
+
+
+
+
+
+/* select الحالة */
+
+
+#bulkStatus{
+
+
+height:48px;
+
+min-width:180px;
+
+padding:0 18px;
+
+border-radius:15px;
+
+border:1px solid #e5e5e5;
+
+background:#fafafa;
+
+font-size:15px;
+
+font-weight:700;
+
+color:#333;
+
+cursor:pointer;
+
+transition:.3s;
+
+
+}
+
+
+
+#bulkStatus:hover{
+
+
+border-color:#111;
+
+
+}
+
+
+
+#bulkStatus:focus{
+
+
+outline:none;
+
+border-color:#111;
+
+background:white;
+
+
+}
+
+
+
+
+/* زر التطبيق */
+
+
+#applyBulk{
+
+
+height:48px;
+
+padding:0 35px;
+
+border:none;
+
+border-radius:15px;
+
+background:#111;
+
+color:white;
+
+font-size:15px;
+
+font-weight:900;
+
+cursor:pointer;
+
+box-shadow:0 8px 20px #0003;
+
+transition:.3s;
+
+
+}
+
+
+
+#applyBulk:hover{
+
+
+transform:translateY(-3px);
+
+background:#333;
+
+
+}
+
+
+
+
+
+
+/* ============================= */
+/* جدول الطلبات checkbox */
+/* ============================= */
+
+
+.order-check{
+
+
+appearance:none;
+
+border:2px solid #ddd;
+
+border-radius:7px;
+
+background:white;
+
+position:relative;
+
+transition:.25s;
+
+
+}
+
+
+
+.order-check:hover{
+
+
+border-color:#111;
+
+
+}
+
+
+
+.order-check:checked{
+
+
+background:#111;
+
+border-color:#111;
+
+
+}
+
+
+
+.order-check:checked::after{
+
+
+content:"✓";
+
+position:absolute;
+
+color:white;
+
+font-size:14px;
+
+font-weight:900;
+
+left:50%;
+
+top:50%;
+
+transform:translate(-50%,-55%);
+
+
+}
+
+
+
+
+/* الصف المحدد */
+
+
+tr:has(.order-check:checked){
+
+
+background:#fff8e8 !important;
+
+transition:.3s;
+
+
+}
+
+
+
+
+/* =====================
+ PREMIUM CONTROL BAR
+===================== */
+
+
+.control-bar{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+background:white;
+
+padding:10px 14px;
+
+border-radius:20px;
+
+box-shadow:0 8px 25px #0001;
+
+margin:18px 0;
+
+border:1px solid #f3e8ec;
+
+}
+
+
+
+/* =====================
+ SEARCH
+===================== */
+
+
+.search-mini{
+
+flex:1;
+
+height:42px;
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+background:#faf7f8;
+
+border:1px solid #f1e1e6;
+
+border-radius:14px;
+
+padding:0 15px;
+
+transition:.3s;
+
+
+}
+
+
+
+.search-mini:focus-within{
+
+background:white;
+
+border-color:#f7b6c8;
+
+box-shadow:0 0 0 4px #f7b6c833;
+
+
+}
+
+
+
+.search-mini i{
+
+color:#d987a0;
+
+font-size:16px;
+
+}
+
+
+
+.search-mini input{
+
+border:none;
+
+outline:none;
+
+background:transparent;
+
+width:100%;
+
+height:100%;
+
+font-family:Cairo;
+
+font-size:14px;
+
+}
+
+
+
+
+
+/* =====================
+ SELECT ALL
+===================== */
+
+
+.select-all{
+
+height:42px;
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+padding:0 16px;
+
+background:#fff6f8;
+
+border-radius:14px;
+
+font-size:14px;
+
+font-weight:800;
+
+cursor:pointer;
+
+white-space:nowrap;
+
+transition:.3s;
+
+border:1px solid transparent;
+
+
+}
+
+
+
+.select-all:hover{
+
+border-color:#f7b6c8;
+
+background:#fff0f5;
+
+}
+
+
+
+.select-all input{
+
+width:18px;
+
+height:18px;
+
+accent-color:#d987a0;
+
+cursor:pointer;
+
+}
+
+
+
+
+
+/* =====================
+ ICON BUTTONS
+===================== */
+
+
+.control-icons{
+
+display:flex;
+
+gap:8px;
+
+
+}
+
+
+
+.control-icons button{
+
+width:40px;
+
+height:40px;
+
+border:none;
+
+border-radius:13px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+color:white;
+
+cursor:pointer;
+
+font-size:15px;
+
+transition:.3s;
+
+box-shadow:0 5px 15px #0002;
+
+
+}
+
+
+
+#bulkUpdate{
+
+background:linear-gradient(135deg,#8b7cff,#6d5dfc);
+
+}
+
+
+
+#bulkDelete{
+
+background:linear-gradient(135deg,#ff7b92,#ff5b75);
+
+}
+
+
+
+
+.control-icons button:hover{
+
+transform:translateY(-3px) scale(1.05);
+
+
+}
+
+
+
+/* =====================
+ MOBILE
+===================== */
+
+
+@media(max-width:700px){
+
+
+.control-bar{
+
+flex-wrap:wrap;
+
+padding:12px;
+
+
+}
+
+
+
+.search-mini{
+
+width:100%;
+
+flex:none;
+
+}
+
+
+
+.select-all{
+
+flex:1;
+
+justify-content:center;
+
+}
+
+
+
+.control-icons{
+
+gap:10px;
+
+}
+
+
+
+.control-icons button{
+
+width:42px;
+
+height:42px;
+
+}
+
+
+}
+.control-bar{
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+gap:20px;
+
+flex-wrap:wrap;
+
+margin-bottom:25px;
+
+width:100%;
+
+}
+
+/* البحث */
+
+.search-mini{
+
+flex:1;
+
+min-width:280px;
+
+height:50px;
+
+}
+.products-cell{
+    min-width:220px;
+}
+
+
+.product-box{
+
+background:#f7f7f7;
+
+padding:10px;
+
+border-radius:10px;
+
+margin-bottom:8px;
+
+line-height:1.8;
+
+direction:rtl;
+
+text-align:right;
+
+}
+
+
+
+/* خلفية المودال */
+
+#modal{
+
+position:fixed;
+
+inset:0;
+
+background:rgba(0,0,0,0.55);
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+z-index:9999;
+
+padding:20px;
+
+}
+
+
+
+/* صندوق المودال */
+
+.modal-box{
+
+width:380px;
+
+max-width:95%;
+
+background:white;
+
+border-radius:22px;
+
+padding:25px;
+
+position:relative;
+
+box-shadow:0 20px 50px rgba(0,0,0,.25);
+
+animation:showModal .25s ease;
+
+}
+
+
+
+/* حركة الفتح */
+
+@keyframes showModal{
+
+from{
+
+transform:scale(.8);
+
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
+
+
+
+/* زر الاغلاق */
+
+#close{
+
+position:absolute;
+
+top:15px;
+
+left:15px;
+
+width:35px;
+
+height:35px;
+
+border-radius:50%;
+
+border:none;
+
+background:#ff4757;
+
+color:white;
+
+cursor:pointer;
+
+font-size:18px;
+
+}
+
+
+
+/* العنوان */
+
+.modal-box h2{
+
+text-align:center;
+
+margin-bottom:20px;
+
+font-size:22px;
+
+}
+
+
+
+/* تفاصيل الطلب */
+
+#details{
+
+max-height:350px;
+
+overflow-y:auto;
+
+padding:5px;
+
+}
+
+
+
+/* بيانات الزبون */
+
+#details p{
+
+background:#f7f7f7;
+
+padding:10px;
+
+border-radius:12px;
+
+margin:8px 0;
+
+font-size:14px;
+
+}
+
+
+
+/* كل قطعة */
+
+#details > div{
+
+background:#fafafa;
+
+border-radius:15px;
+
+padding:15px;
+
+margin-bottom:12px;
+
+border:1px solid #eee;
+
+font-size:14px;
+
+line-height:1.8;
+
+}
+
+
+/* كارت المنتج بالاسترجاع */
+
+.return-product-card{
+
+display:flex;
+
+direction:rtl;
+
+align-items:flex-start;
+
+gap:12px;
+
+background:#fff;
+
+border:1px solid #eee;
+
+padding:10px;
+
+border-radius:18px;
+
+margin-bottom:10px;
+
+box-shadow:0 5px 18px rgba(0,0,0,.06);
+
+}
+
+
+
+/* الصورة + الزر */
+
+.return-image-box{
+
+width:85px;
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+gap:8px;
+
+}
+
+
+
+/* صورة المنتج */
+
+.return-img{
+
+width:85px;
+
+height:85px;
+
+object-fit:cover;
+
+border-radius:16px;
+
+}
+
+
+
+/* صندوق الصورة والزر */
+
+.return-image-box{
+
+width:85px;
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+justify-content:center;
+
+gap:8px;
+
+}
+
+
+
+/* صورة المنتج */
+
+.return-img{
+
+width:85px;
+
+height:85px;
+
+object-fit:cover;
+
+border-radius:16px;
+
+}
+
+
+
+/* زر الاسترجاع */
+
+.return-btn{
+
+width:36px;
+
+height:36px;
+
+border-radius:50%;
+
+border:none;
+
+background:#2563eb;
+
+color:white;
+
+cursor:pointer;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:17px;
+
+transition:.35s;
+
+box-shadow:0 4px 12px rgba(37,99,235,.35);
+
+}
+
+
+
+/* حركة السهم */
+
+.return-btn i{
+
+transition:.5s;
+
+}
+
+
+
+.return-btn:hover{
+
+background:#1d4ed8;
+
+transform:translateY(-3px);
+
+}
+
+
+
+.return-btn:hover i{
+
+transform:rotate(-180deg);
+
+}
+
+
+
+
+
+/* معلومات المنتج */
+
+.return-info{
+
+flex:1;
+
+text-align:right;
+
+padding-top:3px;
+
+}
+
+
+
+.return-info b{
+
+font-size:14px;
+
+color:#111;
+
+display:block;
+
+margin-bottom:8px;
+
+}
+
+
+
+.return-info p{
+
+font-size:12px;
+
+margin:4px 0;
+
+color:#555;
+
+}
+
+
+
+
+/* الهيدر */
+
+.return-modal-header{
+
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+direction:rtl;
+
+margin-bottom:15px;
+
+}
+
+
+
+.return-modal-header h2{
+
+font-size:18px;
+
+margin:0;
+
+}
+
+
+
+.return-modal-header span{
+
+
+background:#111;
+
+color:#fff;
+
+padding:5px 12px;
+
+border-radius:20px;
+
+font-size:12px;
+
+
+}
+
+
+
+
+/* معلومات الزبون */
+
+.customer-box{
+
+
+background:#f8fafc;
+
+padding:12px;
+
+border-radius:16px;
+
+font-size:13px;
+
+border:1px solid #eee;
+
+
+}
+
+
+
+.customer-box p{
+
+margin:5px 0;
+
+}
+
+
+
+
+/* عنوان المنتجات */
+
+.products-title{
+
+font-size:15px;
+
+margin:15px 0 10px;
+
+}
+
+
+
+
+
+/* المجموع */
+
+.total-box{
+
+
+background:#111;
+
+color:white;
+
+text-align:center;
+
+
+padding:12px;
+
+
+border-radius:16px;
+
+
+font-size:15px;
+
+
+margin-top:12px;
+
+
+}
+
+.product-box{
+
+display:flex;
+align-items:stretch;
+justify-content:space-between;
+
+direction:rtl;
+
+background:#fff;
+
+border:1px solid #eee;
+
+border-radius:12px;
+
+padding:10px;
+
+margin-bottom:10px;
+
+}
+
+
+.product-info{
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+gap:6px;
+
+font-size:14px;
+
+}
+
+
+
+.product-info b{
+
+font-size:16px;
+
+color:#222;
+
+}
+
+
+
+.variant-img{
+
+
+width:90px;
+
+height:90px;
+
+object-fit:cover;
+
+border-radius:12px;
+
+margin-left:10px;
+
+
+}
+
+.order-select-box{
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+direction:rtl;
+
+}
+
+
+
+.order-id{
+
+font-weight:bold;
+
+font-size:14px;
+
+}
+
+
+
+.return-order-icon{
+
+
+width:28px;
+
+height:28px;
+
+border-radius:50%;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+background:#fff7ed;
+
+color:#f97316;
+
+border:1px solid #fed7aa;
+
+font-size:13px;
+
+cursor:pointer;
+
+transition:.3s;
+
+
+}
+
+.order-number{
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.return-order-icon:hover{
+
+
+background:#f97316;
+
+color:white;
+
+transform:rotate(-20deg) scale(1.1);
+
+
+}
+.order-number-box{
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+direction:rtl;
+
+}
+
+.return-product-card{
+
+display:flex;
+
+direction:rtl;
+
+align-items:center;
+
+gap:12px;
+
+background:white;
+
+padding:10px;
+
+border-radius:18px;
+
+margin-bottom:10px;
+
+box-shadow:0 5px 18px #0001;
+
+}
+
+
+.return-info{
+
+flex:1;
+
+text-align:right;
+
+}
+
+
+.return-image-box{
+
+width:85px;
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+gap:6px;
+
+}
+
+
+.return-img{
+
+width:85px;
+
+height:85px;
+
+object-fit:cover;
+
+border-radius:15px;
+
+}
+
+
+.return-btn{
+
+width:34px;
+
+height:34px;
+
+border-radius:50%;
+
+border:none;
+
+background:#2563eb;
+
+color:white;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+cursor:pointer;
+
+}
+
+
+.return-btn i{
+
+transition:.5s;
+
+}
+
+
+.return-btn:hover i{
+
+transform:rotate(-180deg);
+
 }

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>NIVRA Finance</title>
+
+
+<link rel="stylesheet" href="../css/finance.css">
+
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+</head>
+
+
+<body>
+
+
+
+<header class="topbar">
+
+
+<a href="order-management.html" class="back-btn">
+
+<i class="fa-solid fa-arrow-right"></i>
+
+</a>
+
+
+<div>
+
+<h1>
+NIVRA
+</h1>
+
+<span>
+الحسابات المالية
+</span>
+
+
+</div>
+
+
+</header>
+
+
+
+
+
+<main>
+
+
+
+
+<section class="finance-cards">
+
+
+
+<div class="finance-card completed">
+
+
+<i class="fa-solid fa-circle-check"></i>
+
+
+<div>
+
+<p>
+المكتملة
+</p>
+
+
+<b id="completedCount">
+0
+</b>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="finance-card cancelled">
+
+
+<i class="fa-solid fa-ban"></i>
+
+
+<div>
+
+<p>
+الملغية
+</p>
+
+
+<b id="cancelledCount">
+0
+</b>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="finance-card returns">
+
+
+<i class="fa-solid fa-rotate-left"></i>
+
+
+<div>
+
+<p>
+الرواجع
+</p>
+
+
+<b id="returnCount">
+0
+</b>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+<section class="finance-total">
+
+
+<h3>
+💰 مجموع الطلبات المكتملة
+</h3>
+
+
+<strong id="totalCompleted">
+
+0 د.ع
+
+</strong>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section class="finance-control">
+
+
+<label class="select-all">
+
+
+<input type="checkbox" id="selectAll">
+
+
+تحديد الكل
+
+
+</label>
+
+
+
+<button id="receiveMoney">
+
+
+<i class="fa-solid fa-money-bill-transfer"></i>
+
+استلام الأموال
+
+</button>
+
+
+
+
+<button id="receiveReturns">
+
+
+<i class="fa-solid fa-box-open"></i>
+
+استلام الرواجع
+
+</button>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<div class="finance-table">
+
+
+
+<table>
+
+
+
+<thead>
+
+
+<tr>
+
+
+<th>
+</th>
+
+
+<th>
+رقم الطلب
+</th>
+
+
+<th>
+الزبون
+</th>
+
+
+<th>
+الحالة
+</th>
+
+
+<th>
+المبلغ
+</th>
+
+
+<th>
+التاريخ
+</th>
+
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+
+
+<tbody id="financeOrders">
+
+
+</tbody>
+
+
+
+
+
+</table>
+
+
+
+</div>
+
+
+
+
+
+
+
+</main>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script src="../js/supabase.js"></script>
+
+
+<script src="../js/finance.js"></script>
+
+
+
+</body>
+
+</html>

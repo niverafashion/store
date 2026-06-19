@@ -251,7 +251,7 @@ productsContainer.innerHTML="";
 products.forEach(product=>{
 
 
-productsContainer.innerHTML +=`
+productsContainer.innerHTML =`
 
 
 <div class="product-card">

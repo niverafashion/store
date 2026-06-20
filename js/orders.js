@@ -1144,26 +1144,22 @@ generateMessage();
 
 
 document
-
 .getElementById("hasRefund")
+.onchange = ()=>{
 
-.onchange=()=>{
+let box = document.getElementById("refundBox");
 
-
-let box =
-
-document
-
-.getElementById("refundBox");
+let amount = document.getElementById("refundAmount");
 
 
-
-if(
-document.getElementById("hasRefund").checked
-){
+if(document.getElementById("hasRefund").checked){
 
 
 box.style.display="block";
+
+
+// القيمة الابتدائية
+amount.value = 5000;
 
 
 }else{
@@ -1171,20 +1167,13 @@ box.style.display="block";
 
 box.style.display="none";
 
-
-document
-
-.getElementById("refundAmount")
-
-.value="";
+amount.value="";
 
 
 }
 
 
-
 generateMessage();
-
 
 };
 
@@ -1250,30 +1239,59 @@ updateTotal();
 function generateMessage(){
 
 
+let items = "";
 
-let items="";
+let total = 0;
 
 
-
+// حساب المنتجات
 
 cart.forEach(x=>{
 
 
-items +=`
+let itemTotal = x.price * x.quantity;
 
-🛍 ${x.product}
 
-اللون: ${x.color}
+// اذا يوجد تبديل نحسب القطعة مرة وحدة
 
-الحجم: ${x.size}
+if(document.getElementById("hasReturn").checked){
 
-الكمية: ${x.quantity}
 
-السعر: ${x.price} دينار
+let exists = cart.findIndex(p=>
 
+p.product === x.product &&
+p.price === x.price
+
+);
+
+
+if(exists === cart.indexOf(x)){
+
+
+total += x.price;
+
+
+}
+
+
+
+}else{
+
+
+total += itemTotal;
+
+
+}
+
+
+
+
+items +=
+`🛍 ${x.product}
+اللون: ${x.color} | المقاس: ${x.size}
+الكمية: ${x.quantity} | السعر: ${x.price.toLocaleString()} دينار
 
 `;
-
 
 
 });
@@ -1282,86 +1300,84 @@ items +=`
 
 
 
+let discount = Number(
 
-let message=`
+document.getElementById("discount_amount").value || 0
 
-✨ NIVRA FASHION ✨
-
-
-مرحباً ${document.getElementById("name").value}
-
-
-تم تثبيت طلبك بنجاح 🤍
-
-
-
-👤 بيانات الزبون
-
-━━━━━━━━━━━━
-
-
-الاسم:
-${document.getElementById("name").value}
-
-
-الهاتف:
-${document.getElementById("phone").value}
-
-
-المحافظة:
-${document.getElementById("governorate").value}
-
-
-العنوان:
-${document.getElementById("address").value}
+);
 
 
 
 
-📦 الطلب
+
+let finalTotal =
+
+total + deliveryPrice - discount;
 
 
+
+if(finalTotal < 0){
+
+finalTotal = 0;
+
+}
+
+
+
+
+
+
+
+let message =
+
+`✨ NIVRA FASHION ✨
+مرحباً ${document.getElementById("name").value} 🤍 تم تثبيت طلبك بنجاح ✅
+
+👤 المعلومات الشخصية:
+━━━━━━━━━━━━━
+الاسم: ${document.getElementById("name").value}
+الهاتف: ${document.getElementById("phone").value}
+المحافظة: ${document.getElementById("governorate").value} - ${document.getElementById("address").value}
+━━━━━━━━━━━━━
+
+📦 تفاصيل الطلب:
+━━━━━━━━━━━━━
 ${items}
+━━━━━━━━━━━━━
+
+💰 المبلغ الكلي:
+━━━━━━━━━━━━━
+كلفة المنتجات:${total.toLocaleString()} دينار
+🚚 التوصيل:${deliveryPrice.toLocaleString()} دينار
+🏷 الخصم:${discount.toLocaleString()} دينار
+المجموع النهائي:${finalTotal.toLocaleString()} دينار
+━━━━━━━━━━━━━
+`;
+
+// الاسترجاع
+
+if(document.getElementById("hasReturn").checked){
 
 
-🚚 التوصيل:
+message +=
 
-${deliveryPrice} دينار
-
-${document.getElementById("hasDiscount").checked ? `
-
-🏷 الخصم:
-
-${document.getElementById("discount_amount").value} دينار
-
-` : ""}
-
-💰 المجموع النهائي:
-
-${document.getElementById("finalTotal").innerText} دينار
-
-
+`
+🔄 تم إرسال قطعتين للفحص. يرجى استلام القطعة المناسبة وإرجاع القطعة الأخرى مع مندوب التوصيل.
 
 `;
 
+}
+
+// الاستقطاع
+
+if(document.getElementById("hasRefund").checked){
 
 
+message +=
 
-
-
-if(
-document.getElementById("hasReturn").checked
-){
-
-
-
-message +=`
-
-🔄 يوجد تبديل / استرجاع
+`⚠️ في حال رفض الطلب يتوجب دفع مبلغ ${document.getElementById("refundAmount").value.toLocaleString()} ديناركأجور خدمة للمندوب.
 
 `;
-
-
 
 }
 
@@ -1369,40 +1385,11 @@ message +=`
 
 
 
+message +=
 
-if(
-document.getElementById("hasRefund").checked
-){
+`🛒 زوروا موقعنا للتسوق الإلكتروني: https://niverafashion.github.io/store/index.html
 
-
-message +=`
-
-⚠️ استقطاع عند الرفض:
-
-${document.getElementById("refundAmount").value}
-
-دينار
-
-`;
-
-
-
-}
-
-
-
-
-
-message +=`
-
-🛒 المتجر:
-
-https://niverafashion.github.io/store/index.html
-
-
-شكراً لثقتكم بـ NIVRA 🤍
-
-`;
+شكراً لثقتكم بـ NIVRA 🤍`;
 
 
 
@@ -1412,20 +1399,11 @@ document
 
 .getElementById("whatsappMessage")
 
-.value=message;
+.value = message;
 
 
 
 }
-
-
-
-
-
-
-
-
-
 
 // تحديث الرسالة تلقائياً
 

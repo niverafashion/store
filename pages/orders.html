@@ -31,6 +31,15 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <header class="topbar">
 
 
+<button class="orders-btn"
+onclick="location.href='order-management.html'">
+
+<i class="fa-solid fa-list"></i>
+
+</button>
+
+
+
 <div>
 
 <h1>
@@ -58,9 +67,7 @@ onclick="location.href='../dashboard.html'">
 </button>
 
 
-
 </header>
-
 
 
 
@@ -507,17 +514,19 @@ placeholder="مبلغ التوصيل">
 
 
 
+<div id="returnCheckBox" style="display:none;">
 
 <label>
 
 <input
 type="checkbox"
 id="hasReturn">
-يوجد استرجاع/تبديل
 
+يوجد استرجاع/تبديل
 
 </label>
 
+</div>
 
 
 
@@ -525,7 +534,6 @@ id="hasReturn">
 
 
 <label>
-
 
 <input
 
@@ -533,13 +541,51 @@ type="checkbox"
 
 id="hasRefund">
 
-
 استقطاع مبلغ عند رفض الطلب
-
 
 </label>
 
 
+<div id="refundBox" style="display:none;">
+
+<input
+
+id="refundAmount"
+
+type="number"
+
+value="5000"
+
+placeholder="مبلغ الاستقطاع">
+
+</div>
+
+
+
+<label>
+
+<input
+
+type="checkbox"
+
+id="hasDiscount">
+
+خصم من الطلب
+
+</label>
+
+
+<div id="discountBox" style="display:none;">
+
+<input
+
+id="discount_amount"
+
+type="number"
+
+placeholder="قيمة الخصم">
+
+</div>
 
 
 <div id="refundBox" style="display:none;">

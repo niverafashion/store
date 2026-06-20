@@ -1,266 +1,225 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Cormorant+Garamond:wght@600;700&display=swap');
+import {supabase} from "./supabase.js";
 
 
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-}
-
-
-
-body{
-
-font-family:'Cairo',sans-serif;
-
-background:#faf7f8;
-
-color:#333;
-
-overflow-x:hidden;
-
-}
-
-
-
-/* =====================
- TOP BAR
-===================== */
-
-
-.topbar{
-
-height:95px;
-
-background:white;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
+// =====================
+// العناصر
+// =====================
 
-position:sticky;
+let currentFilter = "new";
+const table =
+document.getElementById("ordersTable");
 
-top:0;
 
-z-index:100;
+const search =
+document.getElementById("search");
 
-box-shadow:0 8px 30px #0002;
 
-}
-
-
-
-.topbar h1{
-
-font-family:'Cormorant Garamond',serif;
+const modal =
+document.getElementById("modal");
 
-font-size:65px;
 
-letter-spacing:6px;
+const details =
+document.getElementById("details");
 
-color:#111;
 
-}
-
+const changeStatus =
+document.getElementById("changeStatus");
 
-.topbar span{
 
-display:block;
+const saveStatus =
+document.getElementById("saveStatus");
 
-text-align:center;
 
-font-size:15px;
-
-color:#d987a0;
-
-}
+const close =
+document.getElementById("close");
 
 
 
-.back-btn{
+let orders=[];
 
-position:absolute;
+let currentOrder=null;
+let scanner=null;
 
-left:25px;
 
-width:55px;
 
-height:55px;
+// =====================
+// تصفير التحديد
+// =====================
 
-border-radius:50%;
+function resetChecks(){
 
-background:#f7b6c8;
+document
+.querySelectorAll(".order-check")
+.forEach(x=>{
 
-color:white;
+x.checked=false;
 
-display:flex;
+});
 
-align-items:center;
 
-justify-content:center;
+let all =
+document.getElementById("selectAll");
 
-font-size:22px;
 
-text-decoration:none;
+if(all){
 
-transition:.3s;
+all.checked=false;
 
 }
 
 
-
-.back-btn:hover{
-
-transform:translateX(5px);
-
 }
+// =====================
+// سجل النشاط
+// =====================
 
+async function addActivity(action,tableName,recordId){
 
 
+await supabase
 
+.from("activity_logs")
 
-/* =====================
- MAIN
-===================== */
+.insert({
 
+action:action,
 
-main{
+table_name:tableName,
 
-max-width:1400px;
+record_id:recordId
 
-margin:auto;
+});
 
-padding:35px 6%;
 
 }
 
+// =====================
+// تحميل الطلبات
+// =====================
 
 
+async function loadOrders(){
 
 
+const {data,error}=await supabase
 
+.from("orders")
 
-/* =====================
- PREMIUM STATUS CARDS
-===================== */
+.select(`
 
+id,
 
-.order-status-cards{
+customer_id,
 
-display:grid;
+customer_name,
 
-grid-template-columns:repeat(3,1fr);
+finance_done,
 
-gap:22px;
+phone,
 
-margin-bottom:35px;
+phone,
 
-}
+governorate,
 
+address,
 
+nearest_point,
 
-.status-card{
+delivery_price,
 
+total_price,
 
-border:none;
+status,
 
-padding:18px;
+has_return,
 
-height:150px;
+has_partial_refund,
 
-border-radius:28px;
+refund_amount,
 
-cursor:pointer;
+completed_at,
 
-position:relative;
+cancelled_reason,
 
-overflow:hidden;
+created_at,
 
-display:flex;
 
-flex-direction:column;
+order_items(
 
-justify-content:center;
+id,
 
-align-items:center;
+order_id,
 
-gap:8px;
+variant_id,
 
-font-family:'Cairo';
+quantity,
 
-transition:.35s;
+price,
 
-box-shadow:0 12px 35px #0002;
+product_variants(
 
-color:#333;
+color,
 
+size,
 
-}
+stock_quantity,
 
+image,
 
+products(
 
+name
 
-.status-card:hover{
+)
 
+)
 
-transform:translateY(-6px) scale(1.02);
+)
 
+`)
 
+.order(
+"created_at",
+{
+ascending:false
 }
-
-
-
-
-
-/* الاسم */
-
+);
 
-.status-card h3{
 
 
-font-size:16px;
+if(error){
 
-font-weight:700;
+console.log(error);
 
-margin:0;
+return;
 
-color:#333;
-
-
 }
-
-
-
-
-
-/* الرقم */
-
-
-.status-card span{
-
 
-width:45px;
 
-height:45px;
 
-border-radius:50%;
+// فقط الطلبات اللي خلصت مالياً تظهر بالإدارة
 
-display:flex;
+orders = data.filter(order => 
+    order.finance_done === false
+);
 
-align-items:center;
 
-justify-content:center;
+console.log(
+"طلبات الادارة:",
+orders
+);
 
-font-size:16px;
 
-font-weight:600;
+// عرض حسب الحالة الحالية
 
-background:white;
+renderOrders(
+    orders.filter(o =>
+        o.status === currentFilter
+    )
+);
 
-box-shadow:0 5px 15px #0002;
 
+updateStatusCards();
 
 }
 
@@ -268,2555 +227,2395 @@ box-shadow:0 5px 15px #0002;
 
 
 
-/* الايقونة */
 
 
-.status-card i{
 
+// =====================
+// عرض الطلبات
+// =====================
 
-font-size:25px;
 
-margin-bottom:5px;
+function renderOrders(list){
 
 
-}
-
+let html="";
 
-.status-card.new span{
 
-background:#ffb84d;
-color:white;
 
-}
+list.forEach(o=>{
 
 
-.status-card.ready span{
+let item=o.order_items?.[0];
 
-background:#67b7ff;
-color:white;
-
-}
 
+let products = o.order_items?.map(item=>{
 
-.status-card.delivery span{
+return `
 
-background:#8b7cff;
-color:white;
+<div class="product-box">
 
-}
 
+<div class="product-info">
 
-.status-card.done span{
 
-background:#65c97a;
-color:white;
+<b>
+🛍 ${item.product_variants?.products?.name || "-"}
+</b>
 
-}
 
+<div>
+🎨 اللون:
+${item.product_variants?.color || "-"}
+</div>
 
-.status-card.delayed span{
 
-background:#d987a0;
-color:white;
+<div>
+📏 الحجم:
+${item.product_variants?.size || "-"}
+</div>
 
-}
 
+<div>
+🔢 الكمية:
+${item.quantity === 0 ? "مسترجعة" : item.quantity}
+</div>
 
-.status-card.rejected span{
 
-background:#ff6b81;
-color:white;
+</div>
 
-}
 
 
-/* الالوان */
+<img
 
+src="${item.product_variants?.image || 'default.png'}"
 
-.status-card.new{
+class="variant-img"
 
 
-background:#fff0d6;
+>
 
 
-}
+</div>
 
 
-.status-card.new i{
+`;
 
-color:#ffb84d;
+}).join("");
+html += `
 
-}
 
+<tr>
 
 
-.status-card.ready{
+<td class="order-number">
 
 
-background:#e8f5ff;
+<div class="order-select-box">
 
 
-}
+<input 
+type="checkbox"
+class="order-check"
+data-id="${o.id}">
 
+<span class="order-id">
 
-.status-card.ready i{
+#${o.id}
 
-color:#67b7ff;
+</span>
+${o.has_return ? `
 
-}
+<span class="return-order-icon" title="طلب يحتوي على استرجاع">
 
+<i class="fa-solid fa-arrow-right-arrow-left"></i></span>
 
+</span>
 
-.status-card.delivery{
+` : ""}
 
+</div>
 
-background:#eeebff;
 
+</td>
 
-}
+<td>${o.customer_name}</td>
 
 
-.status-card.delivery i{
+<td>${o.phone}</td>
 
-color:#8b7cff;
 
-}
+<td>${o.governorate}</td>
 
 
+<td class="products-cell">
 
-.status-card.done{
+${products}
 
+</td>
 
-background:#e9ffef;
+<td>${o.total_price} د.ع</td>
 
 
-}
 
+<td>
 
-.status-card.done i{
+<span class="badge ${o.status}">
 
-color:#65c97a;
+${statusName(o.status)}
 
-}
+</span>
 
+</td>
 
 
-.status-card.delayed{
 
 
-background:#fff0f5;
+<td>
 
 
-}
+<button class="action-btn edit-btn"
 
+onclick="editOrder('${o.id}')">
 
-.status-card.delayed i{
+<i class="fa-solid fa-pen"></i>
 
-color:#d987a0;
+</button>
 
-}
 
 
+<button class="action-btn view-btn"
 
-.status-card.rejected{
+onclick="openOrder('${o.id}')">
 
+<i class="fa-solid fa-eye"></i>
 
-background:#fff0f2;
+</button>
 
 
-}
 
+<button class="action-btn delete-btn"
 
-.status-card.rejected i{
+onclick="deleteOrder('${o.id}')">
 
-color:#ff6b81;
+<i class="fa-solid fa-trash"></i>
 
-}
+</button>
 
 
+<button class="action-btn update-btn"
+data-id="${o.id}">
 
+<i class="fa-solid fa-rotate"></i>
 
+</button>
 
-/* علامة التحديد */
 
-.status-card.active::after{
+</td>
 
-content:"✓";
 
-position:absolute;
+</tr>
 
-top:12px;
 
-right:12px;
+`;
 
-width:30px;
 
-height:30px;
 
-background:#93d987;
+});
 
-color:rgb(255, 255, 255);
 
-border-radius:50%;
 
-display:flex;
 
-align-items:center;
+table.innerHTML=html;
 
-justify-content:center;
+document
+.querySelectorAll(".update-btn")
+.forEach(btn=>{
 
-font-size:18px;
+btn.onclick=()=>{
 
-font-weight:800;
+updateOrderStatus(btn.dataset.id);
 
-box-shadow:0 5px 15px #d987a055;
+};
 
+});
 }
 
 
 
-.status-card.active::after{
 
 
-content:"✓";
 
-position:absolute;
+// ==========================
+// SCROLL TOP BUTTON
+// ==========================
 
-top:12px;
 
-right:12px;
+const scrollBtn =
+document.getElementById("scrollTop");
 
-width:26px;
 
-height:26px;
 
-background:#059000;
+window.addEventListener("scroll",()=>{
 
-color:rgb(255, 255, 255);
 
-border-radius:50%;
+if(window.scrollY > 300){
 
-display:flex;
 
-align-items:center;
+scrollBtn.innerHTML = `
 
-justify-content:center;
+<i class="fa-solid fa-arrow-up"></i>
 
-font-size:13px;
+`;
 
 
-}
-
-
-
-
 
+}else{
 
-@media(max-width:600px){
 
+scrollBtn.innerHTML = `
 
-.order-status-cards{
+<i class="fa-solid fa-arrow-down"></i>
 
+`;
 
-grid-template-columns:repeat(2,1fr);
 
-gap:12px;
-
-
 }
-
-
-
-.status-card{
-
 
-height:130px;
 
-border-radius:22px;
+});
 
 
-}
-
 
 
-.status-card i{
 
+scrollBtn.onclick=()=>{
 
-font-size:22px;
 
+if(window.scrollY > 300){
 
-}
 
-
-}
+window.scrollTo({
 
+top:0,
 
+behavior:"smooth"
 
+});
 
-/* =====================
- SEARCH
-===================== */
 
+}else{
 
-.search-box{
 
+window.scrollTo({
 
-display:grid;
+top:document.body.scrollHeight,
 
-grid-template-columns:2fr 1fr;
+behavior:"smooth"
 
-gap:15px;
+});
 
-margin-bottom:25px;
 
 }
 
 
+};
 
-input,
-select{
+// تحديد الكل
 
+document
+.addEventListener("change",(e)=>{
 
-width:100%;
 
-height:50px;
+if(e.target.id==="selectAll"){
 
-padding:0 18px;
 
-border-radius:20px;
+document
+.querySelectorAll(".order-check")
+.forEach(box=>{
 
-border:2px solid #f7b6c8;
 
-background:white;
+box.checked = e.target.checked;
 
-font-family:'Cairo';
 
-font-size:15px;
+});
 
-outline:none;
 
 }
-
-
-
-input:focus,
-select:focus{
-
-
-box-shadow:0 0 0 4px #f7b6c855;
 
 
-}
-
 
+});
 
 
+let checked =
+document.getElementById("selectAll").checked;
 
-/* =====================
- TABLE
-===================== */
 
 
-table{
+document
+.querySelectorAll(".order-check")
+.forEach(box=>{
 
 
-width:100%;
+box.checked = checked;
 
-border-collapse:collapse;
 
-}
+});
 
 
 
-thead{
+// =====================
+// تحديث جماعي
+// =====================
 
+document
+.getElementById("bulkUpdate")
+.onclick = async()=>{
 
-background:#fff0f5;
 
-}
+let selected=[];
 
 
+document
+.querySelectorAll(".order-check:checked")
+.forEach(box=>{
 
-th{
 
+let order = orders.find(
+o=>o.id == box.dataset.id
+);
 
-padding:15px;
 
-color:#d987a0;
+if(order){
 
-font-weight:800;
+selected.push(order);
 
 }
 
 
+});
 
-td{
 
 
-padding:15px;
+if(selected.length===0){
 
-text-align:right;
+alert("حدد طلبات اولا");
 
-border-bottom:1px solid #eee;
+return;
 
 }
 
 
 
-tbody tr:hover{
 
+let nextStatus = null;
 
-background:#fff8fa;
 
+// حالة الطلبات الحالية
 
-}
+let statuses = [
+...new Set(
+selected.map(o=>o.status)
+)
+];
 
 
 
-/* زر التعديل */
-.edit-btn{
 
-background:#5895ff !important;
+// جديد -> مجهز
 
-}
+if(
+statuses.length === 1 &&
+statuses[0] === "new"
+){
 
 
-/* زر الحذف */
-.delete-btn{
+nextStatus="prepared";
 
-background:#fa0026 !important;
 
 }
 
 
-/* زر تحديث الحالة */
-.update-btn{
 
-background:#00ff37 !important;
 
-}
+// مجهز -> توصيل
 
-.edit-btn:hover{
+else if(
 
-background:#3b9de8 !important;
+statuses.length === 1 &&
+statuses[0] === "prepared"
 
-}
+){
 
 
-.delete-btn:hover{
+nextStatus="delivery";
 
-background:#ff0026 !important;
 
 }
 
 
-.update-btn:hover{
 
-background:#43a85a !important;
 
-}
+// توصيل -> اختيار
 
+else if(
 
+statuses.length === 1 &&
+statuses[0] === "delivery"
 
+){
 
 
-/* =====================
- STATUS BADGE
-===================== */
 
+let choice = prompt(
 
-.badge{
+"اختار الحالة:\n\n1 - مكتمل\n2 - مؤجل\n3 - مرفوض"
 
+);
 
-padding:7px 15px;
 
-border-radius:20px;
 
-color:white;
+if(choice==="1"){
 
-font-size:13px;
+nextStatus="completed";
 
 }
 
 
+else if(choice==="2"){
 
-.badge.new{
+nextStatus="postponed";
 
-background:#ffb84d;
-
 }
-
 
 
-.badge.prepared{
+else if(choice==="3"){
 
-background:#67b7ff;
+nextStatus="cancelled";
 
 }
 
 
+else{
 
-.badge.delivery{
+alert("اختيار غير صحيح");
 
-background:#8b7cff;
+return;
 
 }
 
 
 
-.badge.completed{
-
-background:#65c97a;
-
 }
 
 
 
-.badge.postponed{
-
-background:#d987a0;
-
-}
+else{
 
 
+alert(
+"لازم تكون الطلبات بنفس الحالة حتى تتحدث"
+);
 
-.badge.cancelled{
+return;
 
-background:#ff6b81;
 
 }
-
-
-
-
-
 
-/* =====================
- MODAL
-===================== */
 
 
-#modal{
 
 
-position:fixed;
 
-inset:0;
 
-background:#0005;
+let ok = confirm(
 
-display:none;
+`تغيير حالة ${selected.length} طلب إلى ${statusName(nextStatus)} ؟`
 
-align-items:center;
+);
 
-justify-content:center;
 
-z-index:999;
 
+if(!ok)
 
-}
+return;
 
 
 
-.modal-box{
 
 
-width:450px;
+let ids = selected.map(
+o=>o.id
+);
 
-position:relative;
 
 
-}
 
+const {error}=await supabase
 
+.from("orders")
 
-#close{
+.update({
 
+status:nextStatus
 
-position:absolute;
+})
 
-left:20px;
+.in(
 
-top:20px;
+"id",
 
-border:none;
+ids
 
-background:#ff6b81;
+);
 
-color:white;
 
-width:40px;
 
-height:40px;
 
-border-radius:50%;
+if(error){
 
-cursor:pointer;
+alert(error.message);
 
+return;
 
 }
-
-
-
+// حفظ تاريخ الحالات
 
-#editOrder,
-#saveStatus{
+for(let order of selected){
 
 
-width:100%;
+await supabase
 
-padding:14px;
+.from("order_status_history")
 
-margin-top:15px;
+.insert({
 
-border:none;
+order_id:order.id,
 
-border-radius:25px;
+status:nextStatus
 
-background:#111;
+});
 
-color:white;
 
-font-family:'Cairo';
 
-cursor:pointer;
+// تحديث الزبون
 
+if(nextStatus==="completed"){
 
-}
 
+await supabase
 
+.from("customers")
 
+.update({
 
-#editOrder:hover,
-#saveStatus:hover{
+completed_orders:
+orders.find(x=>x.id===order.id)
+?.customer_id
 
+})
 
-background:#d987a0;
+.eq(
+"id",
+order.customer_id
+);
 
 
 }
-
-
-
-
-
-/* =====================
- MOBILE
-===================== */
 
 
-@media(max-width:900px){
 
-.topbar{
+if(nextStatus==="cancelled"){
 
-height:75px;
 
-}
-
+await supabase
 
+.from("customers")
 
-.topbar h1{
-
-font-size:42px;
-
-}
+.update({
 
+cancelled_orders:
+orders.find(x=>x.id===order.id)
+?.customer_id
 
+})
 
-.topbar span{
+.eq(
+"id",
+order.customer_id
+);
 
-font-size:13px;
 
 }
 
 
 
-.back-btn{
+await addActivity(
 
-width:42px;
+"تحديث حالة طلب",
 
-height:42px;
+"orders",
 
-top:17px;
+order.id
 
-}
-
-main{
+);
 
-padding:20px 15px;
 
 }
-
-.order-status-cards{
-
-
-grid-template-columns:repeat(3,1fr);
 
-gap:10px;
 
+alert("تم تحديث الطلبات 🔥");
 
-}
 
+resetChecks();
 
 
+await loadOrders();
 
-.status-card{
+};
 
 
-padding:6px;
 
-border-radius:30px;
 
 
-}
+// =====================
+// حذف جماعي
+// =====================
 
 
+document
 
+.getElementById("bulkDelete")
 
+.onclick = async()=>{
 
-.search-box{
 
+let ids=[];
 
-grid-template-columns:1fr;
 
-}
+document
+.querySelectorAll(".order-check:checked")
+.forEach(box=>{
 
 
+ids.push(box.dataset.id);
 
 
+});
 
-.card{
 
 
-padding:10px;
+if(ids.length===0){
 
-border-radius:25px;
+alert("حدد طلبات اولا");
 
+return;
 
 }
-
-
 
 
 
-.topbar h1{
 
 
-font-size:45px;
+let ok = confirm(
 
+`هل تريد حذف ${ids.length} طلب؟`
 
-}
+);
 
 
-}
 
+if(!ok)
+return;
 
 
 
 
+const {error}=await supabase
 
+.from("orders")
 
+.delete()
 
-/* =====================
- جدول الهاتف - تصميم احترافي
-===================== */
+.in(
+"id",
+ids
+);
 
 
-@media(max-width:600px){
 
+if(error){
 
-table,
-thead,
-tbody,
-th,
-td,
-tr{
+alert(error.message);
 
-display:block;
+return;
 
 }
-
-
-
-thead{
-
-display:none;
 
-}
 
 
+alert("تم حذف الطلبات");
+resetChecks();
 
 
+await loadOrders();
 
-tbody tr{
 
 
-background:#ffffff;
+};
+// =====================
+// تعديل الطلب
+// =====================
 
-margin-bottom:18px;
 
-border-radius:25px;
+window.editOrder=function(id){
 
-padding:15px 16px;
 
-box-shadow:0 8px 25px #0002;
+window.location.href =
 
-border:1px solid #f7b6c8;
+`edit-orders.html?id=${id}`;
 
-position:relative;
 
 }
-
-
-
-
-/* رقم الوصل + checkbox */
 
-.order-number{
 
-background:#fff0f5;
+window.deleteOrder = async function(id){
 
-border-radius:18px;
+let ok = confirm("هل تريد حذف الطلب؟");
 
-padding:10px 14px;
+if(!ok) return;
 
-margin-bottom:10px;
 
-font-weight:800;
 
-display:flex;
+// حذف returns المرتبطة
 
-align-items:center;
+let {data:returns,error:returnsCheckError}=await supabase
+.from("returns")
+.select("id,order_id")
+.eq("order_id", id);
 
-gap:10px;
 
-direction:rtl;
+console.log("returns قبل الحذف:", returns);
 
-}
 
 
-.order-number .order-check{
+if(returnsCheckError){
 
-order:2;
+alert(returnsCheckError.message);
 
-margin-right:auto;
+return;
 
 }
-
-
-.order-number::before{
-
-content:"وصل رقم";
-
-font-size:12px;
 
-color:#d987a0;
 
-}
 
+if(returns?.length){
 
+const {error}=await supabase
+.from("returns")
+.delete()
+.eq("order_id", id);
 
 
-td:nth-child(1)::before{
+console.log("حذف returns:",error);
 
 
-content:"وصل رقم";
+if(error){
 
-font-size:12px;
+alert(error.message);
 
-color:#d987a0;
+return;
 
 }
-
 
-
+}
 
 
 
-td{
+// حذف order_items
 
-display:flex;
+const {error:itemError}=await supabase
+.from("order_items")
+.delete()
+.eq("order_id",id);
 
-justify-content:space-between;
 
-align-items:flex-start;
+console.log("حذف items:",itemError);
 
-padding:6px 2px;
 
-border:none;
 
-font-size:14px;
+if(itemError){
 
-font-weight:600;
+alert(itemError.message);
 
-line-height:1.7;
+return;
 
 }
-
 
-/* خانة المنتجات */
 
-.products-cell{
 
-display:block !important;
 
-width:100%;
-
-background:#fafafa;
-
-padding:12px;
-
-border-radius:15px;
-
-margin-top:5px;
-
-}
+// حذف history
 
+const {error:historyError}=await supabase
+.from("order_status_history")
+.delete()
+.eq("order_id",id);
 
-/* كل منتج داخل الطلب */
 
-.products-cell b{
+console.log("حذف history:",historyError);
 
-display:block;
 
-color:#d987a0;
 
-font-size:16px;
 
-margin-bottom:5px;
+// حذف النشاط
 
-}
+await supabase
+.from("activity_logs")
+.delete()
+.eq("record_id",id);
 
 
-.products-cell hr{
 
-border:none;
 
-border-top:1px dashed #ddd;
+// الآن حذف الطلب
 
-margin:10px 0;
+const {error:orderError}=await supabase
+.from("orders")
+.delete()
+.eq("id",id);
 
-}
 
 
+console.log("حذف الطلب:",orderError);
 
-td::before{
 
 
-font-weight:800;
+if(orderError){
 
+alert(orderError.message);
 
-font-size:12px;
+return;
 
 }
-
-
-
 
 
-td:nth-child(2)::before{
 
-content:"الزبون";
+alert("تم الحذف ✅");
 
-}
-
 
+loadOrders();
 
-td:nth-child(3)::before{
 
-content:"الهاتف";
-
 }
-
-
 
-td:nth-child(4)::before{
 
-content:"المحافظة";
 
-}
-
 
+// =====================
+// ارجاع قطعة للمخزن
+// =====================
 
-td:nth-child(5)::before{
 
-content:"المنتجات";
+async function returnSingleItem(item){
 
-}
 
+let variant =
+item.variant_id;
 
 
 
+let qty =
+item.quantity;
 
 
-td:nth-child(6)::before{
 
-content:"المبلغ";
-
-}
+// جلب المخزون الحالي
 
+const {data:variantData,error:vError}=
 
+await supabase
 
+.from("product_variants")
 
+.select("stock_quantity")
 
-td:nth-child(7)::before{
+.eq("id",variant)
 
-content:"الحالة";
+.single();
 
-}
 
 
+if(vError)
+return;
 
 
 
-/* البادج */
+// زيادة المخزون
 
-td:nth-child(8) .badge{
 
+await supabase
 
-padding:5px 14px;
+.from("product_variants")
 
-font-size:12px;
+.update({
 
-font-weight:700;
+stock_quantity:
 
-}
+variantData.stock_quantity + qty
 
+})
 
+.eq(
 
+"id",
 
+variant
 
-/* الإجراءات */
+);
 
 
-td:nth-child(9){
 
 
-display:flex;
 
-justify-content:center;
+// تسجيل حركة
 
-gap:10px;
 
-padding-top:12px;
+await supabase
 
-margin-top:10px;
+.from("stock_movements")
 
-border-top:1px dashed #770022;
+.insert({
 
-}
+variant_id:variant,
 
+type:"return",
 
+quantity:qty,
 
+note:"ارجاع من طلب"
 
+});
 
-td:nth-child(10)::before{
 
-content:"";
 
-}
 
 
+// تسجيل returns
 
 
+await supabase
 
-.action-btn{
+.from("returns")
 
+.insert({
 
-width:34px;
+order_id:item.order_id,
 
-height:34px;
+order_item_id:item.id,
 
-padding:0;
+variant_id:variant,
 
-border-radius:50%;
+quantity:qty,
 
-display:flex;
+reason:"استرجاع من الطلب"
 
-align-items:center;
+});
 
-justify-content:center;
 
-font-size:13px;
 
-box-shadow:0 5px 15px #0002;
 
-}
+await supabase
 
+// اذا الكمية اكثر من 1 نقص وحدة فقط
 
+if(item.quantity > 1){
 
 
+await supabase
 
-.action-btn i{
+.from("order_items")
 
+.update({
 
-font-size:13px;
+quantity: 1
 
-}
+})
 
+.eq(
 
+"id",
 
+item.id
 
+);
 
-.modal-box{
 
-width:92%;
 
 }
 
+else{
 
+await supabase
 
-}
-
-html{
+.from("order_items")
 
--webkit-text-size-adjust:100%;
+.delete()
 
-}
+.eq(
 
+"id",
 
+item.id
 
-button,
-input,
-select{
+);
 
-font-size:16px !important;
 
 }
-.action-btn{
+const {data:remainingItems}=await supabase
 
-width:35px;
+.from("order_items")
 
-height:35px;
+.select("id")
 
-border-radius:50%;
+.eq(
+"order_id",
+item.order_id
+);
 
-padding:0;
 
-display:inline-flex;
+if(!remainingItems || remainingItems.length===0){
 
-align-items:center;
 
-justify-content:center;
+await supabase
 
-margin:3px;
+.from("orders")
 
-font-size:14px;
-
-}
+.update({
 
+total_price:0
 
+})
 
-.action-btn:hover{
+.eq(
+"id",
+item.order_id
+);
 
-transform:scale(1.1);
 
 }
-.scroll-top{
-position:fixed;
-bottom:25px;
-left:25px;
-width:40px;
-height:40px;
-border:none;
-border-radius:90%;
-background:#00bfffe1;
-color:white;
-font-size:2px;
-cursor:pointer;
-box-shadow:0 8px 25px #0003;
-z-index:999;
-transition:.3s;
-}
-/* ============================= */
-/* BULK ACTIONS - تحديد الطلبات */
-/* ============================= */
-
-
-.bulk-actions{
-
-
-display:flex;
+// تحديث مجموع الطلب
 
-align-items:center;
+const {data:items}=await supabase
 
-justify-content:flex-start;
+.from("order_items")
 
-gap:18px;
+.select("price,quantity")
 
-padding:18px 22px;
+.eq(
+"order_id",
+item.order_id
+);
 
-margin:20px 0;
 
-background:#ffffff;
 
-border-radius:22px;
+let newTotal=0;
 
-box-shadow:0 10px 30px rgba(0,0,0,.06);
 
-border:1px solid #f2f2f2;
+items?.forEach(i=>{
 
-flex-wrap:wrap;
 
+newTotal += i.price*i.quantity;
 
-}
 
+});
 
 
 
-/* تحديد الكل */
+await supabase
 
+.from("orders")
 
-.bulk-actions label{
+.update({
 
+total_price:newTotal
 
-display:flex;
+})
 
-align-items:center;
+.eq(
 
-gap:10px;
+"id",
 
-font-size:15px;
+item.order_id
 
-font-weight:800;
+);
 
-color:#222;
 
-cursor:pointer;
+await addActivity(
 
-background:#fafafa;
+"ارجاع قطعة للمخزن",
 
-padding:12px 18px;
+"orders",
 
-border-radius:14px;
+item.order_id
 
-transition:.3s;
+);
 
 
 }
 
 
+function openScanner(callback){
 
-.bulk-actions label:hover{
 
+document
+.getElementById("scanModal")
+.style.display="flex";
 
-background:#fff0d6;
 
 
-}
+scanner =
+new Html5Qrcode("reader");
 
 
 
+scanner.start(
 
+{
+facingMode:"environment"
+},
 
-/* checkbox */
 
+{
 
-.bulk-actions input[type="checkbox"],
+fps:10,
 
-.order-check{
+qrbox:250
 
+},
 
-width:20px;
 
-height:20px;
+async(code)=>{
 
-cursor:pointer;
 
-accent-color:#111;
+await scanner.stop();
 
-}
 
+document
+.getElementById("scanModal")
+.style.display="none";
 
 
-.order-check{
 
+callback(code);
 
-transform:scale(1.1);
 
 }
-
-
-
-
-
-/* select الحالة */
-
-
-#bulkStatus{
-
 
-height:48px;
 
-min-width:180px;
 
-padding:0 18px;
+);
 
-border-radius:15px;
 
-border:1px solid #e5e5e5;
-
-background:#fafafa;
-
-font-size:15px;
-
-font-weight:700;
-
-color:#333;
+}
+document
+.getElementById("closeScanner")
+.onclick=async()=>{
 
-cursor:pointer;
 
-transition:.3s;
+if(scanner){
 
+await scanner.stop();
 
 }
 
 
+document
+.getElementById("scanModal")
+.style.display="none";
 
-#bulkStatus:hover{
 
-
-border-color:#111;
-
-
 }
-
-
 
-#bulkStatus:focus{
+// =====================
+// تحديث الحالة
+// =====================
 
+window.updateOrderStatus = async function(id){
 
-outline:none;
+let order = orders.find(o=>o.id==id);
 
-border-color:#111;
 
-background:white;
+if(!order){
 
+alert("الطلب غير موجود");
+return;
 
 }
 
 
 
+let nextStatus=null;
 
-/* زر التطبيق */
 
 
-#applyBulk{
+// =====================
+// انتقال الحالات
+// =====================
 
 
-height:48px;
+if(order.status==="new"){
 
-padding:0 35px;
 
-border:none;
+openScanner(async(code)=>{
 
-border-radius:15px;
 
-background:#111;
+const {error}=await supabase
 
-color:white;
+.from("orders")
 
-font-size:15px;
+.update({
 
-font-weight:900;
+delivery_code:code,
 
-cursor:pointer;
+status:"prepared"
 
-box-shadow:0 8px 20px #0003;
+})
 
-transition:.3s;
+.eq(
+"id",
+id
+);
 
 
-}
-
-
-
-#applyBulk:hover{
-
 
-transform:translateY(-3px);
+if(error){
 
-background:#333;
+alert(error.message);
 
+return;
 
 }
 
 
 
+await supabase
 
+.from("order_status_history")
 
+.insert({
 
-/* ============================= */
-/* جدول الطلبات checkbox */
-/* ============================= */
+order_id:id,
 
+status:"prepared"
 
-.order-check{
+});
 
 
-appearance:none;
 
-border:2px solid #ddd;
+await addActivity(
 
-border-radius:7px;
+"تحويل الطلب الى مجهز مع كود شحن",
 
-background:white;
+"orders",
 
-position:relative;
+id
 
-transition:.25s;
+);
 
 
-}
 
+alert("تم حفظ الكود وتحضير الطلب ✅");
 
 
-.order-check:hover{
+await loadOrders();
 
 
-border-color:#111;
 
+});
 
-}
 
+return;
 
 
-.order-check:checked{
+}
 
 
-background:#111;
 
-border-color:#111;
+else if(order.status==="prepared"){
 
+nextStatus="delivery";
 
 }
 
 
 
-.order-check:checked::after{
 
+else if(order.status==="delivery"){
 
-content:"✓";
 
-position:absolute;
 
-color:white;
+let choice = prompt(
+"اختر الحالة:\n\n1 - مكتمل\n2 - مرفوض\n3 - مؤجل"
+);
 
-font-size:14px;
 
-font-weight:900;
 
-left:50%;
+if(choice==="1"){
 
-top:50%;
+nextStatus="completed";
 
-transform:translate(-50%,-55%);
-
-
 }
-
 
 
 
-/* الصف المحدد */
+else if(choice==="2"){
 
+nextStatus="cancelled";
 
-tr:has(.order-check:checked){
-
-
-background:#fff8e8 !important;
-
-transition:.3s;
-
-
 }
 
 
 
+else if(choice==="3"){
 
-/* =====================
- PREMIUM CONTROL BAR
-===================== */
+nextStatus="postponed";
 
-
-.control-bar{
-
-display:flex;
-
-align-items:center;
-
-gap:12px;
+}
 
-background:white;
 
-padding:10px 14px;
 
-border-radius:20px;
+else{
 
-box-shadow:0 8px 25px #0001;
+alert("اختيار غير صحيح");
+return;
 
-margin:18px 0;
+}
 
-border:1px solid #f3e8ec;
 
 }
 
 
 
-/* =====================
- SEARCH
-===================== */
 
+else if(order.status==="postponed"){
 
-.search-mini{
 
-flex:1;
 
-height:42px;
+let choice = prompt(
+"اختر:\n\n1 - مكتمل\n2 - مرفوض"
+);
 
-display:flex;
 
-align-items:center;
 
-gap:12px;
+if(choice==="1"){
 
-background:#faf7f8;
+nextStatus="completed";
 
-border:1px solid #f1e1e6;
+}
 
-border-radius:14px;
 
-padding:0 15px;
 
-transition:.3s;
+else if(choice==="2"){
 
+nextStatus="cancelled";
 
 }
 
 
 
-.search-mini:focus-within{
+else{
 
-background:white;
+return;
 
-border-color:#f7b6c8;
-
-box-shadow:0 0 0 4px #f7b6c833;
+}
 
 
 }
 
 
 
-.search-mini i{
+if(!nextStatus)
+return;
 
-color:#d987a0;
 
-font-size:16px;
 
-}
 
 
+// =====================
+// فحص الاسترجاع قبل الاكمال
+// =====================
 
-.search-mini input{
 
-border:none;
+if(nextStatus==="completed"){
 
-outline:none;
 
-background:transparent;
 
-width:100%;
+// فحص هل بعد اكو قطعة لازم ترجع
 
-height:100%;
+if(nextStatus==="completed"){
 
-font-family:Cairo;
 
-font-size:14px;
+if(order.has_return === true){
 
-}
 
+alert(
+"⚠️ يرجى استرجاع القطعة المطلوبة أولاً ثم إكمال الطلب"
+);
 
 
+return;
 
 
-/* =====================
- SELECT ALL
-===================== */
+}
 
 
-.select-all{
+}
 
-height:42px;
 
-display:flex;
+}
 
-align-items:center;
 
-gap:8px;
 
-padding:0 16px;
 
-background:#fff6f8;
+// =====================
+// رفض الطلب
+// رجع كل القطع للمخزن
+// =====================
 
-border-radius:14px;
 
-font-size:14px;
+if(nextStatus==="cancelled"){
 
-font-weight:800;
 
-cursor:pointer;
+let ok = confirm(
+"سيتم رفض الطلب وإرجاع جميع القطع للمخزن؟"
+);
 
-white-space:nowrap;
 
-transition:.3s;
 
-border:1px solid transparent;
+if(!ok)
+return;
 
 
-}
 
 
+for(let item of order.order_items){
 
-.select-all:hover{
 
-border-color:#f7b6c8;
 
-background:#fff0f5;
+// جلب المخزون الحالي
 
-}
+const {data:variant}=await supabase
 
+.from("product_variants")
 
+.select("stock_quantity")
 
-.select-all input{
+.eq(
+"id",
+item.variant_id
+)
 
-width:18px;
+.single();
 
-height:18px;
 
-accent-color:#d987a0;
 
-cursor:pointer;
 
-}
 
+// زيادة المخزون
 
+await supabase
 
+.from("product_variants")
 
+.update({
 
-/* =====================
- ICON BUTTONS
-===================== */
+stock_quantity:
 
+(variant.stock_quantity || 0)
++
+item.quantity
 
-.control-icons{
 
-display:flex;
+})
 
-gap:8px;
+.eq(
 
+"id",
 
-}
+item.variant_id
 
+);
 
 
-.control-icons button{
 
-width:40px;
 
-height:40px;
 
-border:none;
+// حركة مخزن
 
-border-radius:13px;
+await supabase
 
-display:flex;
+.from("stock_movements")
 
-align-items:center;
+.insert({
 
-justify-content:center;
+variant_id:item.variant_id,
 
-color:white;
+type:"RETURN",
 
-cursor:pointer;
+quantity:item.quantity,
 
-font-size:15px;
+note:"رفض طلب"
 
-transition:.3s;
+});
 
-box-shadow:0 5px 15px #0002;
 
 
 }
 
 
 
-#bulkUpdate{
+}
 
-background:linear-gradient(135deg,#8b7cff,#6d5dfc);
 
-}
 
 
 
-#bulkDelete{
+// =====================
+// تحديث الطلب
+// =====================
 
-background:linear-gradient(135deg,#ff7b92,#ff5b75);
 
-}
 
+const {error}=await supabase
 
+.from("orders")
 
+.update({
 
-.control-icons button:hover{
 
-transform:translateY(-3px) scale(1.05);
+status:nextStatus,
 
 
-}
+completed_at:
 
+nextStatus==="completed"
+?
+new Date()
+:
+null
 
 
-/* =====================
- MOBILE
-===================== */
+})
 
+.eq(
+"id",
+id
+);
 
-@media(max-width:700px){
 
 
-.control-bar{
 
-flex-wrap:wrap;
 
-padding:12px;
+if(error){
 
+alert(error.message);
+return;
 
 }
 
 
 
-.search-mini{
 
-width:100%;
 
-flex:none;
+// =====================
+// سجل الحالة
+// =====================
 
-}
 
+await supabase
 
+.from("order_status_history")
 
-.select-all{
+.insert({
 
-flex:1;
+order_id:id,
 
-justify-content:center;
+status:nextStatus
 
-}
+});
 
 
 
-.control-icons{
 
-gap:10px;
 
-}
 
+// =====================
+// تحديث العميل
+// =====================
 
 
-.control-icons button{
+if(nextStatus==="completed"){
 
-width:42px;
 
-height:42px;
+await supabase
 
+.rpc(
+"increment_completed_orders",
+{
+customer_id_input:order.customer_id
 }
+);
+
 
 
 }
-.control-bar{
 
-display:flex;
 
-align-items:center;
 
-justify-content:space-between;
 
-gap:20px;
 
-flex-wrap:wrap;
+if(nextStatus==="cancelled"){
 
-margin-bottom:25px;
 
-width:100%;
+await supabase
 
+.rpc(
+"increment_cancelled_orders",
+{
+customer_id_input:order.customer_id
 }
+);
 
-/* البحث */
 
-.search-mini{
 
-flex:1;
-
-min-width:280px;
-
-height:50px;
-
 }
-.products-cell{
-    min-width:220px;
-}
-
 
-.product-box{
 
-background:#f7f7f7;
 
-padding:10px;
 
-border-radius:10px;
 
-margin-bottom:8px;
+await addActivity(
 
-line-height:1.8;
+"تغيير حالة طلب",
 
-direction:rtl;
+"orders",
 
-text-align:right;
+id
 
-}
-
-
+);
 
-/* خلفية المودال */
 
-#modal{
 
-position:fixed;
+alert(
+"تم تحديث الحالة ✅"
+);
 
-inset:0;
 
-background:rgba(0,0,0,0.55);
 
-display:none;
+await loadOrders();
 
-align-items:center;
 
-justify-content:center;
 
-z-index:9999;
-
-padding:20px;
-
 }
-
 
 
-/* صندوق المودال */
 
-.modal-box{
 
-width:380px;
 
-max-width:95%;
 
-background:white;
+// =====================
+// اسم الحالة
+// =====================
 
-border-radius:22px;
 
-padding:25px;
+function statusName(status){
 
-position:relative;
+const names={
 
-box-shadow:0 20px 50px rgba(0,0,0,.25);
+new:"جديد",
 
-animation:showModal .25s ease;
+prepared:"مجهز",
 
-}
-
-
-
-/* حركة الفتح */
-
-@keyframes showModal{
+delivery:"قيد التوصيل",
 
-from{
+completed:"مكتمل",
 
-transform:scale(.8);
+postponed:"مؤجل",
 
-opacity:0;
+cancelled:"مرفوض"
 
-}
-
-to{
+};
 
-transform:scale(1);
 
-opacity:1;
+return names[status] || status;
 
 }
-
-}
-
 
 
-/* زر الاغلاق */
 
-#close{
 
-position:absolute;
 
-top:15px;
 
-left:15px;
 
-width:35px;
 
-height:35px;
 
-border-radius:50%;
+// =====================
+// كروت الحالات
+// =====================
 
-border:none;
 
-background:#ff4757;
+function updateStatusCards(){
 
-color:white;
 
-cursor:pointer;
+console.log("تحديث الكروت");
 
-font-size:18px;
 
-}
-
+let states=[
 
+{
+status:"new",
+id:"newCount"
+},
 
-/* العنوان */
+{
+status:"prepared",
+id:"preparedCount"
+},
 
-.modal-box h2{
+{
+status:"delivery",
+id:"deliveryCount"
+},
 
-text-align:center;
+{
+status:"completed",
+id:"completedCount"
+},
 
-margin-bottom:20px;
+{
+status:"postponed",
+id:"postponedCount"
+},
 
-font-size:22px;
-
+{
+status:"cancelled",
+id:"cancelledCount"
 }
 
+];
 
 
-/* تفاصيل الطلب */
+states.forEach(item=>{
 
-#details{
 
-max-height:350px;
+let count = orders.filter(o=>{
 
-overflow-y:auto;
+return o.status === item.status;
 
-padding:5px;
+}).length;
 
-}
 
 
+console.log(
+item.status,
+count
+);
 
-/* بيانات الزبون */
 
-#details p{
 
-background:#f7f7f7;
+let el=document.getElementById(item.id);
 
-padding:10px;
 
-border-radius:12px;
 
-margin:8px 0;
+if(el){
 
-font-size:14px;
+el.innerText=count;
 
 }
-
 
 
-/* كل قطعة */
+});
 
-#details > div{
 
-background:#fafafa;
-
-border-radius:15px;
-
-padding:15px;
-
-margin-bottom:12px;
-
-border:1px solid #eee;
+}
 
-font-size:14px;
 
-line-height:1.8;
 
-}
 
 
-/* كارت المنتج بالاسترجاع */
 
-.return-product-card{
 
-display:flex;
+// =====================
+// فلترة الكروت
+// =====================
 
-direction:rtl;
+document
+.querySelectorAll(".status-card")
+.forEach(btn=>{
 
-align-items:flex-start;
 
-gap:12px;
+btn.onclick = ()=>{
 
-background:#fff;
 
-border:1px solid #eee;
+document
+.querySelectorAll(".status-card")
+.forEach(b=>{
 
-padding:10px;
+b.classList.remove("active");
 
-border-radius:18px;
+});
 
-margin-bottom:10px;
 
-box-shadow:0 5px 18px rgba(0,0,0,.06);
 
-}
+btn.classList.add("active");
 
 
 
-/* الصورة + الزر */
+currentFilter = btn.dataset.status;
 
-.return-image-box{
 
-width:85px;
 
-display:flex;
+search.value = "";
 
-flex-direction:column;
 
-align-items:center;
 
-gap:8px;
+renderOrders(
 
-}
+orders.filter(o=>
 
+o.status === currentFilter
 
+)
 
-/* صورة المنتج */
+);
 
-.return-img{
 
-width:85px;
 
-height:85px;
+};
 
-object-fit:cover;
 
-border-radius:16px;
+});
 
-}
 
+// =====================
+// البحث مع احترام الحالة المحددة
+// =====================
 
+search.oninput = ()=>{
 
-/* صندوق الصورة والزر */
 
-.return-image-box{
+let value = search.value
+.trim()
+.toLowerCase();
 
-width:85px;
 
-display:flex;
 
-flex-direction:column;
+let filtered = orders.filter(o=>{
 
-align-items:center;
 
-justify-content:center;
+return (
 
-gap:8px;
+o.status === currentFilter &&
 
-}
+(
 
+String(o.id).includes(value)
 
+||
 
-/* صورة المنتج */
+(o.customer_name || "")
+.toLowerCase()
+.includes(value)
 
-.return-img{
+||
 
-width:85px;
+(o.phone || "")
+.includes(value)
 
-height:85px;
+||
 
-object-fit:cover;
+(o.governorate || "")
+.toLowerCase()
+.includes(value)
 
-border-radius:16px;
+)
 
-}
+);
 
 
+});
 
-/* زر الاسترجاع */
 
-.return-btn{
 
-width:36px;
+console.log("الحالة الحالية:", currentFilter);
+console.log("نتائج البحث:", filtered);
 
-height:36px;
 
-border-radius:50%;
 
-border:none;
+renderOrders(filtered);
 
-background:#2563eb;
 
-color:white;
+};
 
-cursor:pointer;
+// =====================
+// المودال
+// =====================
 
-display:flex;
 
-align-items:center;
+window.openOrder=function(id){
 
-justify-content:center;
 
-font-size:17px;
+currentOrder=
 
-transition:.35s;
+orders.find(
+o=>o.id==id
+);
 
-box-shadow:0 4px 12px rgba(37,99,235,.35);
 
-}
 
+let o=currentOrder;
 
 
-/* حركة السهم */
 
-.return-btn i{
+details.innerHTML = `
 
-transition:.5s;
+<div class="return-modal-header">
 
-}
 
+<div class="order-number-box">
 
 
-.return-btn:hover{
+<span class="order-id">
+#${o.id}
+</span>
 
-background:#1d4ed8;
 
-transform:translateY(-3px);
+${o.has_return ? `
 
-}
+<span class="return-order-icon" title="يوجد استرجاع">
 
+<i class="fa-solid fa-arrow-right-arrow-left"></i></span>
 
+` : ""}
 
-.return-btn:hover i{
 
-transform:rotate(-180deg);
+</div>
 
-}
 
+</div>
 
+<div class="customer-box">
 
 
+<div>
+👤
+<b>${o.customer_name || "-"}</b>
+</div>
 
-/* معلومات المنتج */
 
-.return-info{
+<div>
+📱
+${o.phone || "-"}
+</div>
 
-flex:1;
 
-text-align:right;
 
-padding-top:3px;
+<div>
+📍
+${o.governorate || "-"}
+</div>
 
-}
 
 
+<div>
+🏠
+${o.address || "-"}
+</div>
 
-.return-info b{
 
-font-size:14px;
 
-color:#111;
+<div>
+📌
+${o.nearest_point || "-"}
+</div>
 
-display:block;
 
-margin-bottom:8px;
 
-}
+</div>
 
 
 
-.return-info p{
+<hr>
 
-font-size:12px;
 
-margin:4px 0;
 
-color:#555;
+<h3 class="products-title">
+المنتجات
+</h3>
 
-}
 
 
+${o.order_items.map(i=>`
 
 
-/* الهيدر */
+<div class="return-product-card">
 
-.return-modal-header{
 
+<div class="return-info">
 
-display:flex;
 
-justify-content:space-between;
+<b>
+🛍 ${i.product_variants.products.name}
+</b>
 
-align-items:center;
 
-direction:rtl;
+<p>
+🎨 اللون:
+${i.product_variants.color}
+</p>
 
-margin-bottom:15px;
 
-}
+<p>
+📏 الحجم:
+${i.product_variants.size}
+</p>
 
 
+<p>
+🔢 الكمية:
+${i.quantity}
+</p>
 
-.return-modal-header h2{
 
-font-size:18px;
+<button 
+onclick="returnItem('${i.id}')"
+class="return-btn">
 
-margin:0;
+<i class="fa-solid fa-rotate-left"></i>
 
-}
+</button>
 
 
+</div>
 
-.return-modal-header span{
 
 
-background:#111;
 
-color:#fff;
+<img
 
-padding:5px 12px;
+src="${i.product_variants.image || 'default.png'}"
 
-border-radius:20px;
+class="return-img"
 
-font-size:12px;
 
+>
 
-}
 
+</div>
 
 
 
-/* معلومات الزبون */
+`).join("")}
 
-.customer-box{
 
 
-background:#f8fafc;
 
-padding:12px;
+<h3 class="total-box">
 
-border-radius:16px;
+💰 المجموع:
+${o.total_price} د.ع
 
-font-size:13px;
+</h3>
 
-border:1px solid #eee;
 
 
-}
+`;
 
 
 
-.customer-box p{
+modal.style.display="flex";
 
-margin:5px 0;
 
 }
-
-
 
 
-/* عنوان المنتجات */
 
-.products-title{
 
-font-size:15px;
 
-margin:15px 0 10px;
+// =====================
+// ارجاع قطعة
+// =====================
 
-}
 
+window.returnItem = async function(id){
 
 
+if(!confirm("ارجاع هذه القطعة للمخزن؟"))
 
+return;
 
-/* المجموع */
 
-.total-box{
 
+// جلب القطعة
 
-background:#111;
+const {data:item,error}=
 
-color:white;
+await supabase
 
-text-align:center;
+.from("order_items")
 
+.select(`
 
-padding:12px;
+id,
 
+order_id,
 
-border-radius:16px;
+variant_id,
 
+quantity,
 
-font-size:15px;
+price,
 
+product_variants(
 
-margin-top:12px;
+stock_quantity
 
+)
 
-}
+`)
 
-.product-box{
+.eq("id",id)
 
-display:flex;
-align-items:stretch;
-justify-content:space-between;
+.single();
 
-direction:rtl;
 
-background:#fff;
 
-border:1px solid #eee;
+if(error){
 
-border-radius:12px;
+console.log(error);
 
-padding:10px;
+alert(error.message);
 
-margin-bottom:10px;
+return;
 
 }
-
 
-.product-info{
 
-display:flex;
 
-flex-direction:column;
+// منع الاسترجاع إذا الكمية صفر
 
-justify-content:center;
+if(item.quantity <= 0){
 
-gap:6px;
 
-font-size:14px;
+alert(
+"⚠️ هذه القطعة تم استرجاعها مسبقاً"
+);
 
-}
-
 
+return;
 
-.product-info b{
 
-font-size:16px;
-
-color:#222;
-
 }
-
 
 
-.variant-img{
 
 
-width:90px;
+// زيادة المخزون قطعة واحدة فقط
 
-height:90px;
+await supabase
 
-object-fit:cover;
+.from("product_variants")
 
-border-radius:12px;
+.update({
 
-margin-left:10px;
+stock_quantity:
+(item.product_variants.stock_quantity || 0)
++
+1
 
+})
 
-}
-
-.order-select-box{
+.eq(
 
-display:flex;
+"id",
 
-align-items:center;
+item.variant_id
 
-gap:8px;
+);
 
-direction:rtl;
 
-}
 
 
+// تسجيل حركة المخزن
 
-.order-id{
+await supabase
 
-font-weight:bold;
+.from("stock_movements")
 
-font-size:14px;
+.insert({
 
-}
+variant_id:item.variant_id,
 
+type:"return",
 
+quantity:item.quantity,
 
-.return-order-icon{
+note:"استرجاع من طلب"
 
+});
 
-width:28px;
 
-height:28px;
 
-border-radius:50%;
 
-display:flex;
+// تسجيل جدول returns
 
-align-items:center;
+await supabase
 
-justify-content:center;
+.from("returns")
 
-background:#fff7ed;
+.insert({
 
-color:#f97316;
+order_id:item.order_id,
 
-border:1px solid #fed7aa;
+order_item_id:item.id,
 
-font-size:13px;
+variant_id:item.variant_id,
 
-cursor:pointer;
+quantity:item.quantity,
 
-transition:.3s;
+reason:"استرجاع"
 
+});
 
-}
 
-.order-number{
-display:flex;
-align-items:center;
-gap:8px;
-}
+// تصفير الكمية فقط وابقاء المنتج ظاهر
 
-.return-order-icon:hover{
+const {error:updateItemError}=await supabase
 
+.from("order_items")
 
-background:#f97316;
+.update({
 
-color:white;
+quantity:item.quantity - 1
 
-transform:rotate(-20deg) scale(1.1);
+})
 
+.eq(
+"id",
+item.id
+);
 
-}
-.order-number-box{
 
-display:flex;
+if(updateItemError){
 
-align-items:center;
+console.log(updateItemError);
 
-gap:8px;
+alert(updateItemError.message);
 
-direction:rtl;
+return;
 
 }
 
-.return-product-card{
 
-display:flex;
 
-direction:rtl;
+// تحديث سعر الطلب
 
-align-items:center;
+const {data:items}=await supabase
 
-gap:12px;
+.from("order_items")
 
-background:white;
+.select("price,quantity")
 
-padding:10px;
+.eq(
+"order_id",
+item.order_id
+);
 
-border-radius:18px;
 
-margin-bottom:10px;
 
-box-shadow:0 5px 18px #0001;
+let total=0;
 
-}
 
+items?.forEach(i=>{
 
-.return-info{
+if(i.quantity > 0){
 
-flex:1;
+total += Number(i.price) * Number(i.quantity);
 
-text-align:right;
-
 }
-
 
-.return-image-box{
+});
 
-width:85px;
 
-display:flex;
 
-flex-direction:column;
+await supabase
 
-align-items:center;
+.from("orders")
 
-gap:6px;
+.update({
 
-}
+total_price:total
 
+})
 
-.return-img{
+.eq(
+"id",
+item.order_id
+);
+// تحديث حالة الاسترجاع بعد تنفيذ الاسترجاع
 
-width:85px;
+await supabase
 
-height:85px;
+.from("orders")
 
-object-fit:cover;
+.update({
 
-border-radius:15px;
+has_return:false
 
-}
+})
 
+.eq(
+"id",
+item.order_id
+);
 
-.return-btn{
+alert("تم ارجاع القطعة للمخزن ✅");
 
-width:34px;
+modal.style.display="none";
 
-height:34px;
+await loadOrders();
 
-border-radius:50%;
+// تحديث الجدول من البيانات الجديدة
+const updatedList = orders.filter(o =>
+    o.status === currentFilter
+);
 
-border:none;
+renderOrders(updatedList);
 
-background:#2563eb;
 
-color:white;
+}
 
-display:flex;
+close.onclick=()=>{
 
-align-items:center;
 
-justify-content:center;
+modal.style.display="none";
 
-cursor:pointer;
 
 }
 
+loadOrders().then(()=>{
 
-.return-btn i{
 
-transition:.5s;
+renderOrders(
 
-}
+orders.filter(o=>
 
+o.status === currentFilter
 
-.return-btn:hover i{
+)
 
-transform:rotate(-180deg);
+);
 
-}
+
+});

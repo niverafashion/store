@@ -715,6 +715,7 @@ document.getElementById("manualDelivery").checked
 
 
 deliveryPrice =
+
 Number(
 document.getElementById("deliveryPrice").value || 0
 );
@@ -722,8 +723,6 @@ document.getElementById("deliveryPrice").value || 0
 
 
 updateTotal();
-
-generateMessage();
 
 
 }
@@ -1015,12 +1014,48 @@ document
 
 updateTotal();
 
+checkReturnVisibility();
+
+}
+
+
+function checkReturnVisibility(){
+
+
+let box = document.getElementById("returnCheckBox");
+
+
+// عدد الخيارات المختلفة (حجم + لون)
+let variantsCount = new Set(
+
+cart.map(x => 
+x.size + "-" + x.color
+)
+
+).size;
+
+
+
+if(variantsCount > 1){
+
+
+box.style.display="block";
+
+
+}else{
+
+
+box.style.display="none";
+
+
+document.getElementById("hasReturn").checked=false;
 
 
 }
 
 
 
+}
 
 
 window.removeItem=function(index){
@@ -1053,20 +1088,33 @@ generateMessage();
 function updateTotal(){
 
 
-
-let total =
+let subtotal_price =
 
 Number(
-
-document
-
-.getElementById("total")
-
-.innerText
-
-||0
-
+document.getElementById("total").innerText || 0
 );
+
+
+
+let discount =
+
+Number(
+document.getElementById("discount_amount")?.value || 0
+);
+
+
+
+let final =
+
+subtotal_price + deliveryPrice - discount;
+
+
+
+if(final < 0){
+
+final = 0;
+
+}
 
 
 
@@ -1074,14 +1122,14 @@ document
 
 .getElementById("finalTotal")
 
-.innerText =
+.innerText = final;
 
-total + deliveryPrice;
+
+
+generateMessage();
 
 
 }
-
-
 
 
 
@@ -1142,7 +1190,53 @@ generateMessage();
 
 
 
+// =====================
+// الخصم
+// =====================
 
+
+document
+
+.getElementById("hasDiscount")
+
+.onchange=()=>{
+
+
+let box =
+
+document.getElementById("discountBox");
+
+
+
+if(
+document.getElementById("hasDiscount").checked
+){
+
+
+box.style.display="block";
+
+
+}else{
+
+
+box.style.display="none";
+
+
+document
+
+.getElementById("discount_amount")
+
+.value="";
+
+
+}
+
+
+
+updateTotal();
+
+
+};
 
 
 
@@ -1234,7 +1328,13 @@ ${items}
 
 ${deliveryPrice} دينار
 
+${document.getElementById("hasDiscount").checked ? `
 
+🏷 الخصم:
+
+${document.getElementById("discount_amount").value} دينار
+
+` : ""}
 
 💰 المجموع النهائي:
 
@@ -1331,29 +1431,33 @@ document
 
 
 [
-
 "name",
-
 "phone",
-
 "address",
-
 "notes",
-
-"refundAmount"
-
+"refundAmount",
+"discount_amount"
 ]
-
 .forEach(id=>{
 
 
-document
+let el = document.getElementById(id);
 
-.getElementById(id)
 
-.oninput=
+if(el){
 
-generateMessage;
+el.oninput = ()=>{
+
+
+updateTotal();
+
+generateMessage();
+
+
+};
+
+
+}
 
 
 });
@@ -1385,76 +1489,93 @@ function validateOrder(){
 
 
 
-let phone =
-document.getElementById("phone").value.trim();
+let fields = [
+
+
+{
+id:"name",
+msg:"ادخل اسم الزبون"
+},
+
+
+{
+id:"phone",
+msg:"ادخل رقم الهاتف"
+},
+
+
+{
+id:"governorate",
+msg:"اختار المحافظة"
+},
+
+
+{
+id:"address",
+msg:"ادخل العنوان"
+},
+
+
+{
+id:"nearest_point",
+msg:"ادخل أقرب نقطة دالة"
+}
+
+
+];
 
 
 
-if(!phone){
 
 
-alert("ادخل رقم الهاتف");
+for(let field of fields){
+
+
+let el =
+
+document.getElementById(field.id);
+
+
+
+if(
+!el.value.trim()
+){
+
+
+alert(field.msg);
+
+
+el.focus();
 
 
 return false;
 
 
 }
+
+
+}
+
+
 
 
 
 if(!validatePhone())
-return false;
-
-
-
-
-
-
-if(
-!document.getElementById("governorate").value
-){
-
-
-alert("اختار المحافظة");
-
 
 return false;
 
 
-}
 
 
-
-
-
-
-if(
-!document.getElementById("address").value.trim()
-){
-
-
-alert("ادخل العنوان");
-
-
-return false;
-
-
-}
-
-
-
-
-
-
-if(
-cart.length===0
-){
+if(cart.length===0){
 
 
 alert("ضيف منتج واحد على الاقل");
 
 
+document.getElementById("category").focus();
+
+
 return false;
 
 
@@ -1463,22 +1584,53 @@ return false;
 
 
 
-
 if(
+
 document.getElementById("manualDelivery").checked
+
 &&
+
 deliveryPrice<=0
+
 ){
 
 
 alert("ادخل سعر التوصيل");
 
 
+document.getElementById("deliveryPrice").focus();
+
+
 return false;
 
 
 }
 
+
+
+
+
+if(
+
+document.getElementById("hasDiscount").checked
+
+&&
+
+Number(document.getElementById("discount_amount").value)<=0
+
+){
+
+
+alert("ادخل مبلغ الخصم");
+
+
+document.getElementById("discount_amount").focus();
+
+
+return false;
+
+
+}
 
 
 
@@ -1487,8 +1639,6 @@ return true;
 
 
 }
-
-
 
 
 
@@ -1707,18 +1857,34 @@ document.getElementById("notes").value,
 
 
 
+subtotal_price:
+
+Number(
+document.getElementById("total").innerText || 0
+),
+
+
 delivery_price:
+
 Number(
 document.getElementById("deliveryPrice")?.value || deliveryPrice || 0
 ),
 
-total_price:
+
+
+discount_amount:
 
 Number(
-document.getElementById("finalTotal").innerText
+document.getElementById("discount_amount")?.value || 0
 ),
 
 
+
+total_price:
+
+Number(
+document.getElementById("finalTotal").innerText || 0
+),
 
 delivery_type:
 
@@ -2014,9 +2180,7 @@ clearOrderForm();
 
 
 document
-
 .getElementById("whatsapp")
-
 .onclick=()=>{
 
 
@@ -2024,39 +2188,29 @@ if(!validateOrder())
 return;
 
 
-
 generateMessage();
-
 
 
 let phone =
 
 document
-
 .getElementById("phone")
-
 .value.trim();
-
 
 
 
 let text =
 
 document
-
 .getElementById("whatsappMessage")
-
 .value;
 
 
 
 
+window.location.href =
 
-window.open(
-
-`https://wa.me/964${phone.substring(1)}?text=${encodeURIComponent(text)}`
-
-);
+`https://wa.me/964${phone.substring(1)}?text=${encodeURIComponent(text)}`;
 
 
 
@@ -2101,16 +2255,12 @@ await document
 
 setTimeout(()=>{
 
-
 document
-
 .getElementById("whatsapp")
-
 .click();
 
 
-
-},1200);
+},2000);
 
 
 
@@ -2290,7 +2440,27 @@ document
 
 .checked=false;
 
+document
 
+.getElementById("hasDiscount")
+
+.checked=false;
+
+
+
+document
+
+.getElementById("discountBox")
+
+.style.display="none";
+
+
+
+document
+
+.getElementById("discount_amount")
+
+.value="";
 
 
 document

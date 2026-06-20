@@ -38,7 +38,7 @@ document.getElementById("close");
 let orders=[];
 
 let currentOrder=null;
-
+let scanner=null;
 
 
 
@@ -112,6 +112,10 @@ id,
 customer_id,
 
 customer_name,
+
+finance_done,
+
+phone,
 
 phone,
 
@@ -193,18 +197,29 @@ return;
 
 
 
-orders=data;
-console.log(
-"كل الحالات:",
-orders.map(o=>o.status)
+// فقط الطلبات اللي خلصت مالياً تظهر بالإدارة
+
+orders = data.filter(order => 
+    order.finance_done === false
 );
+
+
+console.log(
+"طلبات الادارة:",
+orders
+);
+
+
+// عرض حسب الحالة الحالية
 
 renderOrders(
-orders.filter(o=>o.status === currentFilter)
+    orders.filter(o =>
+        o.status === currentFilter
+    )
 );
 
-updateStatusCards();
 
+updateStatusCards();
 
 }
 
@@ -337,7 +352,6 @@ ${o.has_return ? `
 ${products}
 
 </td>
-
 
 <td>${o.total_price} د.ع</td>
 
@@ -959,19 +973,10 @@ window.editOrder=function(id){
 
 window.location.href =
 
-`orders.html?id=${id}`;
+`edit-orders.html?id=${id}`;
 
 
 }
-
-
-
-
-
-
-
-
-
 
 
 window.deleteOrder = async function(id){
@@ -1360,7 +1365,77 @@ item.order_id
 }
 
 
+function openScanner(callback){
 
+
+document
+.getElementById("scanModal")
+.style.display="flex";
+
+
+
+scanner =
+new Html5Qrcode("reader");
+
+
+
+scanner.start(
+
+{
+facingMode:"environment"
+},
+
+
+{
+
+fps:10,
+
+qrbox:250
+
+},
+
+
+async(code)=>{
+
+
+await scanner.stop();
+
+
+document
+.getElementById("scanModal")
+.style.display="none";
+
+
+
+callback(code);
+
+
+}
+
+
+
+);
+
+
+}
+document
+.getElementById("closeScanner")
+.onclick=async()=>{
+
+
+if(scanner){
+
+await scanner.stop();
+
+}
+
+
+document
+.getElementById("scanModal")
+.style.display="none";
+
+
+}
 
 // =====================
 // تحديث الحالة
@@ -1368,34 +1443,106 @@ item.order_id
 
 window.updateOrderStatus = async function(id){
 
-
 let order = orders.find(o=>o.id==id);
-
 
 
 if(!order){
 
 alert("الطلب غير موجود");
+return;
+
+}
+
+
+
+let nextStatus=null;
+
+
+
+// =====================
+// انتقال الحالات
+// =====================
+
+
+if(order.status==="new"){
+
+
+openScanner(async(code)=>{
+
+
+const {error}=await supabase
+
+.from("orders")
+
+.update({
+
+delivery_code:code,
+
+status:"prepared"
+
+})
+
+.eq(
+"id",
+id
+);
+
+
+
+if(error){
+
+alert(error.message);
 
 return;
 
 }
 
 
-let nextStatus = null;
 
-console.log("الحالة الجديدة بالبداية:", nextStatus);
+await supabase
 
-// جديد -> مجهز
+.from("order_status_history")
 
-if(order.status === "new"){
+.insert({
 
-nextStatus="prepared";
+order_id:id,
+
+status:"prepared"
+
+});
+
+
+
+await addActivity(
+
+"تحويل الطلب الى مجهز مع كود شحن",
+
+"orders",
+
+id
+
+);
+
+
+
+alert("تم حفظ الكود وتحضير الطلب ✅");
+
+
+await loadOrders();
+
+
+
+});
+
+
+return;
+
 
 }
 
 
-else if(order.status === "prepared"){
+
+else if(order.status==="prepared"){
 
 nextStatus="delivery";
 
@@ -1403,36 +1550,36 @@ nextStatus="delivery";
 
 
 
-// توصيل -> اختيار الحالات النهائية
 
-else if(order.status === "delivery"){
+else if(order.status==="delivery"){
+
 
 
 let choice = prompt(
-"اختر الحالة:\n\n1 - مكتمل\n2 - ملغي\n3 - مؤجل"
+"اختر الحالة:\n\n1 - مكتمل\n2 - مرفوض\n3 - مؤجل"
 );
 
 
 
-if(choice === "1"){
+if(choice==="1"){
 
-nextStatus = "completed";
-
-}
-
-
-
-else if(choice === "2"){
-
-nextStatus = "cancelled";
+nextStatus="completed";
 
 }
 
 
 
-else if(choice === "3"){
+else if(choice==="2"){
 
-nextStatus = "postponed";
+nextStatus="cancelled";
+
+}
+
+
+
+else if(choice==="3"){
+
+nextStatus="postponed";
 
 }
 
@@ -1441,7 +1588,6 @@ nextStatus = "postponed";
 else{
 
 alert("اختيار غير صحيح");
-
 return;
 
 }
@@ -1449,13 +1595,15 @@ return;
 
 }
 
-// مؤجل -> فقط مكتمل او ملغي
 
-else if(order.status === "postponed"){
+
+
+else if(order.status==="postponed"){
+
 
 
 let choice = prompt(
-"اختر الحالة النهائية:\n\n1 - مكتمل\n2 - ملغي"
+"اختر:\n\n1 - مكتمل\n2 - مرفوض"
 );
 
 
@@ -1478,7 +1626,6 @@ nextStatus="cancelled";
 
 else{
 
-alert("اختيار غير صحيح");
 return;
 
 }
@@ -1487,55 +1634,145 @@ return;
 }
 
 
-// حماية اذا ماكو حالة
 
-if(!nextStatus){
+if(!nextStatus)
+return;
 
-alert("لم يتم اختيار حالة جديدة");
+
+
+
+
+// =====================
+// فحص الاسترجاع قبل الاكمال
+// =====================
+
+
+if(nextStatus==="completed"){
+
+
+
+// فحص هل بعد اكو قطعة لازم ترجع
+
+if(nextStatus==="completed"){
+
+
+if(order.has_return === true){
+
+
+alert(
+"⚠️ يرجى استرجاع القطعة المطلوبة أولاً ثم إكمال الطلب"
+);
+
 
 return;
+
 
 }
 
 
-// اذا مكتمل او ملغي رسالة إنهاء
-
-if(
-nextStatus === "completed" ||
-nextStatus === "cancelled"
-){
+}
 
 
-let confirmUpdate = confirm(
+}
 
-`تم اختيار حالة ${statusName(nextStatus)}.\n\nهذه الحالة نهائية ولا يمكن تعديلها لاحقاً.\n\nهل تريد تأكيد إنهاء الطلب؟`
+
+
+
+// =====================
+// رفض الطلب
+// رجع كل القطع للمخزن
+// =====================
+
+
+if(nextStatus==="cancelled"){
+
+
+let ok = confirm(
+"سيتم رفض الطلب وإرجاع جميع القطع للمخزن؟"
+);
+
+
+
+if(!ok)
+return;
+
+
+
+
+for(let item of order.order_items){
+
+
+
+// جلب المخزون الحالي
+
+const {data:variant}=await supabase
+
+.from("product_variants")
+
+.select("stock_quantity")
+
+.eq(
+"id",
+item.variant_id
+)
+
+.single();
+
+
+
+
+
+// زيادة المخزون
+
+await supabase
+
+.from("product_variants")
+
+.update({
+
+stock_quantity:
+
+(variant.stock_quantity || 0)
++
+item.quantity
+
+
+})
+
+.eq(
+
+"id",
+
+item.variant_id
 
 );
 
 
 
-if(!confirmUpdate)
 
-return;
+
+// حركة مخزن
+
+await supabase
+
+.from("stock_movements")
+
+.insert({
+
+variant_id:item.variant_id,
+
+type:"RETURN",
+
+quantity:item.quantity,
+
+note:"رفض طلب"
+
+});
 
 
 
 }
 
-else{
-
-
-let confirmUpdate = confirm(
-
-`تغيير الحالة من ${statusName(order.status)} إلى ${statusName(nextStatus)} ؟`
-
-);
-
-
-
-if(!confirmUpdate)
-
-return;
 
 
 }
@@ -1543,21 +1780,38 @@ return;
 
 
 
-const {data,error}=await supabase
+
+// =====================
+// تحديث الطلب
+// =====================
+
+
+
+const {error}=await supabase
 
 .from("orders")
 
 .update({
 
-status:nextStatus
+
+status:nextStatus,
+
+
+completed_at:
+
+nextStatus==="completed"
+?
+new Date()
+:
+null
+
 
 })
 
-.eq("id",id)
-
-.select();
-
-
+.eq(
+"id",
+id
+);
 
 
 
@@ -1565,19 +1819,19 @@ status:nextStatus
 
 if(error){
 
-
-console.log(error);
-
-
 alert(error.message);
-
-
 return;
-
 
 }
 
-// حفظ حالة الطلب
+
+
+
+
+// =====================
+// سجل الحالة
+// =====================
+
 
 await supabase
 
@@ -1594,29 +1848,29 @@ status:nextStatus
 
 
 
-// تحديث بيانات العميل
+
+
+// =====================
+// تحديث العميل
+// =====================
+
 
 if(nextStatus==="completed"){
 
 
 await supabase
 
-.from("customers")
-
-.update({
-
-completed_orders:
-(order.customer_id)
-
-})
-
-.eq(
-"id",
-order.customer_id
+.rpc(
+"increment_completed_orders",
+{
+customer_id_input:order.customer_id
+}
 );
 
 
+
 }
+
 
 
 
@@ -1626,22 +1880,17 @@ if(nextStatus==="cancelled"){
 
 await supabase
 
-.from("customers")
-
-.update({
-
-cancelled_orders:
-(order.customer_id)
-
-})
-
-.eq(
-"id",
-order.customer_id
+.rpc(
+"increment_cancelled_orders",
+{
+customer_id_input:order.customer_id
+}
 );
 
 
+
 }
+
 
 
 
@@ -1656,25 +1905,19 @@ id
 
 );
 
-alert("تم تحديث الحالة بنجاح");
+
+
+alert(
+"تم تحديث الحالة ✅"
+);
+
 
 
 await loadOrders();
 
 
-renderOrders(
-
-orders.filter(
-
-o=>o.status===currentFilter
-
-)
-
-);
-
 
 }
-
 
 
 
@@ -2160,6 +2403,23 @@ return;
 
 
 
+// منع الاسترجاع إذا الكمية صفر
+
+if(item.quantity <= 0){
+
+
+alert(
+"⚠️ هذه القطعة تم استرجاعها مسبقاً"
+);
+
+
+return;
+
+
+}
+
+
+
 
 // زيادة المخزون قطعة واحدة فقط
 
@@ -2300,13 +2560,25 @@ total_price:total
 })
 
 .eq(
-
 "id",
-
 item.order_id
-
 );
+// تحديث حالة الاسترجاع بعد تنفيذ الاسترجاع
 
+await supabase
+
+.from("orders")
+
+.update({
+
+has_return:false
+
+})
+
+.eq(
+"id",
+item.order_id
+);
 
 alert("تم ارجاع القطعة للمخزن ✅");
 

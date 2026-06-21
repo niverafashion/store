@@ -10,7 +10,7 @@ const table =
 document.getElementById("ordersTable");
 
 
-const search =f
+const search =
 document.getElementById("search");
 
 

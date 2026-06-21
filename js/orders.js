@@ -1260,10 +1260,11 @@ if(document.getElementById("hasReturn").checked){
 let exists = cart.findIndex(p=>
 
 p.product === x.product &&
-p.price === x.price
+p.price === x.price &&
+p.size === x.size &&
+p.color === x.color
 
 );
-
 
 if(exists === cart.indexOf(x)){
 
@@ -1349,8 +1350,9 @@ ${items}
 ━━━━━━━━━━━━━
 كلفة المنتجات:${total.toLocaleString()} دينار
 🚚 التوصيل:${deliveryPrice.toLocaleString()} دينار
-🏷 الخصم:${discount.toLocaleString()} دينار
+${discount > 0 ? `🏷 الخصم:${discount.toLocaleString()} دينار` : ""}
 المجموع النهائي:${finalTotal.toLocaleString()} دينار
+${document.getElementById("notes").value.trim() ? `📝 الملاحظة:${document.getElementById("notes").value}` : ""}
 ━━━━━━━━━━━━━
 `;
 
@@ -1449,10 +1451,6 @@ document
 .onchange=
 
 generateMessage;
-
-
-
-
 
 
 
@@ -1628,14 +1626,7 @@ return true;
 // حفظ الطلب
 // =====================
 
-
-
-document
-
-.getElementById("saveOrder")
-
-.onclick=async()=>{
-
+async function saveOrder(clear = true){
 
 
 if(!validateOrder())
@@ -1643,367 +1634,53 @@ return;
 
 
 
+// هنا خلي كود الحفظ القديم كامل مالك
+// من let {data:customer}
+// إلى activity_logs
 
 
-let phone =
-
-document.getElementById("phone").value;
-
-
-
-
-
-// =====================
-// العميل
-// =====================
-
-
-
-let {data:customer}=await supabase
-
-.from("customers")
-
-.select("*")
-
-.eq(
-"phone",
-phone
-)
-
-.maybeSingle();
-
-
-
-
-
-let customerType="new";
-
-
-
-
-
-if(!customer){
-
-
-
-const {data:newCustomer,error}=await supabase
-
-.from("customers")
-
-.insert({
-
-
-name:
-
-document.getElementById("name").value,
-
-
-phone,
-
-
-address:
-
-document.getElementById("address").value,
-
-
-governorate:
-
-document.getElementById("governorate").value
-
-
-
-})
-
-.select()
-
-.single();
-
-
-
-if(error){
-
-console.log(error);
-
-return;
-
-}
-
-
-
-customer=newCustomer;
-
-
-
-}else{
-
-
-customerType="old";
-
-
-}
-
-
-
-
-
-
-
-// تحديث العميل
-
-
-await supabase
-
-.from("customers")
-
-.update({
-
-
-orders_count:
-
-(customer.orders_count||0)+1,
-
-
-last_order:new Date()
-
-
-
-})
-
-.eq(
-"id",
-customer.id
-);
-
-
-
-
-
-
-
-
-
-
-// =====================
-// الطلب
-// =====================
-
-
-
-const {data:order,error}=await supabase
-
-.from("orders")
-
-.insert({
-
-
-customer_id:customer.id,
-
-
-customer_name:
-
-document.getElementById("name").value,
-
-
-phone,
-
-
-governorate:
-
-document.getElementById("governorate").value,
-
-
-address:
-
-document.getElementById("address").value,
-
-
-nearest_point:
-
-document.getElementById("nearest_point").value || "",
-
-
-
-source:
-
-document.getElementById("source").value,
-
-
-
-notes:
-
-document.getElementById("notes").value,
-
-
-
-subtotal_price:
-
-Number(
-document.getElementById("total").innerText || 0
-),
-
-
-delivery_price:
-
-Number(
-document.getElementById("deliveryPrice")?.value || deliveryPrice || 0
-),
-
-
-
-discount_amount:
-
-Number(
-document.getElementById("discount_amount")?.value || 0
-),
-
-
-
-total_price:
-
-Number(
-document.getElementById("finalTotal").innerText || 0
-),
-
-delivery_type:
-
-document.getElementById("manualDelivery").checked
-?
-"manual"
-:
-"auto",
-
-
-
-has_return:
-
-document.getElementById("hasReturn").checked,
-
-
-
-has_partial_refund:
-
-document.getElementById("hasRefund").checked,
-
-
-
-refund_amount:
-
-Number(
-document.getElementById("refundAmount").value ||0
-),
-
-
-
-customer_type:customerType,
-
-
-payment_method:"cash"
-
-
-
-})
-
-.select()
-
-.single();
-
-
-
-
-
-if(error){
-
-
-alert(error.message);
-
-
-return;
-
-
-}
-
-
-
-
-
-
-
-// سجل الحالة
-
-
-await supabase
-
-.from("order_status_history")
-
-.insert({
-
-
-order_id:order.id,
-
-
-status:"new"
-
-
-});
-
-
-
-
-
-
-
-
-// =====================
-// القطع + المخزون
-// =====================
-
-
+// بعد نجاح الحفظ ونهاية كل العمليات:
 
 for(let x of cart){
 
 
-
-const {data:stock}=await supabase
+const {data:stock,error}=await supabase
 
 .from("product_variants")
 
 .select("stock_quantity")
 
-.eq(
-"id",
-x.variant_id
-)
+.eq("id",x.variant_id)
 
 .single();
 
 
 
+if(error || !stock){
+
+console.log(error);
+
+continue;
+
+}
+
 
 
 await supabase
 
-.from("order_items")
+.from("product_variants")
 
-.insert({
+.update({
 
+stock_quantity:
+stock.stock_quantity - x.quantity
 
-order_id:order.id,
+})
 
-
-variant_id:x.variant_id,
-
-
-quantity:x.quantity,
-
-
-price:x.price
-
-
-
-});
-
-
-
+.eq(
+"id",
+x.variant_id
+);
 
 
 
@@ -2013,129 +1690,18 @@ await supabase
 
 .insert({
 
-
 variant_id:x.variant_id,
-
 
 type:"OUT",
 
-
 quantity:x.quantity,
 
-
-note:
-
-`طلب رقم ${order.id}`
-
-
+note:"خصم من طلب جديد"
 
 });
-
-
-
-
-
-
-
-await supabase
-
-.from("product_variants")
-
-.update({
-
-
-stock_quantity:
-
-stock.stock_quantity-x.quantity
-
-
-
-})
-
-.eq(
-"id",
-x.variant_id
-);
-
-
-
-
-
-
-if(
-document.getElementById("hasReturn").checked
-){
-
-
-
-await supabase
-
-.from("returns")
-
-.insert({
-
-
-order_id:order.id,
-
-
-variant_id:x.variant_id,
-
-
-quantity:1,
-
-
-reason:"تبديل مقاس"
-
-
-
-});
-
 
 
 }
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// log
-
-
-await supabase
-
-.from("activity_logs")
-
-.insert({
-
-
-user_id:
-
-document.getElementById("user_id").value || null,
-
-
-action:"CREATE_ORDER",
-
-
-table_name:"orders",
-
-
-record_id:order.id
-
-
-
-});
-
-
-
 
 
 
@@ -2145,17 +1711,30 @@ alert("تم حفظ الطلب 🔥");
 
 
 
+// تنظيف فقط عند زر الحفظ
+if(clear){
+
 clearOrderForm();
 
+}
 
 
 
+}
+
+
+
+// زر حفظ فقط
+document
+.getElementById("saveOrder")
+.onclick=async()=>{
+
+await saveOrder(true);
 
 };
 // =====================
 // زر واتساب
 // =====================
-
 
 document
 .getElementById("whatsapp")
@@ -2166,36 +1745,35 @@ if(!validateOrder())
 return;
 
 
+// تجهيز الرسالة قبل التنظيف
 generateMessage();
 
 
 let phone =
-
 document
 .getElementById("phone")
 .value.trim();
 
 
-
 let text =
-
 document
 .getElementById("whatsappMessage")
 .value;
 
 
 
+// تنظيف الفورم
+clearOrderForm();
 
+
+
+// فتح الواتساب
 window.location.href =
 
 `https://wa.me/964${phone.substring(1)}?text=${encodeURIComponent(text)}`;
 
 
-
 };
-
-
-
 
 
 
@@ -2204,48 +1782,41 @@ window.location.href =
 // حفظ + واتساب
 // =====================
 
-
-
 document
-
 .getElementById("saveAndWhatsapp")
-
 .onclick=async()=>{
-
 
 
 if(!validateOrder())
 return;
 
 
+// خزن الرسالة قبل التنظيف
+generateMessage();
 
-// حفظ الطلب
-
-await document
-
-.getElementById("saveOrder")
-
-.click();
-
-
-
-
-
-setTimeout(()=>{
-
+let phone =
 document
-.getElementById("whatsapp")
-.click();
+.getElementById("phone")
+.value.trim();
 
 
-},2000);
+let text =
+document
+.getElementById("whatsappMessage")
+.value;
 
+
+// احفظ ونظف
+await saveOrder(false);
+
+
+// افتح الواتساب بعد التنظيف
+window.location.href =
+
+`https://wa.me/964${phone.substring(1)}?text=${encodeURIComponent(text)}`;
 
 
 };
-
-
-
 
 
 
@@ -2260,17 +1831,11 @@ document
 
 function clearOrderForm(){
 
-
-
-// بيانات العميل
-
-
 document
 
 .getElementById("name")
 
 .value="";
-
 
 
 document
@@ -2279,7 +1844,8 @@ document
 
 .value="";
 
-
+// المحافظة
+governorateSelect.selectedIndex = 0;
 
 document
 
@@ -2287,15 +1853,11 @@ document
 
 .value="";
 
-
-
 document
 
 .getElementById("nearest_point")
 
 .value="";
-
-
 
 document
 
@@ -2303,17 +1865,7 @@ document
 
 .value="";
 
-
-
-
-
-
-// المنتجات
-
-
 categorySelect.value="";
-
-
 
 productSelect.innerHTML=`
 
@@ -2325,8 +1877,6 @@ productSelect.innerHTML=`
 
 `;
 
-
-
 sizeSelect.innerHTML=`
 
 <option>
@@ -2336,8 +1886,6 @@ sizeSelect.innerHTML=`
 </option>
 
 `;
-
-
 
 colorSelect.innerHTML=`
 
@@ -2351,7 +1899,7 @@ colorSelect.innerHTML=`
 
 
 
-qtyInput.value="";
+qtyInput.value="1";
 
 
 

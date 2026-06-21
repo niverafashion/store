@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>NIVRA Edit Order</title>
+
+
+<link rel="stylesheet" href="../css/edit-orders.css">
+
+
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+
+
+</head>
+
+
+
+<body>
+
+
+
+<header>
+
+
+<a href="orders.html" class="back-btn">
+
+<i class="fa-solid fa-arrow-right"></i>
+
+</a>
+
+
+<h1>
+
+تعديل الطلب
+
+</h1>
+
+
+
+</header>
+
+
+
+
+
+
+
+<main>
+
+
+
+<input id="orderId" type="hidden">
+
+
+<input id="user_id" type="hidden">
+
+
+
+
+
+<!-- بيانات الزبون -->
+
+
+<section class="form-card">
+
+
+<h2>
+بيانات الزبون
+</h2>
+
+
+
+
+<input
+
+id="name"
+
+placeholder="اسم الزبون"
+
+>
+
+
+
+
+
+<input
+
+id="phone"
+
+placeholder="رقم الهاتف"
+
+>
+
+
+
+
+
+
+<input
+
+id="address"
+
+placeholder="العنوان"
+
+>
+
+
+
+
+
+
+<input
+
+id="nearest_point"
+
+placeholder="اقرب نقطة"
+
+>
+
+
+
+
+
+
+<select id="governorate">
+
+<option value="">
+
+اختار المحافظة
+
+</option>
+
+</select>
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- معلومات الطلب -->
+
+
+
+<section class="form-card">
+
+
+<h2>
+معلومات الطلب
+</h2>
+
+
+
+
+
+<select id="source">
+
+
+<option value="">
+مصدر الطلب
+</option>
+
+
+<option value="whatsapp">
+واتساب
+</option>
+
+
+<option value="store">
+المتجر
+</option>
+
+
+<option value="admin">
+إدارة
+</option>
+
+
+</select>
+
+
+
+
+
+
+
+<textarea
+
+id="notes"
+
+placeholder="ملاحظات"
+
+></textarea>
+
+
+
+
+
+
+
+
+<select id="payment_method">
+
+
+<option value="cash">
+
+كاش
+
+</option>
+
+
+<option value="online">
+
+اونلاين
+
+</option>
+
+
+</select>
+
+
+
+
+
+
+
+<select id="status">
+
+
+<option value="new">
+
+جديد
+
+</option>
+
+
+<option value="prepared">
+
+جاهز
+
+</option>
+
+
+<option value="delivery">
+
+توصيل
+
+</option>
+
+
+<option value="completed">
+
+مكتمل
+
+</option>
+
+
+<option value="cancelled">
+
+ملغي
+
+</option>
+
+
+</select>
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- المنتجات -->
+
+
+
+<section class="form-card">
+
+
+
+<h2>
+
+تعديل المنتجات
+
+</h2>
+
+
+
+
+<div class="product-select-box">
+
+
+
+
+
+<select id="category">
+
+<option value="">
+
+اختار الصنف
+
+</option>
+
+</select>
+
+
+
+
+
+<select id="product">
+
+<option value="">
+
+اختار المنتج
+
+</option>
+
+</select>
+
+
+
+
+
+<select id="size">
+
+<option value="">
+
+اختار الحجم
+
+</option>
+
+</select>
+
+
+
+
+
+
+<select id="color">
+
+<option value="">
+
+اختار اللون
+
+</option>
+
+</select>
+
+
+
+
+
+<input
+
+id="qty"
+
+type="number"
+
+value="1"
+
+min="1"
+
+>
+
+
+
+
+
+
+<button id="addItem">
+
+
+<i class="fa-solid fa-plus"></i>
+
+
+إضافة قطعة
+
+
+</button>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div id="cart">
+
+
+</div>
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- التوصيل -->
+
+
+
+<section class="form-card">
+
+
+
+<h2>
+
+التوصيل
+
+</h2>
+
+
+
+
+
+<label>
+
+<input
+
+type="radio"
+
+name="delivery"
+
+id="autoDelivery"
+
+checked
+
+>
+
+توصيل حسب المحافظة
+
+</label>
+
+
+
+
+
+
+
+
+<label>
+
+<input
+
+type="radio"
+
+name="delivery"
+
+id="manualDelivery"
+
+>
+
+توصيل يدوي
+
+</label>
+
+
+
+
+
+
+
+
+<div id="manualBox">
+
+
+<input
+
+id="deliveryPrice"
+
+type="number"
+
+placeholder="سعر التوصيل"
+
+>
+
+
+</div>
+
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- الاسترجاع -->
+
+
+
+<section class="form-card">
+
+
+
+<h2>
+
+الاسترجاع
+
+</h2>
+
+
+
+<label>
+
+
+<input
+
+type="checkbox"
+
+id="hasReturn"
+
+>
+
+
+يوجد تبديل / استرجاع
+
+
+</label>
+
+
+
+
+<div id="returnBox">
+
+
+</div>
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- الاستقطاع -->
+
+
+
+<section class="form-card">
+
+
+<h2>
+
+الاستقطاع
+
+</h2>
+
+
+
+<label>
+
+
+<input
+
+type="checkbox"
+
+id="hasRefund"
+
+>
+
+
+يوجد استقطاع
+
+
+</label>
+
+
+
+
+<div id="refundBox">
+
+
+<input
+
+id="refundAmount"
+
+type="number"
+
+placeholder="مبلغ الاستقطاع"
+
+>
+
+
+
+</div>
+
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- الحساب -->
+
+
+
+<section class="total-card">
+
+
+<h2>
+
+الحساب
+
+</h2>
+
+
+
+
+<p>
+
+قيمة المنتجات:
+
+<span id="total">
+
+0
+
+</span>
+
+د.ع
+
+</p>
+
+
+
+
+
+
+<p>
+
+التوصيل:
+
+<span id="deliveryTotal">
+
+0
+
+</span>
+
+د.ع
+
+</p>
+
+
+
+
+
+
+
+<h3>
+
+المجموع النهائي:
+
+
+<span id="finalTotal">
+
+0
+
+</span>
+
+د.ع
+
+
+</h3>
+
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- الازرار -->
+
+
+
+<section class="actions">
+
+
+
+<button id="saveEdit">
+
+
+<i class="fa-solid fa-floppy-disk"></i>
+
+
+حفظ التعديل
+
+
+</button>
+
+
+
+
+
+
+<button id="saveAndWhatsapp">
+
+
+<i class="fa-brands fa-whatsapp"></i>
+
+
+حفظ + واتساب
+
+
+</button>
+
+
+
+
+</section>
+
+
+
+
+
+
+
+<textarea
+
+id="whatsappMessage"
+
+readonly
+
+placeholder="رسالة الواتساب"
+
+></textarea>
+
+
+
+
+
+
+</main>
+
+
+
+
+
+
+
+
+<button id="scrollTop" class="scroll-top">
+
+
+<i class="fa-solid fa-arrow-down"></i>
+
+
+</button>
+
+
+
+
+
+
+
+<script type="module" src="../js/edit-orders.js"></script>
+
+
+
+</body>
+
+
+</html>

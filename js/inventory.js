@@ -821,23 +821,19 @@ ${v.size}
 
 
 <td>
+${v.sku ?? "-"}
+</td>
 
+<td>
 ${v.products.price}
-
 </td>
 
-
 <td>
-
 ${v.stock_quantity}
-
 </td>
 
-
 <td>
-
 ${status}
-
 </td>
 
 
@@ -1149,11 +1145,6 @@ movementList.innerHTML=html;
 
 
 }
-
-
-
-
-
 
 
 

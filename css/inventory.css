@@ -2,56 +2,64 @@
 
 
 *{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
-box-sizing:border-box;
-margin:0;
-padding:0;
 
+html{
+    -webkit-text-size-adjust:100%;
 }
 
 
 
 body{
 
-font-family:'Cairo',sans-serif;
+    font-family:'Cairo',sans-serif;
 
-background:#faf7f8;
+    background:
+    linear-gradient(
+        135deg,
+        #faf7f8,
+        #fff
+    );
 
-color:#333;
+    color:#333;
 
-overflow-x:hidden;
+    overflow-x:hidden;
 
 }
 
 
 
 
-
-
-/* =====================
- TOP BAR
-===================== */
+/* =========================
+        TOP BAR
+========================= */
 
 
 .topbar{
 
-height:95px;
+    height:95px;
 
-background:white;
+    background:white;
 
-display:flex;
+    display:flex;
 
-align-items:center;
+    justify-content:center;
 
-justify-content:center;
+    align-items:center;
 
-position:sticky;
+    position:sticky;
 
-top:0;
+    top:0;
 
-z-index:100;
+    z-index:100;
 
-box-shadow:0 8px 30px #0002;
+    box-shadow:
+
+    0 10px 35px rgba(0,0,0,.08);
 
 }
 
@@ -59,13 +67,15 @@ box-shadow:0 8px 30px #0002;
 
 .topbar h1{
 
-font-family:'Cormorant Garamond',serif;
+    font-family:'Cormorant Garamond',serif;
 
-font-size:65px;
+    font-size:68px;
 
-letter-spacing:7px;
+    letter-spacing:8px;
 
-color:#111;
+    color:#111;
+
+    line-height:1;
 
 }
 
@@ -73,49 +83,67 @@ color:#111;
 
 .topbar span{
 
-display:block;
+    display:block;
 
-text-align:center;
+    text-align:center;
 
-font-size:15px;
+    color:#d987a0;
 
-color:#d987a0;
+    font-size:14px;
+
+    font-weight:700;
 
 }
 
 
 
 
-
 .back-btn{
 
-position:absolute;
 
-left:25px;
+    position:absolute;
 
-top:22px;
+    left:25px;
 
-width:55px;
+    width:55px;
 
-height:55px;
+    height:55px;
 
-border-radius:50%;
+    border-radius:50%;
 
-background:#f7b6c8;
 
-color:white;
+    background:
 
-display:flex;
+    linear-gradient(
+        135deg,
+        #f7b6c8,
+        #d987a0
+    );
 
-align-items:center;
 
-justify-content:center;
+    color:white;
 
-font-size:22px;
 
-text-decoration:none;
+    display:flex;
 
-transition:.3s;
+    align-items:center;
+
+    justify-content:center;
+
+
+    font-size:22px;
+
+
+    text-decoration:none;
+
+
+    box-shadow:
+
+    0 10px 25px #d987a055;
+
+
+    transition:.35s;
+
 
 }
 
@@ -123,7 +151,7 @@ transition:.3s;
 
 .back-btn:hover{
 
-transform:translateX(5px);
+    transform:translateX(6px) scale(1.05);
 
 }
 
@@ -131,19 +159,18 @@ transform:translateX(5px);
 
 
 
-
-/* =====================
- MAIN
-===================== */
+/* =========================
+        MAIN
+========================= */
 
 
 main{
 
-max-width:1400px;
+    max-width:1450px;
 
-margin:auto;
+    margin:auto;
 
-padding:30px 5%;
+    padding:35px 5%;
 
 }
 
@@ -151,42 +178,111 @@ padding:30px 5%;
 
 
 
-
-/* =====================
- STATISTICS
-===================== */
+/* =========================
+        STAT CARDS
+========================= */
 
 
 .cards{
 
-display:grid;
 
-grid-template-columns:repeat(2,1fr);
+    display:grid;
 
-gap:15px;
+    grid-template-columns:
 
-margin-bottom:25px;
+    repeat(4,1fr);
+
+
+    gap:22px;
+
+
+    margin-bottom:35px;
+
 
 }
+
+
 
 
 
 .stat-card{
 
 
-background:white;
+    height:170px;
 
-border-radius:28px;
 
-padding:18px;
+    background:white;
 
-text-align:center;
 
-border:1px solid #f7b6c8;
+    border-radius:32px;
 
-box-shadow:0 12px 35px #0001;
 
-transition:.3s;
+    padding:25px;
+
+
+    display:flex;
+
+
+    flex-direction:column;
+
+
+    justify-content:center;
+
+
+    align-items:center;
+
+
+    gap:10px;
+
+
+    border:1px solid #f3e3e8;
+
+
+    box-shadow:
+
+
+    0 15px 40px rgba(0,0,0,.06);
+
+
+    position:relative;
+
+
+    overflow:hidden;
+
+
+    transition:.35s;
+
+
+}
+
+
+
+.stat-card::before{
+
+
+    content:"";
+
+
+    position:absolute;
+
+
+    width:120px;
+
+
+    height:120px;
+
+
+    border-radius:50%;
+
+
+    background:#f7b6c822;
+
+
+    top:-40px;
+
+
+    right:-40px;
+
 
 }
 
@@ -194,19 +290,46 @@ transition:.3s;
 
 .stat-card:hover{
 
-transform:translateY(-5px);
+
+    transform:
+
+    translateY(-8px);
+
 
 }
 
 
 
+
 .stat-card i{
 
-font-size:28px;
 
-color:#f7b6c8;
+    width:55px;
 
-margin-bottom:8px;
+
+    height:55px;
+
+
+    border-radius:18px;
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    justify-content:center;
+
+
+    font-size:25px;
+
+
+    background:#fff0f5;
+
+
+    color:#d987a0;
+
 
 }
 
@@ -214,9 +337,12 @@ margin-bottom:8px;
 
 .stat-card h4{
 
-font-size:15px;
 
-color:#777;
+    color:#777;
+
+
+    font-size:15px;
+
 
 }
 
@@ -224,9 +350,15 @@ color:#777;
 
 .stat-card h2{
 
-font-size:30px;
 
-color:#d987a0;
+    font-size:35px;
+
+
+    font-weight:900;
+
+
+    color:#111;
+
 
 }
 
@@ -234,40 +366,98 @@ color:#d987a0;
 
 
 
+/* كل القطع */
 
 
-/* =====================
- CARDS
-===================== */
+.stat-card:nth-child(2) i{
+
+    background:#eef7ff;
+
+    color:#5895ff;
+
+}
+
+
+
+/* قليل */
+
+
+.stat-card:nth-child(3) i{
+
+    background:#fff5df;
+
+    color:#ffb84d;
+
+}
+
+
+
+/* نفذ */
+
+
+.stat-card:nth-child(4) i{
+
+    background:#ffecee;
+
+    color:#ff6b81;
+
+}
+
+
+
+
+
+/* =========================
+        GENERAL CARD
+========================= */
 
 
 .card{
 
-background:white;
 
-padding:28px;
+    background:white;
 
-border-radius:35px;
 
-box-shadow:0 15px 40px #0001;
+    padding:30px;
 
-margin-bottom:30px;
+
+    border-radius:35px;
+
+
+    margin-bottom:30px;
+
+
+    box-shadow:
+
+
+    0 15px 45px rgba(0,0,0,.06);
+
+
+    border:1px solid #f3e7eb;
+
 
 }
+
 
 
 
 .card h2{
 
-display:flex;
 
-align-items:center;
+    display:flex;
 
-gap:10px;
 
-font-size:24px;
+    align-items:center;
 
-margin-bottom:22px;
+
+    gap:12px;
+
+
+    font-size:23px;
+
+
+    margin-bottom:25px;
+
 
 }
 
@@ -275,7 +465,8 @@ margin-bottom:22px;
 
 .card h2 i{
 
-color:#f7b6c8;
+
+    color:#d987a0;
 
 }
 
@@ -284,13 +475,15 @@ color:#f7b6c8;
 
 hr{
 
-border:none;
 
-height:1px;
+    border:none;
 
-background:#eee;
+    height:1px;
 
-margin:28px 0;
+    background:#eee;
+
+    margin:30px 0;
+
 
 }
 
@@ -298,21 +491,24 @@ margin:28px 0;
 
 
 
-
-
-
-/* =====================
- FORMS
-===================== */
+/* =========================
+        FORM
+========================= */
 
 
 .form-grid{
 
-display:grid;
 
-grid-template-columns:repeat(3,1fr);
+    display:grid;
 
-gap:18px;
+
+    grid-template-columns:
+
+    repeat(3,1fr);
+
+
+    gap:20px;
+
 
 }
 
@@ -320,13 +516,24 @@ gap:18px;
 
 label{
 
-display:block;
 
-font-weight:700;
+    display:flex;
 
-margin-bottom:7px;
 
-color:#555;
+    align-items:center;
+
+
+    gap:8px;
+
+
+    font-weight:800;
+
+
+    margin-bottom:10px;
+
+
+    color:#555;
+
 
 }
 
@@ -334,9 +541,10 @@ color:#555;
 
 label i{
 
-color:#d987a0;
+    color:#d987a0;
 
 }
+
 
 
 
@@ -344,21 +552,32 @@ input,
 select{
 
 
-width:100%;
+    width:100%;
 
-height:50px;
 
-padding:12px 16px;
+    height:52px;
 
-border-radius:20px;
 
-border:2px solid #f7b6c8;
+    border-radius:18px;
 
-font-family:'Cairo';
 
-background:white;
+    border:2px solid #f3dce4;
 
-outline:none;
+
+    background:#fff;
+
+
+    padding:0 18px;
+
+
+    font-family:'Cairo';
+
+
+    outline:none;
+
+
+    transition:.3s;
+
 
 }
 
@@ -368,7 +587,13 @@ input:focus,
 select:focus{
 
 
-box-shadow:0 0 0 4px #f7b6c855;
+    border-color:#d987a0;
+
+
+    box-shadow:
+
+    0 0 0 5px #d987a033;
+
 
 }
 
@@ -376,75 +601,36 @@ box-shadow:0 0 0 4px #f7b6c855;
 
 
 
-
-#saveMovement{
-
-
-width:100%;
-
-margin-top:20px;
-
-height:52px;
-
-border:none;
-
-border-radius:30px;
-
-background:#111;
-
-color:white;
-
-font-family:'Cairo';
-
-font-size:17px;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-
-
-#saveMovement:hover{
-
-background:#d987a0;
-
-}
-
-
-
-
-
-
-
-
-/* =====================
- STOCK INFO
-===================== */
-
-
-.stock-info{
-
-
-margin-top:20px;
-
-}
-
+/* معلومات القطعة */
 
 
 .stock-info-box{
 
 
-background:#fff5f8;
+    margin-top:20px;
 
-border:1px solid #f7b6c8;
 
-border-radius:25px;
+    background:
 
-padding:20px;
 
-text-align:center;
+    linear-gradient(
+        135deg,
+        #fff5f8,
+        #fff
+    );
+
+
+    border-radius:25px;
+
+
+    padding:22px;
+
+
+    text-align:center;
+
+
+    border:1px solid #f7b6c8;
+
 
 }
 
@@ -452,14 +638,80 @@ text-align:center;
 
 
 
+/* زر الحفظ */
+
+
+#saveMovement{
+
+
+    margin-top:25px;
+
+
+    height:55px;
+
+
+    width:100%;
+
+
+    border:none;
+
+
+    border-radius:30px;
+
+
+    background:
+
+
+    linear-gradient(
+        135deg,
+        #111,
+        #333
+    );
+
+
+    color:white;
+
+
+    font-family:'Cairo';
+
+
+    font-size:17px;
+
+
+    font-weight:800;
+
+
+    cursor:pointer;
+
+
+    transition:.35s;
+
+
+}
 
 
 
 
+#saveMovement:hover{
 
-/* =====================
- SEARCH
-===================== */
+
+    transform:translateY(-3px);
+
+
+    background:
+
+
+    linear-gradient(
+        135deg,
+        #d987a0,
+        #f7b6c8
+    );
+
+
+}
+/* =========================
+        SEARCH BAR
+========================= */
 
 
 .inventory-search{
@@ -467,30 +719,36 @@ text-align:center;
 
 display:grid;
 
-grid-template-columns:repeat(2,1fr);
 
-gap:12px;
+grid-template-columns:
 
-padding:18px;
+2fr repeat(5,1fr);
+
+
+gap:15px;
+
+
+padding:22px;
+
 
 background:#fff7fa;
 
+
 border-radius:30px;
+
 
 margin-bottom:25px;
 
+
+border:1px solid #f3e3e8;
+
+
+box-shadow:
+
+inset 0 0 30px #f7b6c811;
+
+
 }
-
-
-
-#searchSKU{
-
-
-grid-column:span 2;
-
-}
-
-
 
 
 
@@ -498,18 +756,17 @@ grid-column:span 2;
 .inventory-search select{
 
 
-height:48px;
+height:50px;
+
 
 }
 
 
 
 
-
-
-/* =====================
- TABLE
-===================== */
+/* =========================
+        TABLE
+========================= */
 
 
 .table-box{
@@ -517,12 +774,14 @@ height:48px;
 
 width:100%;
 
+
 overflow-x:auto;
 
-border-radius:25px;
+
+border-radius:30px;
+
 
 }
-
 
 
 
@@ -531,14 +790,20 @@ table{
 
 width:100%;
 
-min-width:850px;
 
-border-collapse:collapse;
+border-collapse:separate;
+
+
+border-spacing:0;
+
 
 background:white;
 
-}
 
+overflow:hidden;
+
+
+}
 
 
 
@@ -546,10 +811,17 @@ background:white;
 thead{
 
 
-background:#fff0f5;
+background:
+
+
+linear-gradient(
+135deg,
+#fff0f5,
+#fff
+);
+
 
 }
-
 
 
 
@@ -557,16 +829,22 @@ background:#fff0f5;
 th{
 
 
-padding:15px;
+padding:18px;
+
 
 color:#d987a0;
 
+
 font-size:15px;
+
+
+font-weight:900;
+
 
 white-space:nowrap;
 
-}
 
+}
 
 
 
@@ -574,17 +852,33 @@ white-space:nowrap;
 td{
 
 
-padding:14px;
+padding:18px;
+
 
 text-align:center;
 
-border-bottom:1px solid #eee;
 
-white-space:nowrap;
+border-bottom:
+
+1px solid #eee;
+
+
+font-weight:600;
+
 
 }
 
 
+
+
+
+tbody tr{
+
+
+transition:.25s;
+
+
+}
 
 
 
@@ -593,6 +887,45 @@ tbody tr:hover{
 
 background:#fff8fa;
 
+
+transform:scale(1.005);
+
+
+}
+
+
+
+
+/* SKU */
+
+
+td:nth-child(5){
+
+
+font-weight:800;
+
+
+color:#777;
+
+
+}
+
+
+
+
+
+/* السعر */
+
+
+td:nth-child(6){
+
+
+color:#d987a0;
+
+
+font-weight:900;
+
+
 }
 
 
@@ -600,49 +933,42 @@ background:#fff8fa;
 
 
 
-/* =====================
- STATUS
-===================== */
+/* =========================
+        STOCK STATUS
+========================= */
 
 
-.done,
-.delayed,
-.rejected{
+.stock-status{
 
 
-padding:7px 15px;
+display:inline-flex;
 
-border-radius:20px;
 
-color:white;
+padding:7px 18px;
+
+
+border-radius:25px;
+
 
 font-size:13px;
 
-font-weight:700;
+
+font-weight:900;
+
 
 }
 
 
 
-.done{
 
-background:#79c779;
-
-}
+.available{
 
 
-
-.delayed{
-
-background:#f7b6c8;
-
-}
+background:#e9f8ed;
 
 
+color:#42a85f;
 
-.rejected{
-
-background:#ff6b81;
 
 }
 
@@ -650,21 +976,14 @@ background:#ff6b81;
 
 
 
+.low{
 
 
-
-/* =====================
- MOBILE
-===================== */
+background:#fff3db;
 
 
-@media(max-width:900px){
+color:#e9a52c;
 
-
-
-main{
-
-padding:20px 15px;
 
 }
 
@@ -672,9 +991,14 @@ padding:20px 15px;
 
 
 
-.topbar{
+.out{
 
-height:80px;
+
+background:#ffe8ec;
+
+
+color:#ff5d78;
+
 
 }
 
@@ -682,25 +1006,136 @@ height:80px;
 
 
 
-.topbar h1{
 
-font-size:45px;
+
+
+/* =========================
+        MOVEMENTS TABLE
+========================= */
+
+
+#movementList td{
+
+
+font-size:14px;
+
 
 }
 
 
+
+
+#movementList td:nth-child(2){
+
+
+font-weight:900;
+
+
+color:#d987a0;
+
+
+}
+
+
+
+
+/* =========================
+        SCROLL TOP
+========================= */
+
+
+#scrollTop{
+
+
+position:fixed;
+
+
+bottom:25px;
+
+
+right:25px;
+
+
+width:55px;
+
+
+height:55px;
+
+
+border-radius:50%;
+
+
+border:none;
+
+
+background:#111;
+
+
+color:#d987a0;
+
+
+font-size:22px;
+
+
+display:flex;
+
+
+align-items:center;
+
+
+justify-content:center;
+
+
+box-shadow:
+
+
+0 15px 35px #0004;
+
+
+cursor:pointer;
+
+
+z-index:50;
+
+
+}
+
+
+
+
+
+
+
+/* =========================
+        MOBILE
+========================= */
+
+
+@media(max-width:1000px){
+
+
+
+.cards{
+
+
+grid-template-columns:
+
+repeat(2,1fr);
+
+
+}
 
 
 
 .form-grid{
 
 
-grid-template-columns:repeat(2,1fr);
+grid-template-columns:
+
+repeat(2,1fr);
 
 
 }
-
-
 
 
 
@@ -708,17 +1143,151 @@ grid-template-columns:repeat(2,1fr);
 .inventory-search{
 
 
-grid-template-columns:repeat(2,1fr);
+grid-template-columns:
+
+repeat(2,1fr);
 
 
 }
 
 
 
-#searchSKU{
+.inventory-search input{
 
 
-grid-column:span 2;
+grid-column:
+
+span 2;
+
+
+}
+
+
+
+}
+
+
+
+
+@media(max-width:600px){
+
+
+
+main{
+
+
+padding:20px 12px;
+
+
+}
+
+
+
+
+.topbar{
+
+
+height:85px;
+
+
+}
+
+
+
+.topbar h1{
+
+
+font-size:48px;
+
+
+}
+
+
+
+
+.topbar span{
+
+
+font-size:11px;
+
+
+}
+
+
+
+
+
+.back-btn{
+
+
+width:45px;
+
+
+height:45px;
+
+
+left:15px;
+
+
+}
+
+
+
+
+.cards{
+
+
+grid-template-columns:
+
+repeat(2,1fr);
+
+
+gap:12px;
+
+
+}
+
+
+
+
+
+.stat-card{
+
+
+height:145px;
+
+
+padding:15px;
+
+
+border-radius:25px;
+
+
+}
+
+
+
+.stat-card i{
+
+
+width:45px;
+
+
+height:45px;
+
+
+font-size:20px;
+
+
+}
+
+
+
+.stat-card h2{
+
+
+font-size:28px;
+
 
 }
 
@@ -731,98 +1300,16 @@ grid-column:span 2;
 
 padding:22px;
 
+
 border-radius:28px;
 
-}
 
+margin-bottom:22px;
 
 
-}
+box-shadow:
 
-
-
-
-
-@media(max-width:600px){
-
-
-
-.cards{
-
-
-grid-template-columns:repeat(2,1fr);
-
-
-}
-
-
-
-
-.stat-card{
-
-
-padding:15px;
-
-}
-
-
-
-
-
-.stat-card i{
-
-font-size:24px;
-
-}
-
-
-
-
-
-.stat-card h2{
-
-
-font-size:25px;
-
-
-}
-
-
-
-
-
-
-.form-grid{
-
-
-grid-template-columns:1fr;
-
-
-}
-
-
-
-
-
-.inventory-search{
-
-
-grid-template-columns:repeat(2,1fr);
-
-
-gap:10px;
-
-
-}
-
-
-
-
-
-#searchSKU{
-
-
-grid-column:span 2;
+0 10px 35px #0001;
 
 
 }
@@ -843,10 +1330,41 @@ font-size:20px;
 
 
 
-table{
+.form-grid{
 
 
-min-width:750px;
+grid-template-columns:
+
+repeat(3,minmax(0,1fr));
+
+
+gap:14px;
+
+
+}
+
+
+
+
+.inventory-search{
+
+
+grid-template-columns:
+
+1fr;
+
+
+padding:15px;
+
+
+}
+
+
+
+.inventory-search input{
+
+
+grid-column:auto;
 
 
 }
@@ -855,10 +1373,40 @@ min-width:750px;
 
 
 
-.topbar span{
 
 
-font-size:12px;
+/* تحويل جدول المخزون لكروت */
+
+
+.table-box{
+
+
+overflow:visible;
+
+
+}
+
+
+
+table,
+thead,
+tbody,
+th,
+td,
+tr{
+
+
+display:block;
+
+
+}
+
+
+
+thead{
+
+
+display:none;
 
 
 }
@@ -867,14 +1415,267 @@ font-size:12px;
 
 
 
-.back-btn{
+tbody tr{
 
 
-width:42px;
+background:white;
 
-height:42px;
 
-top:18px;
+margin-bottom:18px;
+
+
+border-radius:28px;
+
+
+padding:18px;
+
+
+box-shadow:
+
+0 10px 30px #0001;
+
+
+border:1px solid #f3e3e8;
+
+
+}
+
+
+
+
+
+td{
+
+
+display:flex;
+
+
+justify-content:space-between;
+
+
+align-items:center;
+
+
+border:none;
+
+
+padding:10px 5px;
+
+
+text-align:right;
+
+
+white-space:normal;
+
+
+}
+
+
+
+
+
+td::before{
+
+
+font-weight:900;
+
+
+color:#d987a0;
+
+
+}
+
+
+
+
+
+/* أسماء الأعمدة */
+
+
+#inventoryList td:nth-child(1)::before{
+
+
+content:"الصنف";
+
+
+}
+
+
+
+#inventoryList td:nth-child(2)::before{
+
+
+content:"المنتج";
+
+
+}
+
+
+
+#inventoryList td:nth-child(3)::before{
+
+
+content:"اللون";
+
+
+}
+
+
+
+#inventoryList td:nth-child(4)::before{
+
+
+content:"الحجم";
+
+
+}
+
+
+
+#inventoryList td:nth-child(5)::before{
+
+
+content:"SKU";
+
+
+}
+
+
+
+#inventoryList td:nth-child(6)::before{
+
+
+content:"السعر";
+
+
+}
+
+
+
+#inventoryList td:nth-child(7)::before{
+
+
+content:"المتوفر";
+
+
+}
+
+
+
+#inventoryList td:nth-child(8)::before{
+
+
+content:"الحالة";
+
+
+}
+
+
+
+
+
+
+
+/* سجل الحركات موبايل */
+
+
+#movementList tr{
+
+
+background:white;
+
+
+margin-bottom:15px;
+
+
+padding:18px;
+
+
+border-radius:25px;
+
+
+box-shadow:
+
+0 10px 25px #0001;
+
+
+}
+
+
+
+
+
+#movementList td{
+
+
+display:flex;
+
+
+justify-content:space-between;
+
+
+}
+
+
+
+
+
+#movementList td:nth-child(1)::before{
+
+
+content:"القطعة";
+
+
+}
+
+
+
+#movementList td:nth-child(2)::before{
+
+
+content:"العملية";
+
+
+}
+
+
+
+#movementList td:nth-child(3)::before{
+
+
+content:"الكمية";
+
+
+}
+
+
+
+#movementList td:nth-child(4)::before{
+
+
+content:"الملاحظة";
+
+
+}
+
+
+
+#movementList td:nth-child(5)::before{
+
+
+content:"التاريخ";
+
+
+}
+
+
+
+
+
+#saveMovement{
+
+
+height:58px;
 
 
 }
@@ -887,8 +1688,8 @@ top:18px;
 
 
 
+/* منع تكبير الايفون */
 
-/* منع zoom */
 
 input,
 select,
@@ -900,12 +1701,1797 @@ font-size:16px !important;
 
 }
 
+/* =========================
+        STAT CARDS NEW
+========================= */
+
+.cards{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:16px;
+
+margin-bottom:25px;
+
+}
 
 
-html{
+
+.stat-card{
+
+height:135px;
+
+background:white;
+
+border-radius:25px;
+
+padding:18px;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+gap:6px;
+
+border:1px solid #f3e3e8;
+
+box-shadow:0 10px 30px #0001;
+
+position:relative;
+
+overflow:hidden;
+
+transition:.3s;
+
+}
 
 
--webkit-text-size-adjust:100%;
+
+.stat-card:hover{
+
+transform:translateY(-5px);
+
+}
+
+
+
+.stat-card i{
+
+width:42px;
+
+height:42px;
+
+border-radius:14px;
+
+font-size:19px;
+
+}
+
+
+
+.stat-card h4{
+
+font-size:13px;
+
+}
+
+
+
+.stat-card h2{
+
+font-size:27px;
+
+}
+
+
+
+
+/* =========================
+        GENERAL CARD SMALL
+========================= */
+
+
+.card{
+
+background:white;
+
+padding:22px;
+
+border-radius:28px;
+
+margin-bottom:20px;
+
+box-shadow:0 10px 35px #0001;
+
+border:1px solid #f3e7eb;
+
+}
+
+
+
+.card h2{
+
+font-size:20px;
+
+margin-bottom:18px;
+
+}
+
+
+
+
+/* =========================
+        FORM SMALL
+========================= */
+
+
+.form-grid{
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:14px;
+
+}
+
+
+
+input,
+select{
+
+height:46px;
+
+border-radius:15px;
+
+font-size:14px;
+
+}
+
+
+
+
+
+/* معلومات القطعة */
+
+
+.stock-info-box{
+
+
+margin-top:12px;
+
+padding:15px;
+
+border-radius:20px;
+
+font-size:14px;
+
+
+}
+
+
+
+
+
+/* زر الحفظ */
+
+
+#saveMovement{
+
+
+height:48px;
+
+margin-top:18px;
+
+border-radius:25px;
+
+font-size:15px;
+
+
+}
+
+
+
+
+
+
+
+/* =========================
+        SEARCH SMALL
+========================= */
+
+
+.inventory-search{
+
+
+display:grid;
+
+grid-template-columns:2fr repeat(5,1fr);
+
+gap:10px;
+
+padding:15px;
+
+background:#fff7fa;
+
+border-radius:22px;
+
+margin-bottom:18px;
+
+
+}
+
+
+
+
+.inventory-search input,
+.inventory-search select{
+
+
+height:44px;
+
+border-radius:15px;
+
+
+}
+
+
+
+
+
+/* =========================
+        TABLE PREMIUM
+========================= */
+
+
+.table-box{
+
+
+border-radius:22px;
+
+
+}
+
+
+
+
+th{
+
+
+padding:13px;
+
+font-size:13px;
+
+
+}
+
+
+
+td{
+
+
+padding:13px;
+
+font-size:13px;
+
+
+}
+
+
+
+
+tbody tr:hover{
+
+
+transform:none;
+
+
+}
+
+
+
+
+.stock-status{
+
+
+padding:5px 14px;
+
+font-size:12px;
+
+
+}
+
+
+
+
+
+/* =========================
+        MOVEMENTS SMALL
+========================= */
+
+
+#movementList td{
+
+
+font-size:13px;
+
+
+}
+
+
+
+#movementList tr{
+
+
+transition:.3s;
+
+
+}
+
+
+
+
+/* =========================
+        SCROLL
+========================= */
+
+
+#scrollTop{
+
+
+width:45px;
+
+height:45px;
+
+font-size:18px;
+
+
+}
+
+
+
+
+
+
+
+
+/* =========================
+        MOBILE
+========================= */
+
+
+@media(max-width:1000px){
+
+
+.cards{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+
+.form-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+
+.inventory-search{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+
+
+}
+
+
+
+
+
+@media(max-width:600px){
+
+
+main{
+
+padding:18px 12px;
+
+}
+
+
+
+.cards{
+
+gap:10px;
+
+}
+
+
+
+.stat-card{
+
+height:120px;
+
+border-radius:22px;
+
+padding:12px;
+
+}
+
+
+
+.stat-card i{
+
+
+width:38px;
+
+height:38px;
+
+font-size:17px;
+
+}
+
+
+
+.stat-card h2{
+
+
+font-size:24px;
+
+
+}
+
+
+
+
+.card{
+
+padding:18px;
+
+border-radius:24px;
+
+}
+
+
+
+
+.form-grid{
+
+
+grid-template-columns:(2,1fr);
+
+
+}
+
+
+
+.inventory-search{
+
+
+grid-template-columns:(2,1fr);
+
+padding:12px;
+
+
+}
+
+
+
+
+/* جدول المخزون كروت */
+
+tbody tr{
+
+
+border-radius:22px;
+
+padding:14px;
+
+
+}
+
+
+td{
+
+
+padding:8px 3px;
+
+font-size:13px;
+
+
+}
+
+
+
+
+
+#saveMovement{
+
+
+height:52px;
+
+}
+
+
+
+
+}
+/* =========================
+   INVENTORY CARDS PREMIUM SMALL
+========================= */
+
+
+#inventoryList{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:14px;
+
+padding:3px;
+
+}
+
+
+
+
+#inventoryList tr{
+
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+
+gap:8px;
+
+
+background:white;
+
+
+border-radius:22px;
+
+
+padding:16px;
+
+
+border:1px solid #f3e3e8;
+
+
+box-shadow:
+
+0 8px 25px rgba(0,0,0,.05);
+
+
+transition:.3s;
+
+
+position:relative;
+
+
+overflow:hidden;
+
+
+}
+
+
+
+
+#inventoryList tr::before{
+
+
+content:"";
+
+
+position:absolute;
+
+
+top:0;
+
+
+right:0;
+
+
+width:100%;
+
+
+height:4px;
+
+
+background:
+
+
+linear-gradient(
+90deg,
+#f7b6c8,
+#d987a0
+);
+
+
+}
+
+
+
+
+
+#inventoryList tr:hover{
+
+
+transform:translateY(-4px);
+
+
+box-shadow:
+
+0 15px 35px rgba(0,0,0,.1);
+
+
+}
+
+
+
+
+
+#inventoryList td{
+
+
+border:none;
+
+
+padding:9px 12px;
+
+
+background:#faf7f8;
+
+
+border-radius:14px;
+
+
+display:flex;
+
+
+justify-content:space-between;
+
+
+align-items:center;
+
+
+font-size:13px;
+
+
+font-weight:700;
+
+
+color:#444;
+
+
+height:42px;
+
+
+}
+
+
+
+
+
+/* اسماء الحقول */
+
+
+#inventoryList td::before{
+
+
+font-weight:900;
+
+
+color:#d987a0;
+
+
+font-size:12px;
+
+
+}
+
+
+
+
+
+
+/* ترتيب العناوين */
+
+
+#inventoryList td:nth-child(1)::before{
+
+
+content:"الصنف";
+
+
+}
+
+
+
+#inventoryList td:nth-child(2)::before{
+
+
+content:"المنتج";
+
+
+}
+
+
+
+#inventoryList td:nth-child(3)::before{
+
+
+content:"اللون";
+
+
+}
+
+
+
+#inventoryList td:nth-child(4)::before{
+
+
+content:"الحجم";
+
+
+}
+
+
+
+#inventoryList td:nth-child(5)::before{
+
+
+content:"SKU";
+
+
+}
+
+
+
+#inventoryList td:nth-child(6)::before{
+
+
+content:"السعر";
+
+
+}
+
+
+
+#inventoryList td:nth-child(7)::before{
+
+
+content:"المتوفر";
+
+
+}
+
+
+
+#inventoryList td:nth-child(8)::before{
+
+
+content:"الحالة";
+
+
+}
+
+
+
+
+
+
+
+/* الصنف والمنتج */
+
+
+#inventoryList td:nth-child(1),
+#inventoryList td:nth-child(2){
+
+
+background:#fff0f5;
+
+
+color:#222;
+
+
+font-weight:900;
+
+
+}
+
+
+
+
+
+/* SKU */
+
+
+#inventoryList td:nth-child(5){
+
+
+font-family:monospace;
+
+
+color:#777;
+
+
+font-size:12px;
+
+
+}
+
+
+
+
+
+/* السعر */
+
+
+#inventoryList td:nth-child(6){
+
+
+color:#d987a0;
+
+
+font-size:14px;
+
+
+}
+
+
+
+
+
+
+/* الحالة */
+
+
+#inventoryList .stock-status{
+
+
+padding:5px 12px;
+
+
+font-size:11px;
+
+
+border-radius:20px;
+
+
+}
+
+
+
+
+
+
+/* =========================
+ MOBILE
+========================= */
+
+
+@media(max-width:700px){
+
+
+#inventoryList{
+
+
+grid-template-columns:1fr;
+
+
+gap:12px;
+
+
+}
+
+
+
+
+#inventoryList tr{
+
+
+padding:13px;
+
+
+border-radius:20px;
+
+
+}
+
+
+
+#inventoryList td{
+
+
+height:38px;
+
+
+font-size:12px;
+
+
+padding:8px 10px;
+
+
+}
+
+
+
+}
+/* =========================
+   MOVEMENTS PREMIUM SMALL
+========================= */
+
+
+#movementList{
+
+
+display:flex;
+
+
+flex-direction:column;
+
+
+gap:12px;
+
+
+}
+
+
+
+
+
+#movementList tr{
+
+
+display:grid;
+
+
+grid-template-columns:
+
+1.2fr .8fr .6fr 1.8fr 1fr;
+
+
+align-items:center;
+
+
+background:white;
+
+
+border-radius:22px;
+
+
+padding:12px 15px;
+
+
+border:1px solid #f3e3e8;
+
+
+box-shadow:
+
+
+0 8px 25px rgba(0,0,0,.05);
+
+
+transition:.3s;
+
+
+}
+
+
+
+
+#movementList tr:hover{
+
+
+transform:translateY(-3px);
+
+
+box-shadow:
+
+
+0 15px 35px rgba(217,135,160,.15);
+
+
+}
+
+
+
+
+
+
+
+#movementList td{
+
+
+border:none;
+
+
+padding:8px;
+
+
+text-align:center;
+
+
+font-size:13px;
+
+
+font-weight:700;
+
+
+color:#444;
+
+
+}
+
+
+
+
+
+/* العملية */
+
+#movementList td:nth-child(2){
+
+
+color:#d987a0;
+
+
+font-weight:900;
+
+
+}
+
+
+
+
+/* الكمية */
+
+#movementList td:nth-child(3){
+
+
+background:#fff0f5;
+
+
+border-radius:15px;
+
+
+font-weight:900;
+
+
+}
+
+
+
+
+
+/* التاريخ */
+
+#movementList td:nth-child(5){
+
+
+color:#999;
+
+
+font-size:12px;
+
+
+}
+
+
+
+
+
+
+
+/* عنوان الجدول */
+
+
+#movementList::before{
+
+
+content:
+
+"القطعة        العملية        الكمية        الملاحظة        التاريخ";
+
+
+display:grid;
+
+
+grid-template-columns:
+
+1.2fr .8fr .6fr 1.8fr 1fr;
+
+
+padding:12px;
+
+
+margin-bottom:8px;
+
+
+background:#fff7fa;
+
+
+border-radius:18px;
+
+
+color:#d987a0;
+
+
+font-size:12px;
+
+
+font-weight:900;
+
+
+text-align:center;
+
+
+}
+
+
+
+
+
+
+
+@media(max-width:700px){
+
+
+
+#movementList tr{
+
+
+grid-template-columns:
+
+repeat(2,1fr);
+
+
+padding:14px;
+
+
+}
+
+
+
+#movementList::before{
+
+
+display:none;
+
+
+}
+
+
+
+#movementList td{
+
+
+font-size:12px;
+
+
+padding:7px;
+
+
+}
+
+
+
+}
+/* =========================
+   INVENTORY & MOVEMENTS COMPACT PREMIUM
+========================= */
+
+
+/* بوكسات الأقسام */
+
+.card{
+
+
+padding:18px;
+
+
+border-radius:24px;
+
+
+margin-bottom:16px;
+
+
+box-shadow:
+
+0 8px 28px rgba(0,0,0,.05);
+
+
+}
+
+
+
+
+.card h2{
+
+
+font-size:18px;
+
+
+margin-bottom:14px;
+
+
+gap:8px;
+
+
+}
+
+
+
+/* الخط الفاصل */
+
+
+hr{
+
+
+margin:18px 0;
+
+
+}
+
+
+
+/* ادارة المخزون */
+
+
+.inventory-search{
+
+
+padding:14px;
+
+
+gap:10px;
+
+
+border-radius:20px;
+
+
+margin-bottom:15px;
+
+
+}
+
+
+
+.inventory-search input,
+.inventory-search select{
+
+
+height:42px;
+
+
+border-radius:14px;
+
+
+font-size:13px;
+
+
+}
+
+
+
+/* معلومات القطعة */
+
+
+.stock-info-box{
+
+
+margin-top:12px;
+
+
+padding:14px;
+
+
+border-radius:18px;
+
+
+font-size:13px;
+
+
+}
+
+
+
+/* زر الحفظ */
+
+
+#saveMovement{
+
+
+height:46px;
+
+
+margin-top:15px;
+
+
+border-radius:24px;
+
+
+font-size:14px;
+
+
+}
+
+
+
+
+
+
+/* =========================
+   MOVEMENT BOX SMALL
+========================= */
+
+
+#movementList{
+
+
+gap:10px;
+
+
+}
+
+
+
+#movementList tr{
+
+
+border-radius:18px;
+
+
+padding:10px 12px;
+
+
+}
+
+
+
+#movementList td{
+
+
+font-size:12px;
+
+
+padding:7px;
+
+
+}
+
+
+
+
+#movementList::before{
+
+
+padding:10px;
+
+
+border-radius:15px;
+
+
+font-size:11px;
+
+
+}
+
+
+
+
+/* =========================
+   INVENTORY PRODUCTS SMALLER
+========================= */
+
+
+#inventoryList{
+
+
+gap:12px;
+
+
+}
+
+
+
+#inventoryList tr{
+
+
+border-radius:20px;
+
+
+padding:13px;
+
+
+}
+
+
+
+#inventoryList td{
+
+
+height:38px;
+
+
+padding:8px 10px;
+
+
+font-size:12px;
+
+
+border-radius:12px;
+
+
+}
+
+
+
+
+
+
+/* =========================
+   DESKTOP WIDTH BALANCE
+========================= */
+
+
+@media(min-width:1000px){
+
+
+.card{
+
+
+max-width:100%;
+
+
+}
+
+
+
+
+#inventoryList{
+
+
+grid-template-columns:repeat(2,1fr);
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+/* =========================
+   MOBILE
+========================= */
+
+
+@media(max-width:700px){
+
+
+.card{
+
+
+padding:15px;
+
+
+border-radius:20px;
+
+
+}
+
+
+
+.card h2{
+
+
+font-size:17px;
+
+
+}
+
+
+
+.inventory-search{
+
+
+padding:10px;
+
+
+}
+
+
+}
+/* =========================
+   INVENTORY NAV BAR PREMIUM
+========================= */
+
+
+.inventory-nav{
+
+
+position:sticky;
+
+
+top:95px;
+
+
+z-index:90;
+
+
+
+width:100%;
+
+
+height:62px;
+
+
+
+display:flex;
+
+
+justify-content:center;
+
+
+align-items:center;
+
+
+
+gap:25px;
+
+
+
+background:white;
+
+
+
+border-top:1px solid #f3e3e8;
+
+
+border-bottom:1px solid #f3e3e8;
+
+
+
+box-shadow:
+
+
+0 8px 25px rgba(0,0,0,.08);
+
+
+
+}
+
+
+
+
+
+/* BUTTONS */
+
+
+.inventory-nav a{
+
+
+height:100%;
+
+
+padding:0 28px;
+
+
+
+text-decoration:none;
+
+
+
+color:#555;
+
+
+
+font-size:14px;
+
+
+font-weight:900;
+
+
+
+display:flex;
+
+
+align-items:center;
+
+
+justify-content:center;
+
+
+
+gap:9px;
+
+
+
+position:relative;
+
+
+
+transition:.3s;
+
+
+
+}
+
+
+
+
+
+.inventory-nav a i{
+
+
+color:#d987a0;
+
+
+font-size:17px;
+
+
+
+}
+
+
+
+
+
+
+
+/* خط تحت الزر */
+
+
+.inventory-nav a::after{
+
+
+content:"";
+
+
+position:absolute;
+
+
+
+bottom:0;
+
+
+left:50%;
+
+
+transform:translateX(-50%);
+
+
+
+width:0;
+
+
+height:3px;
+
+
+
+background:
+
+
+linear-gradient(
+90deg,
+#d987a0,
+#f7b6c8
+);
+
+
+
+transition:.35s;
+
+
+
+}
+
+
+
+
+
+.inventory-nav a:hover{
+
+
+color:#d987a0;
+
+
+}
+
+
+
+
+
+.inventory-nav a:hover::after{
+
+
+width:80%;
+
+
+}
+
+
+
+
+
+.inventory-nav a.active{
+
+
+color:#d987a0;
+
+
+}
+
+
+
+
+
+.inventory-nav a.active::after{
+
+
+width:80%;
+
+
+}
+
+
+
+
+
+
+/* MOBILE */
+
+
+@media(max-width:700px){
+
+
+
+.inventory-nav{
+
+
+height:55px;
+
+
+overflow-x:auto;
+
+
+justify-content:flex-start;
+
+
+
+padding:0 15px;
+
+
+
+}
+
+
+
+.inventory-nav a{
+
+
+min-width:130px;
+
+
+font-size:13px;
+
+
+
+}
 
 
 }

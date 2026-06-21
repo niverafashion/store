@@ -39,7 +39,7 @@ let orders=[];
 
 let currentOrder=null;
 let scanner=null;
-
+let scannedCode="";
 
 
 // =====================
@@ -1363,7 +1363,108 @@ item.order_id
 
 
 }
+async function confirmDeliveryCode(code,callback){
 
+
+
+let ok = confirm(
+
+`هل تريد إضافة هذا الكود؟\n\n${code}`
+
+);
+
+
+
+if(!ok)
+
+return;
+
+
+
+
+
+// فحص التكرار
+
+const {data,error}=await supabase
+
+.from("orders")
+
+.select("id,status,delivery_code")
+
+.eq(
+"delivery_code",
+code
+);
+
+
+
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+
+
+
+let duplicated = data?.find(o=>{
+
+
+return (
+
+o.status !== "completed"
+
+&&
+
+o.status !== "cancelled"
+
+);
+
+
+});
+
+
+
+
+
+if(duplicated){
+
+
+alert(
+
+`⚠️ هذا الكود مستخدم مسبقاً بالطلب #${duplicated.id}`
+
+);
+
+
+return;
+
+
+}
+
+
+
+
+
+// إضافة الكود
+
+callback(code);
+
+
+
+
+document
+.getElementById("scanModal")
+.style.display="none";
+
+
+
+}
 
 function openScanner(callback){
 
@@ -1373,9 +1474,17 @@ document
 .style.display="flex";
 
 
+document
+.getElementById("manualCode")
+.value="";
 
-scanner =
-new Html5Qrcode("reader");
+
+document
+.getElementById("scanMessage")
+.innerHTML="";
+
+
+scanner = new Html5Qrcode("reader");
 
 
 
@@ -1385,42 +1494,86 @@ scanner.start(
 facingMode:"environment"
 },
 
-
 {
-
 fps:10,
-
 qrbox:250
-
 },
 
 
-async(code)=>{
+(code)=>{
 
 
-await scanner.stop();
-
-
-document
-.getElementById("scanModal")
-.style.display="none";
+console.log("scan:",code);
 
 
 
-callback(code);
+scanner.stop()
+.then(()=>{
+
+scanner.clear();
+
+});
+
+
+
+confirmDeliveryCode(code,callback);
+
 
 
 }
 
 
 
-);
+)
+
+.catch(err=>{
+
+console.log(err);
+
+});
+
+
+
+
+
+// الإدخال اليدوي
+
+
+document
+.getElementById("addManualCode")
+.onclick=()=>{
+
+
+let code =
+document
+.getElementById("manualCode")
+.value
+.trim();
+
+
+
+if(!code){
+
+alert("اكتب الكود");
+
+return;
+
+}
+
+
+
+confirmDeliveryCode(code,callback);
+
+
+
+}
+
 
 
 }
 document
 .getElementById("closeScanner")
-.onclick=async()=>{
+.onclick = async()=>{
 
 
 if(scanner){
@@ -1435,7 +1588,7 @@ document
 .style.display="none";
 
 
-}
+};
 
 // =====================
 // تحديث الحالة
@@ -1499,6 +1652,7 @@ return;
 
 
 
+
 await supabase
 
 .from("order_status_history")
@@ -1515,7 +1669,7 @@ status:"prepared"
 
 await addActivity(
 
-"تحويل الطلب الى مجهز مع كود شحن",
+`إضافة كود شحن ${code}`,
 
 "orders",
 
@@ -1525,7 +1679,10 @@ id
 
 
 
-alert("تم حفظ الكود وتحضير الطلب ✅");
+alert(
+"تم تجهيز الطلب ✅"
+);
+
 
 
 await loadOrders();
@@ -1533,7 +1690,6 @@ await loadOrders();
 
 
 });
-
 
 return;
 

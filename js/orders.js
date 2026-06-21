@@ -1621,12 +1621,11 @@ return true;
 
 
 
-
 // =====================
 // حفظ الطلب
 // =====================
 
-async function saveOrder(clear = true){
+async function saveOrder(clear=true){
 
 
 if(!validateOrder())
@@ -1634,35 +1633,328 @@ return;
 
 
 
-// هنا خلي كود الحفظ القديم كامل مالك
-// من let {data:customer}
-// إلى activity_logs
+let phone =
+document.getElementById("phone").value.trim();
 
 
-// بعد نجاح الحفظ ونهاية كل العمليات:
 
-for(let x of cart){
+// =====================
+// العميل
+// =====================
 
 
-const {data:stock,error}=await supabase
+let {data:customer,error:customerError}=await supabase
 
-.from("product_variants")
+.from("customers")
 
-.select("stock_quantity")
+.select("*")
 
-.eq("id",x.variant_id)
+.eq(
+"phone",
+phone
+)
+
+.maybeSingle();
+
+
+
+if(customerError){
+
+console.log(customerError);
+return;
+
+}
+
+
+
+
+let customerType="new";
+
+
+
+if(!customer){
+
+
+
+const {data:newCustomer,error}=await supabase
+
+.from("customers")
+
+.insert({
+
+name:
+document.getElementById("name").value,
+
+phone:phone,
+
+address:
+document.getElementById("address").value,
+
+governorate:
+document.getElementById("governorate").value
+
+})
+
+.select()
 
 .single();
 
 
 
-if(error || !stock){
+if(error){
 
-console.log(error);
+alert(error.message);
 
-continue;
+return;
 
 }
+
+
+
+customer=newCustomer;
+
+
+
+}else{
+
+
+customerType="old";
+
+
+}
+
+
+
+
+
+
+// تحديث بيانات العميل
+
+await supabase
+
+.from("customers")
+
+.update({
+
+orders_count:
+(customer.orders_count || 0)+1,
+
+last_order:
+new Date()
+
+})
+
+.eq(
+"id",
+customer.id
+);
+
+
+
+
+
+
+// =====================
+// إنشاء الطلب
+// =====================
+
+
+const {data:order,error}=await supabase
+
+.from("orders")
+
+.insert({
+
+
+customer_id:customer.id,
+
+
+customer_name:
+document.getElementById("name").value,
+
+
+phone:phone,
+
+
+governorate:
+document.getElementById("governorate").value,
+
+
+address:
+document.getElementById("address").value,
+
+
+nearest_point:
+document.getElementById("nearest_point").value,
+
+
+source:
+document.getElementById("source").value || null,
+
+
+notes:
+document.getElementById("notes").value || null,
+
+
+
+subtotal_price:
+Number(
+document.getElementById("total").innerText || 0
+),
+
+
+
+delivery_price:
+deliveryPrice,
+
+
+
+discount_amount:
+Number(
+document.getElementById("discount_amount").value || 0
+),
+
+
+
+total_price:
+Number(
+document.getElementById("finalTotal").innerText || 0
+),
+
+
+
+delivery_type:
+
+document.getElementById("manualDelivery").checked
+?
+"manual"
+:
+"auto",
+
+
+
+has_return:
+
+document.getElementById("hasReturn").checked,
+
+
+
+has_partial_refund:
+
+document.getElementById("hasRefund").checked,
+
+
+
+refund_amount:
+
+Number(
+document.getElementById("refundAmount").value || 0
+),
+
+
+
+customer_type:
+
+customerType,
+
+
+payment_method:
+
+"cash"
+
+
+})
+
+.select()
+
+.single();
+
+
+
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+
+
+
+// =====================
+// حالة الطلب
+// =====================
+
+
+await supabase
+
+.from("order_status_history")
+
+.insert({
+
+order_id:order.id,
+
+status:"new"
+
+});
+
+
+
+
+
+
+
+// =====================
+// تفاصيل الطلب + المخزون
+// =====================
+
+
+for(let x of cart){
+
+
+
+await supabase
+
+.from("order_items")
+
+.insert({
+
+order_id:order.id,
+
+
+variant_id:x.variant_id,
+
+
+quantity:x.quantity,
+
+
+price:x.price
+
+
+});
+
+
+
+
+
+
+let {data:stock}=await supabase
+
+.from("product_variants")
+
+.select("stock_quantity")
+
+.eq(
+"id",
+x.variant_id
+)
+
+.single();
+
 
 
 
@@ -1678,9 +1970,15 @@ stock.stock_quantity - x.quantity
 })
 
 .eq(
+
 "id",
+
 x.variant_id
+
 );
+
+
+
 
 
 
@@ -1692,16 +1990,56 @@ await supabase
 
 variant_id:x.variant_id,
 
+
 type:"OUT",
+
 
 quantity:x.quantity,
 
-note:"خصم من طلب جديد"
+
+note:
+`طلب جديد رقم ${order.id}`
+
 
 });
 
 
+
 }
+
+
+
+
+
+
+// =====================
+// سجل النشاط
+// =====================
+
+
+await supabase
+
+.from("activity_logs")
+
+.insert({
+
+user_id:
+document.getElementById("user_id")?.value || null,
+
+
+action:
+"CREATE_ORDER",
+
+
+table_name:
+"orders",
+
+
+record_id:
+order.id
+
+
+});
 
 
 
@@ -1711,7 +2049,6 @@ alert("تم حفظ الطلب 🔥");
 
 
 
-// تنظيف فقط عند زر الحفظ
 if(clear){
 
 clearOrderForm();
@@ -1719,11 +2056,7 @@ clearOrderForm();
 }
 
 
-
 }
-
-
-
 // زر حفظ فقط
 document
 .getElementById("saveOrder")
@@ -1745,7 +2078,6 @@ if(!validateOrder())
 return;
 
 
-// تجهيز الرسالة قبل التنظيف
 generateMessage();
 
 
@@ -1762,15 +2094,17 @@ document
 
 
 
-// تنظيف الفورم
-clearOrderForm();
-
-
-
-// فتح الواتساب
 window.location.href =
 
 `https://wa.me/964${phone.substring(1)}?text=${encodeURIComponent(text)}`;
+
+
+// تنظيف بعد الخروج
+setTimeout(()=>{
+
+clearOrderForm();
+
+},1000);
 
 
 };

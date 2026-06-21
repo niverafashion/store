@@ -62,7 +62,39 @@ href="../dashboard.html">
 
 
 </header>
+<nav class="inventory-nav">
 
+
+<a href="#manage">
+
+<i class="fa-solid fa-sliders"></i>
+
+إدارة المخزون
+
+</a>
+
+
+
+<a href="#stock">
+
+<i class="fa-solid fa-warehouse"></i>
+
+المخزون الحالي
+
+</a>
+
+
+
+<a href="#moves">
+
+<i class="fa-solid fa-clock-rotate-left"></i>
+
+سجل الحركات
+
+</a>
+
+
+</nav>
 
 
 
@@ -207,8 +239,7 @@ href="../dashboard.html">
 ===================== -->
 
 
-<section class="card">
-
+<section class="card" id="manage">
 
 
 <h2>
@@ -296,22 +327,51 @@ href="../dashboard.html">
 
 <div>
 
+<label>
+
+<i class="fa-solid fa-ruler"></i>
+
+الحجم
+
+</label>
+
+
+<select id="size">
+
+
+<option>
+
+اختار الحجم
+
+</option>
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+<div>
 
 <label>
 
 <i class="fa-solid fa-palette"></i>
 
-التفاصيل
+اللون
 
 </label>
 
 
-<select id="variant">
+<select id="color">
 
 
 <option>
 
-اختار اللون والحجم
+اختار اللون
 
 </option>
 
@@ -462,8 +522,7 @@ placeholder="سبب العملية"
 ===================== -->
 
 
-<section class="card">
-
+<section class="card" id="stock">
 
 
 <h2>
@@ -743,8 +802,7 @@ SKU
 ===================== -->
 
 
-<section class="card">
-
+<section class="card" id="moves">
 
 
 <h2>

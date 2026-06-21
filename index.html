@@ -6,12 +6,13 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" 
-content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NIVRA Store</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 
-<link rel="stylesheet" href="./css/store.css">
+<title>NIVRA Order Management</title>
+
+
+<link rel="stylesheet" href="../css/order-management.css">
 
 
 <link rel="stylesheet"
@@ -21,68 +22,36 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 </head>
 
 
+
 <body>
 
 
 
+<header class="topbar">
 
 
-<header class="top-header">
+<div>
 
-
-<h1 class="logo">
-
+<h1>
 NIVRA
-
 </h1>
 
-
-
-
-<div class="header-actions">
-
-
-<a id="whatsappLink"
-class="whatsapp-icon"
-href="https://wa.me/9647741478145"
-target="_blank">
-
-<i class="fa-brands fa-whatsapp"></i>
-
-</a>
-
-
-
-
-<a href="login.html"
-class="account-icon">
-
-<i class="fa-solid fa-user"></i>
-
-</a>
-
-
-
-
-<button id="cartButton"
-class="cart-icon">
-
-
-<i class="fa-solid fa-cart-shopping"></i>
-
-
-<span id="cartCount">
-
-0
-
+<span>
+إدارة الطلبات
 </span>
 
 
-</button>
-
-
-
 </div>
+
+
+
+<a class="back-btn"
+href="../dashboard.html">
+
+<i class="fa-solid fa-arrow-right"></i>
+
+</a>
+
 
 
 </header>
@@ -93,480 +62,313 @@ class="cart-icon">
 
 
 
+<main>
 
 
-<nav class="main-nav">
 
 
-<a href="#home">
 
-الرئيسية
+<!-- حالات الطلبات -->
 
-</a>
 
+<section class="order-status-cards">
 
-<a href="#categories">
 
-الأصناف
 
-</a>
 
 
-<a href="#products">
+<button class="status-card new"
+data-status="new">
 
-المنتجات
 
-</a>
+<i class="fa-solid fa-bell"></i>
 
 
-<a href="#contact">
+<h3>
+جديد
+</h3>
 
-تواصل معنا
 
-</a>
-
-
-</nav>
-
-
-
-
-
-
-
-
-
-<section id="home"
-class="hero">
-
-
-<div class="hero-content">
-
-
-<h2>
-
-أناقتك تبدأ من هنا
-
-</h2>
-
-
-
-<p>
-
-تشكيلة مصممة لك
-
-</p>
-
-
-
-
-<button id="shopButton">
-
-اكتشفي المجموعة
-
-</button>
-
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-
-<section id="categories">
-
-<div class="category-card-box">
-
-
-<h2>
-تحديد التصنيف
-</h2>
-
-
-<select id="categorySelect">
-
-<option value="">
-اختاري الصنف
-</option>
-
-</select>
-
-
-
-<div class="category-details">
-
-
-<img id="categoryImage">
-
-
-
-<div class="category-text">
-
-
-<h3 id="categoryTitle"></h3>
-
-
-<p id="categoryDescription"></p>
-
-
-</div>
-
-
-
-</div>
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-<section id="products">
-
-
-<h2>
-
-المنتجات
-
-</h2>
-
-
-
-
-<div id="productsContainer"
-class="products-grid">
-
-
-
-</div>
-
-</section>
-
-<!-- مودل اختيار المنتج -->
-
-<div id="orderModal"
-class="modal">
-
-<div class="modal-content">
-
-<button id="closeOrderModal"
-class="close">
-
-×
-
-</button>
-
-<h2>
-
-اختيار المنتج
-
-</h2>
-
-
-<img id="orderProductImage">
-
-<h3 id="orderProductName"></h3>
-
-<p>
-
-السعر:
-
-<span id="productPrice">
-
+<span id="newCount">
 0
-
 </span>
 
-دينار
 
-</p>
-
+</button>
 
 
 
 
-<label>
 
-الحجم
+
+
+<button class="status-card ready"
+data-status="prepared">
+
+
+<i class="fa-solid fa-box"></i>
+
+
+<h3>
+مجهز
+</h3>
+
+
+<span id="preparedCount">
+0
+</span>
+
+
+</button>
+
+
+
+
+
+
+
+<button class="status-card delivery"
+data-status="delivery">
+
+
+<i class="fa-solid fa-truck"></i>
+
+
+<h3>
+قيد التوصيل
+</h3>
+
+
+<span id="deliveryCount">
+0
+</span>
+
+
+</button>
+
+
+
+
+
+
+
+<button class="status-card done"
+data-status="completed">
+
+
+<i class="fa-solid fa-check"></i>
+
+
+<h3>
+مكتمل
+</h3>
+
+
+<span id="completedCount">
+0
+</span>
+
+</button>
+
+
+
+
+
+
+
+<button class="status-card delayed"
+data-status="postponed">
+
+
+<i class="fa-solid fa-clock"></i>
+
+
+<h3>
+مؤجل
+</h3>
+
+
+<span id="postponedCount">
+0
+</span>
+
+
+</button>
+
+
+
+
+
+
+
+<button class="status-card rejected"
+data-status="cancelled">
+
+
+<i class="fa-solid fa-xmark"></i>
+
+
+<h3>
+مرفوض
+</h3>
+
+
+<span id="cancelledCount">
+0
+</span>
+
+
+</button>
+
+
+
+
+</section>
+
+
+
+
+<!-- الطلبات -->
+
+
+<section class="card">
+
+<div class="orders-search-card">
+
+
+<div class="control-bar">
+
+
+<h2>
+<i class="fa-solid fa-cart-shopping"></i>
+البحث في الطلبات
+</h2>
+
+
+<div class="search-mini">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+<input 
+id="search"
+placeholder="بحث...">
+
+</div>
+
+
+
+<label class="select-all">
+
+<input type="checkbox" id="selectAll">
+
+تحديد الكل
 
 </label>
 
 
-<select id="orderSize">
+
+<div class="control-icons">
 
 
-</select>
+<button id="bulkUpdate">
 
-
-<label>
-
-اللون
-
-</label>
-
-
-<select id="orderColor">
-
-
-</select>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<button id="addToCart">
-
-
-🛒 إضافة للسلة
-
+<i class="fa-solid fa-rotate"></i>
 
 </button>
 
 
+<button id="bulkDelete">
 
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- مودل السلة -->
-
-
-<div id="cartModal"
-class="modal">
-
-
-
-<div class="modal-content">
-
-
-
-<button id="closeCartModal"
-class="close">
-
-×
+<i class="fa-solid fa-trash"></i>
 
 </button>
 
 
-
-
-
-<h2>
-
-سلة التسوق
-
-</h2>
-
-
-
-
-
-
-
-<div id="cartContainer">
+</div>
 
 
 </div>
 
 
 
+<div class="table-box">
 
+<table>
 
+<thead>
 
-<hr>
+<tr>
 
-
-
-
-
-<h3>
-
-بيانات الزبون
-
-</h3>
-
-
-
-
-
-
-
+<th>
 <input 
-id="customerName"
+type="checkbox"
+id="selectAll">
+</th>
 
-placeholder="الاسم">
 
+<th>
+رقم
+</th>
 
 
 
+<th>
+الزبون
+</th>
 
 
 
-<input
+<th>
+الهاتف
+</th>
 
-id="customerPhone"
 
-placeholder="رقم الهاتف 11 رقم"
 
-maxlength="11">
+<th>
+المحافظة
+</th>
 
 
 
+<th>
+القطعة
+</th>
 
 
 
+<th>
+المبلغ
+</th>
 
-<select id="customerGovernorate">
 
 
+<th>
+الحالة
+</th>
 
-<option value="">
 
-اختار المحافظة
 
-</option>
+<th>
+إجراءات
+</th>
 
 
-</select>
 
+</tr>
 
 
+</thead>
 
 
+<tbody id="ordersTable">
 
+</tbody>
 
-<p>
 
-كلفة التوصيل:
+</table>
 
-<span id="cartDelivery">
 
-0
-
-</span>
-
-دينار
-
-</p>
-
-
-
-
-
-<input
-
-id="customerArea"
-
-placeholder="المنطقة">
-
-
-<input 
-id="nearestPoint"
-type="text"
-placeholder="أقرب نقطة دالة">
-
-
-
-
-<div class="total-box">
-
-
-
-<p>
-
-مجموع المنتجات:
-
-<span id="cartProductsTotal">
-
-0
-
-</span>
-
-دينار
-
-</p>
-
-
-
-
-
-
-
-<p>
-
-التوصيل:
-
-<span id="cartDeliveryTotal">
-
-0
-
-</span>
-
-دينار
-
-</p>
-
-
-
-
-
-
-
-
-<h3>
-
-المجموع النهائي:
-
-<span id="cartFinalTotal">
-
-0
-
-</span>
-
-دينار
-
-
-</h3>
+</div>
 
 
 
@@ -574,38 +376,34 @@ placeholder="أقرب نقطة دالة">
 
 
 
+</section>
 
 
 
+<!-- تعديل الطلب -->
 
 
-<button id="reserveOrder"
-class="whatsapp-send">
+<div id="modal">
 
 
-<i class="fa-brands fa-whatsapp"></i>
+
+<div class="card modal-box">
 
 
-حجز الطلب
 
+<button id="close">
+
+<i class="fa-solid fa-xmark"></i>
 
 </button>
 
 
 
 
-<button id="continueShopping">
-
-
-➕ إضافة منتج آخر
-
-
-</button>
 
 
 
-
-</div>
+<div id="details">
 
 
 </div>
@@ -613,94 +411,30 @@ class="whatsapp-send">
 
 
 
-
-
-
-
-
-<section id="contact"
-class="contact-section">
-
-
-
-<h2>
-
-تواصلي معنا 🤍
-
-</h2>
-
-
-
-
-<p>
-
-نساعدك باختيار المقاس والتصميم المناسب
-
-</p>
-
-
-
-
-
-<div class="social-icons">
-
-
-<a href="https://www.instagram.com/nivra.iq?igsh=bWE3dTJwajV5bnB5&utm_source=qr"
-target="_blank">
-
-<i class="fa-brands fa-instagram"></i>
-
-</a>
-
-
-
-<a href="https://www.tiktok.com/@nivra.iq?_r=1&_t=ZS-97DhSlQPqqX"
-target="_blank">
-
-<i class="fa-brands fa-tiktok"></i>
-
-</a>
-
-
-
-
-<a href="https://wa.me/9647741478145"
-target="_blank">
-
-<i class="fa-brands fa-whatsapp"></i>
-
-</a>
-
-
-
-
-
-<a href="https://www.facebook.com/share/1GP9BwmSSz/?mibextid=wwXIfr"
-target="_blank">
-
-<i class="fa-brands fa-facebook"></i>
-
-</a>
-
-
-
-</div>
 
 
 
 <button id="scrollTop" class="scroll-top">
 
-<i class="fa-solid fa-arrow-up"></i>
-
-<span id="cartNotify">0</span>
+<i class="fa-solid fa-arrow-down"></i>
 
 </button>
 
+<div id="scanModal" class="scan-modal">
 
+<div id="reader"></div>
+
+<button id="closeScanner">
+اغلاق
+</button>
+
+</div>
 </body>
+<script src="https://unpkg.com/html5-qrcode"></script>
 <script type="module"
 
-src="./js/store.js">
+src="../js/order-management.js">
+
 
 </script>
 

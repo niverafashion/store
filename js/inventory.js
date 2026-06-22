@@ -5,7 +5,6 @@ import { supabase } from "./supabase.js";
 // العناصر
 // =========================
 
-
 const category =
 document.getElementById("category");
 
@@ -13,10 +12,11 @@ document.getElementById("category");
 const product =
 document.getElementById("product");
 
+const size =
+document.getElementById("size");
 
-const variant =
-document.getElementById("variant");
-
+const color =
+document.getElementById("color");
 
 const variantInfo =
 document.getElementById("variantInfo");
@@ -71,7 +71,7 @@ document.getElementById("stockColor");
 let inventory=[];
 
 let variants=[];
-
+let selectedVariant=null;
 
 
 
@@ -162,11 +162,22 @@ product.innerHTML=`
 
 
 
-variant.innerHTML=`
+size.innerHTML=`
 
 <option value="">
 
-اختار التفاصيل
+اختار الحجم
+
+</option>
+
+`;
+
+
+color.innerHTML=`
+
+<option value="">
+
+اختار اللون
 
 </option>
 
@@ -218,21 +229,24 @@ ${p.name}
 
 
 // =========================
-// التفاصيل
+// تحميل الاحجام
 // =========================
 
 
 product.onchange = async ()=>{
 
 
-variant.innerHTML=`
-
-<option>
-
-اختار التفاصيل
-
+size.innerHTML = `
+<option value="">
+اختار الحجم
 </option>
+`;
 
+
+color.innerHTML = `
+<option value="">
+اختار اللون
+</option>
 `;
 
 
@@ -244,44 +258,26 @@ const {data,error}=await supabase
 .select(`
 
 id,
-
 sku,
-
 color,
-
 size,
-
 stock_quantity,
 
 products(
-
 name,
-
 price
-
 )
 
 `)
 
 .eq(
-
 "product_id",
-
 product.value
-
-)
-
-.gt(
-
-"stock_quantity",
-
-0
-
 );
 
 
 
-if(error)return;
+if(error) return;
 
 
 
@@ -289,15 +285,68 @@ variants=data;
 
 
 
-data.forEach(v=>{
+let sizes=[...new Set(
+variants.map(v=>v.size)
+)];
 
 
-variant.innerHTML +=`
 
-<option value="${v.id}">
+sizes.forEach(s=>{
 
-${v.color} - ${v.size}
 
+size.innerHTML +=`
+
+<option value="${s}">
+${s}
+</option>
+
+`;
+
+});
+
+
+};
+
+
+
+
+
+size.onchange=()=>{
+
+
+color.innerHTML=`
+
+<option value="">
+اختار اللون
+</option>
+
+`;
+
+
+
+let colors=[...new Set(
+
+variants
+
+.filter(v=>
+
+v.size == size.value
+
+)
+
+.map(v=>v.color)
+
+)];
+
+
+
+colors.forEach(c=>{
+
+
+color.innerHTML +=`
+
+<option value="${c}">
+${c}
 </option>
 
 `;
@@ -312,22 +361,26 @@ ${v.color} - ${v.size}
 
 
 
+// عند اختيار اللون
+color.onchange=showVariantInfo;
 
 
 
-// =========================
-// معلومات القطعة
-// =========================
+function showVariantInfo(){
 
 
-variant.onchange=()=>{
 
+let v = variants.find(x=>
 
-const v = variants.find(
+x.size == size.value &&
 
-x=>x.id == variant.value
+x.color == color.value
 
 );
+
+
+
+selectedVariant=v;
 
 
 
@@ -340,39 +393,26 @@ variantInfo.innerHTML=`
 <div class="stock-info-box">
 
 
-<h3>
-
-${v.products.name}
-
-</h3>
+<h3>${v.products.name}</h3>
 
 
 <p>
-
 اللون : ${v.color}
-
 </p>
 
 
 <p>
-
 الحجم : ${v.size}
-
 </p>
-
 
 
 <h2>
-
 المتوفر : ${v.stock_quantity}
-
 </h2>
 
 
 <p>
-
 SKU : ${v.sku ?? "-"}
-
 </p>
 
 
@@ -383,10 +423,14 @@ SKU : ${v.sku ?? "-"}
 
 
 
-};
+}
 
 
 
+
+
+// عند اختيار اللون
+color.onchange=showVariantInfo;
 
 
 
@@ -401,8 +445,7 @@ SKU : ${v.sku ?? "-"}
 saveMovement.onclick=async()=>{
 
 
-const id = variant.value;
-
+const id = selectedVariant?.id;
 
 const qty = Number(quantity.value);
 
@@ -888,7 +931,14 @@ stockColor.value;
 
 
 
+const statusValue =
+stockFilter.value;
+
+
+
+
 const result = inventory.filter(v=>{
+
 
 
 const categoryMatch =
@@ -896,6 +946,7 @@ const categoryMatch =
 !categoryValue ||
 
 v.products.categories.name === categoryValue;
+
 
 
 
@@ -907,6 +958,7 @@ v.products.name === productValue;
 
 
 
+
 const sizeMatch =
 
 !sizeValue ||
@@ -915,11 +967,13 @@ v.size === sizeValue;
 
 
 
+
 const colorMatch =
 
 !colorValue ||
 
 v.color === colorValue;
+
 
 
 
@@ -947,6 +1001,50 @@ ${v.sku ?? ""}
 
 
 
+
+
+
+// حالة المخزون
+
+let status = "";
+
+
+
+if(v.stock_quantity <= 0){
+
+status="out";
+
+}
+
+else if(v.stock_quantity <= 5){
+
+status="low";
+
+}
+
+else{
+
+status="available";
+
+}
+
+
+
+
+
+
+const statusMatch =
+
+!statusValue ||
+
+status === statusValue;
+
+
+
+
+
+
+
 return (
 
 categoryMatch &&
@@ -957,7 +1055,9 @@ sizeMatch &&
 
 colorMatch &&
 
-textMatch
+textMatch &&
+
+statusMatch
 
 );
 
@@ -971,7 +1071,6 @@ renderInventory(result);
 
 
 }
-
 
 
 
@@ -1158,43 +1257,135 @@ function updateCards(){
 
 
 
+// مجموع كل الكميات بالمخزون
+
+document.getElementById("totalProducts")
+.innerText =
+
+inventory.reduce(
+
+(total,item)=>
+
+total + item.stock_quantity
+
+,0);
+
+
+
+/* عدد القطع */
+
 document.getElementById("totalItems")
-.innerText=
+.innerText =
 
 inventory.length;
 
 
 
+/* مخزون قليل */
+
 document.getElementById("lowStock")
-.innerText=
+.innerText =
 
 inventory.filter(
 
-x=>x.stock_quantity>0 &&
-x.stock_quantity<=5
+x =>
+
+x.stock_quantity > 0 &&
+
+x.stock_quantity <= 5
 
 ).length;
 
 
+
+/* نافذ */
 
 document.getElementById("outStock")
-.innerText=
+.innerText =
 
 inventory.filter(
 
-x=>x.stock_quantity<=0
+x =>
+
+x.stock_quantity <= 0
 
 ).length;
+
+
+
+}
+
+// ==========================
+// SCROLL TOP BUTTON
+// ==========================
+
+
+const scrollBtn =
+document.getElementById("scrollTop");
+
+
+
+window.addEventListener("scroll",()=>{
+
+
+if(window.scrollY > 300){
+
+
+scrollBtn.innerHTML = `
+
+<i class="fa-solid fa-arrow-up"></i>
+
+`;
+
+
+
+}else{
+
+
+scrollBtn.innerHTML = `
+
+<i class="fa-solid fa-arrow-down"></i>
+
+`;
 
 
 }
 
 
+});
 
 
+scrollBtn.onclick=()=>{
 
 
+if(window.scrollY > 300){
 
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+
+}else{
+
+
+window.scrollTo({
+
+top:document.body.scrollHeight,
+
+behavior:"smooth"
+
+});
+
+
+}
+
+
+};
 
 
 // تشغيل

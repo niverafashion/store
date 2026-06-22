@@ -1837,7 +1837,7 @@ has_return:
 
 document.getElementById("hasReturn").checked,
 
-
+delivery_code:null,
 
 has_partial_refund:
 
@@ -1925,20 +1925,15 @@ await supabase
 
 order_id:order.id,
 
-
 variant_id:x.variant_id,
-
 
 quantity:x.quantity,
 
+returned_quantity:0,
 
 price:x.price
 
-
 });
-
-
-
 
 
 
@@ -1991,7 +1986,7 @@ await supabase
 variant_id:x.variant_id,
 
 
-type:"OUT",
+type:"sale",
 
 
 quantity:x.quantity,

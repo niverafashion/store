@@ -1040,73 +1040,6 @@ color:#d987a0;
 
 
 /* =========================
-        SCROLL TOP
-========================= */
-
-
-#scrollTop{
-
-
-position:fixed;
-
-
-bottom:25px;
-
-
-right:25px;
-
-
-width:55px;
-
-
-height:55px;
-
-
-border-radius:50%;
-
-
-border:none;
-
-
-background:#111;
-
-
-color:#d987a0;
-
-
-font-size:22px;
-
-
-display:flex;
-
-
-align-items:center;
-
-
-justify-content:center;
-
-
-box-shadow:
-
-
-0 15px 35px #0004;
-
-
-cursor:pointer;
-
-
-z-index:50;
-
-
-}
-
-
-
-
-
-
-
-/* =========================
         MOBILE
 ========================= */
 
@@ -2033,30 +1966,6 @@ transition:.3s;
 
 
 }
-
-
-
-
-/* =========================
-        SCROLL
-========================= */
-
-
-#scrollTop{
-
-
-width:45px;
-
-height:45px;
-
-font-size:18px;
-
-
-}
-
-
-
-
 
 
 
@@ -3135,10 +3044,6 @@ border-radius:12px;
 }
 
 
-
-
-
-
 /* =========================
    DESKTOP WIDTH BALANCE
 ========================= */
@@ -3493,5 +3398,123 @@ font-size:13px;
 
 }
 
+
+}
+.scroll-top{
+position:fixed;
+bottom:25px;
+left:25px;
+width:40px;
+height:40px;
+border:none;
+border-radius:90%;
+background:#00bfffe1;
+color:white;
+font-size:2px;
+cursor:pointer;
+box-shadow:0 8px 25px #0003;
+z-index:999;
+transition:.3s;
+}
+@media(max-width:768px){
+
+
+.topbar{
+
+height:75px;
+
+}
+
+
+
+.topbar h1{
+
+font-size:42px;
+
+}
+
+
+
+.topbar span{
+
+font-size:13px;
+
+}
+
+
+
+.back-btn{
+
+width:42px;
+
+height:42px;
+
+top:17px;
+
+}
+
+
+
+main{
+
+padding:20px 15px;
+
+}
+
+
+
+.form-box{
+
+padding:20px;
+
+border-radius:25px;
+
+}
+
+
+
+.section-title{
+
+font-size:20px;
+
+}
+
+
+
+.category-list{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+
+
+.category-card img{
+
+height:190px;
+
+}
+
+
+
+}
+
+
+
+
+/* منع zoom */
+
+input,
+textarea,
+button{
+
+font-size:16px !important;
+
+}
+
+
+html{
+
+-webkit-text-size-adjust:100%;
 
 }

@@ -140,7 +140,7 @@ refund_amount,
 completed_at,
 
 cancelled_reason,
-
+delivery_code,
 created_at,
 
 
@@ -197,11 +197,20 @@ return;
 
 
 
-// فقط الطلبات اللي خلصت مالياً تظهر بالإدارة
+// الطلبات الظاهرة بالإدارة
+// نخفي فقط الطلبات اللي تم إغلاقها مالياً
 
-orders = data.filter(order => 
-    order.finance_done === false
+orders = data.filter(order => {
+
+return (
+order.finance_done === false
+||
+order.finance_done === null
+||
+order.finance_done === undefined
 );
+
+});
 
 
 console.log(
@@ -220,14 +229,66 @@ renderOrders(
 
 
 updateStatusCards();
-
+updateBulkButton();
+updateBulkDelete();
 }
 
 
 
+function updateBulkButton(){
+
+const btn =
+document.getElementById("bulkUpdate");
 
 
+if(!btn)
+return;
 
+
+if(
+currentFilter === "new" ||
+currentFilter === "completed" ||
+currentFilter === "cancelled"
+){
+
+btn.style.display="none";
+
+}
+else{
+
+btn.style.display="block";
+
+}
+
+}
+
+function updateBulkDelete(){
+
+const btn =
+document.getElementById("bulkDelete");
+
+
+if(!btn)
+return;
+
+
+if(
+    currentFilter === "delivery" ||
+    currentFilter === "completed" ||
+    currentFilter === "cancelled"
+){
+
+btn.style.display="none";
+
+}
+else{
+
+btn.style.display="block";
+
+}
+
+
+}
 
 
 // =====================
@@ -318,9 +379,12 @@ type="checkbox"
 class="order-check"
 data-id="${o.id}">
 
-<span class="order-id">
+<span 
+class="order-id copy-code"
+data-code="${o.delivery_code || o.id}"
+title="اضغط للنسخ">
 
-#${o.id}
+${o.delivery_code || "#" + o.id}
 
 </span>
 ${o.has_return ? `
@@ -373,6 +437,11 @@ ${statusName(o.status)}
 <td>
 
 
+${
+o.status !== "delivery"
+?
+`
+
 <button class="action-btn edit-btn"
 
 onclick="editOrder('${o.id}')">
@@ -382,6 +451,17 @@ onclick="editOrder('${o.id}')">
 </button>
 
 
+`
+:
+""
+}
+
+
+
+${
+(o.status !== "prepared" && currentFilter !== "new")
+?
+`
 
 <button class="action-btn view-btn"
 
@@ -391,7 +471,17 @@ onclick="openOrder('${o.id}')">
 
 </button>
 
+`
+:
+""
+}
 
+
+
+${
+o.status !== "delivery"
+?
+`
 
 <button class="action-btn delete-btn"
 
@@ -400,6 +490,16 @@ onclick="deleteOrder('${o.id}')">
 <i class="fa-solid fa-trash"></i>
 
 </button>
+
+
+`
+:
+""
+}
+
+
+
+
 
 
 <button class="action-btn update-btn"
@@ -426,7 +526,29 @@ data-id="${o.id}">
 
 
 table.innerHTML=html;
+document
+.querySelectorAll(".copy-code")
+.forEach(el=>{
 
+el.onclick = async()=>{
+
+let code = el.dataset.code;
+
+
+if(code === "-")
+return;
+
+
+await navigator.clipboard.writeText(code);
+
+
+alert("تم نسخ الكود ✅");
+
+
+};
+
+
+});
 document
 .querySelectorAll(".update-btn")
 .forEach(btn=>{
@@ -750,14 +872,21 @@ o=>o.id
 
 
 
-
 const {error}=await supabase
 
 .from("orders")
 
 .update({
 
-status:nextStatus
+status:nextStatus,
+
+completed_at:
+
+nextStatus==="completed"
+?
+new Date()
+:
+null
 
 })
 
@@ -771,7 +900,6 @@ ids
 
 
 
-
 if(error){
 
 alert(error.message);
@@ -779,9 +907,13 @@ alert(error.message);
 return;
 
 }
-// حفظ تاريخ الحالات
+
+
+
+// حفظ تاريخ الحالات + تحديث بيانات الزبون
 
 for(let order of selected){
+
 
 
 await supabase
@@ -798,26 +930,25 @@ status:nextStatus
 
 
 
-// تحديث الزبون
+
+
+// الطلب مكتمل
 
 if(nextStatus==="completed"){
 
 
 await supabase
 
-.from("customers")
+.rpc(
 
-.update({
+"increment_completed_orders",
 
-completed_orders:
-orders.find(x=>x.id===order.id)
-?.customer_id
+{
 
-})
+customer_id_input:order.customer_id
 
-.eq(
-"id",
-order.customer_id
+}
+
 );
 
 
@@ -825,24 +956,25 @@ order.customer_id
 
 
 
+
+
+// الطلب مرفوض
+
 if(nextStatus==="cancelled"){
 
 
 await supabase
 
-.from("customers")
+.rpc(
 
-.update({
+"increment_cancelled_orders",
 
-cancelled_orders:
-orders.find(x=>x.id===order.id)
-?.customer_id
+{
 
-})
+customer_id_input:order.customer_id
 
-.eq(
-"id",
-order.customer_id
+}
+
 );
 
 
@@ -861,14 +993,22 @@ order.id
 );
 
 
+
 }
 
+await addActivity(
+
+"تحديث حالة طلب",
+
+"orders",
+
+order.id
+
+);
 
 alert("تم تحديث الطلبات 🔥");
 
-
 resetChecks();
-
 
 await loadOrders();
 
@@ -1030,7 +1170,80 @@ return;
 
 }
 
+// جلب قطع الطلب قبل الحذف
 
+const {data:items}=await supabase
+
+.from("order_items")
+
+.select("variant_id,quantity")
+
+.eq(
+"order_id",
+id
+);
+
+
+// رجاع المخزون
+
+for(let item of items || []){
+
+
+const {data:variant}=await supabase
+
+.from("product_variants")
+
+.select("stock_quantity")
+
+.eq(
+"id",
+item.variant_id
+)
+
+.single();
+
+
+
+await supabase
+
+.from("product_variants")
+
+.update({
+
+stock_quantity:
+(variant.stock_quantity || 0)
++
+item.quantity
+
+})
+
+.eq(
+"id",
+item.variant_id
+);
+
+
+
+// حركة مخزن
+
+await supabase
+
+.from("stock_movements")
+
+.insert({
+
+variant_id:item.variant_id,
+
+type:"return",
+
+quantity:item.quantity,
+
+note:`حذف طلب رقم ${id}`
+
+});
+
+
+}
 
 // حذف order_items
 
@@ -1366,7 +1579,6 @@ item.order_id
 async function confirmDeliveryCode(code,callback){
 
 
-
 let ok = confirm(
 
 `هل تريد إضافة هذا الكود؟\n\n${code}`
@@ -1374,12 +1586,13 @@ let ok = confirm(
 );
 
 
+if(!ok){
 
-if(!ok)
+closeScanner();
 
 return;
 
-
+}
 
 
 
@@ -1389,7 +1602,9 @@ const {data,error}=await supabase
 
 .from("orders")
 
-.select("id,status,delivery_code")
+.select(
+"id,status,delivery_code,finance_done"
+)
 
 .eq(
 "delivery_code",
@@ -1397,12 +1612,11 @@ code
 );
 
 
-
-
-
 if(error){
 
 alert(error.message);
+
+closeScanner();
 
 return;
 
@@ -1410,26 +1624,15 @@ return;
 
 
 
-
-
 let duplicated = data?.find(o=>{
-
 
 return (
 
-o.status !== "completed"
-
-&&
-
-o.status !== "cancelled"
+o.finance_done === true
 
 );
 
-
 });
-
-
-
 
 
 if(duplicated){
@@ -1437,24 +1640,56 @@ if(duplicated){
 
 alert(
 
-`⚠️ هذا الكود مستخدم مسبقاً بالطلب #${duplicated.id}`
+`⚠️ هذا الكود مرتبط بطلب مدفوع مسبقاً #${duplicated.id}`
 
 );
 
-
+closeScanner();
 return;
 
 
 }
 
 
-
-
-
 // إضافة الكود
 
 callback(code);
 
+
+// إغلاق السكنر والكامرة
+
+closeScanner();
+
+
+
+}
+
+async function closeScanner(){
+
+
+if(scanner){
+
+
+try{
+
+
+await scanner.stop();
+
+
+await scanner.clear();
+
+
+}catch(e){
+
+console.log(e);
+
+}
+
+
+scanner=null;
+
+
+}
 
 
 
@@ -1463,9 +1698,7 @@ document
 .style.display="none";
 
 
-
 }
-
 function openScanner(callback){
 
 
@@ -1478,10 +1711,6 @@ document
 .getElementById("manualCode")
 .value="";
 
-
-document
-.getElementById("scanMessage")
-.innerHTML="";
 
 
 scanner = new Html5Qrcode("reader");
@@ -1506,18 +1735,7 @@ qrbox:250
 console.log("scan:",code);
 
 
-
-scanner.stop()
-.then(()=>{
-
-scanner.clear();
-
-});
-
-
-
 confirmDeliveryCode(code,callback);
-
 
 
 }
@@ -1537,7 +1755,6 @@ console.log(err);
 
 
 // الإدخال اليدوي
-
 
 document
 .getElementById("addManualCode")
@@ -1569,23 +1786,13 @@ confirmDeliveryCode(code,callback);
 }
 
 
-
 }
 document
 .getElementById("closeScanner")
-.onclick = async()=>{
+.onclick = ()=>{
 
 
-if(scanner){
-
-await scanner.stop();
-
-}
-
-
-document
-.getElementById("scanModal")
-.style.display="none";
+closeScanner();
 
 
 };
@@ -1710,7 +1917,6 @@ nextStatus="delivery";
 else if(order.status==="delivery"){
 
 
-
 let choice = prompt(
 "اختر الحالة:\n\n1 - مكتمل\n2 - مرفوض\n3 - مؤجل"
 );
@@ -1719,13 +1925,83 @@ let choice = prompt(
 
 if(choice==="1"){
 
-nextStatus="completed";
+
+/*
+فحص الاسترجاعات
+*/
+
+const {data:returnItems,error:returnError}=await supabase
+
+.from("returns")
+
+.select("id,quantity")
+
+.eq(
+"order_id",
+order.id
+);
+
+
+
+if(returnError){
+
+alert(returnError.message);
+
+return;
+
+}
+
+
+// اكو استرجاع مسجل
+
+if(returnItems && returnItems.length > 0){
+
+
+let ok = confirm(
+
+"⚠️ هذا الطلب يحتوي على استرجاع\n\nتم ارجاع القطعة؟\n\nهل تريد إكمال الطلب؟"
+
+);
+
+
+if(!ok){
+
+return;
+
+}
+
 
 }
 
 
 
+nextStatus="completed";
+
+
+}
+
+
+
+
 else if(choice==="2"){
+
+
+
+let ok = confirm(
+
+"⚠️ سيتم رفض الطلب وإرجاع جميع القطع للمخزن\n\nهل أنت متأكد؟"
+
+);
+
+
+
+if(!ok){
+
+return;
+
+}
+
+
 
 nextStatus="cancelled";
 
@@ -1735,7 +2011,9 @@ nextStatus="cancelled";
 
 else if(choice==="3"){
 
+
 nextStatus="postponed";
+
 
 }
 
@@ -1743,14 +2021,16 @@ nextStatus="postponed";
 
 else{
 
+
 alert("اختيار غير صحيح");
+
 return;
 
-}
-
 
 }
 
+
+}
 
 
 
@@ -1812,15 +2092,34 @@ if(nextStatus==="completed"){
 if(nextStatus==="completed"){
 
 
-if(order.has_return === true){
+const {data:returnItems}=await supabase
 
+.from("returns")
 
-alert(
-"⚠️ يرجى استرجاع القطعة المطلوبة أولاً ثم إكمال الطلب"
+.select("id")
+
+.eq(
+"order_id",
+order.id
 );
 
 
+
+if(returnItems && returnItems.length > 0){
+
+
+let ok = confirm(
+
+"⚠️ هذا الطلب يحتوي على استرجاع\n\nهل تم التأكد من إرجاع القطع؟\n\nسيتم إكمال الطلب"
+
+);
+
+
+if(!ok){
+
 return;
+
+}
 
 
 }
@@ -1949,9 +2248,7 @@ const {error}=await supabase
 
 .update({
 
-
 status:nextStatus,
-
 
 completed_at:
 
@@ -1959,7 +2256,10 @@ nextStatus==="completed"
 ?
 new Date()
 :
-null
+null,
+
+
+finance_done:false
 
 
 })
@@ -2231,9 +2531,7 @@ btn.classList.add("active");
 currentFilter = btn.dataset.status;
 
 
-
 search.value = "";
-
 
 
 renderOrders(
@@ -2246,6 +2544,8 @@ o.status === currentFilter
 
 );
 
+updateBulkButton();
+updateBulkDelete();
 
 
 };
@@ -2342,18 +2642,28 @@ details.innerHTML = `
 <div class="order-number-box">
 
 
-<span class="order-id">
-#${o.id}
+<span 
+class="order-id copy-code"
+title="اضغط للنسخ"
+data-code="${o.delivery_code || '-'}">
+
+${o.delivery_code || "-"}
+
 </span>
 
 
-${o.has_return ? `
+${o.has_return && 
+(o.status==="delivery" || o.status==="completed") 
+? `
 
-<span class="return-order-icon" title="يوجد استرجاع">
+<span class="return-order-icon" title="طلب يحتوي على استرجاع">
 
-<i class="fa-solid fa-arrow-right-arrow-left"></i></span>
+<i class="fa-solid fa-arrow-right-arrow-left"></i>
 
-` : ""}
+</span>
+
+`
+:""}
 
 
 </div>
@@ -2507,17 +2817,12 @@ modal.style.display="flex";
 window.returnItem = async function(id){
 
 
-if(!confirm("ارجاع هذه القطعة للمخزن؟"))
-
+if(!confirm("ارجاع قطعة واحدة للمخزن؟"))
 return;
 
 
 
-// جلب القطعة
-
-const {data:item,error}=
-
-await supabase
+const {data:item,error}=await supabase
 
 .from("order_items")
 
@@ -2549,35 +2854,31 @@ stock_quantity
 
 if(error){
 
-console.log(error);
-
 alert(error.message);
-
 return;
 
 }
 
 
 
-// منع الاسترجاع إذا الكمية صفر
-
+// اذا خلصت الكمية كلها
 if(item.quantity <= 0){
 
-
-alert(
-"⚠️ هذه القطعة تم استرجاعها مسبقاً"
-);
-
+alert("⚠️ تم ارجاع هذه القطعة بالكامل مسبقاً");
 
 return;
-
 
 }
 
 
 
+// كمية الاسترجاع وحدة فقط
 
-// زيادة المخزون قطعة واحدة فقط
+let returnQty = 1;
+
+
+
+// زيادة المخزون وحدة واحدة
 
 await supabase
 
@@ -2586,24 +2887,22 @@ await supabase
 .update({
 
 stock_quantity:
+
 (item.product_variants.stock_quantity || 0)
 +
-1
+returnQty
 
 })
 
 .eq(
-
 "id",
-
 item.variant_id
-
 );
 
 
 
 
-// تسجيل حركة المخزن
+// تسجيل حركة مخزن
 
 await supabase
 
@@ -2615,16 +2914,17 @@ variant_id:item.variant_id,
 
 type:"return",
 
-quantity:item.quantity,
+quantity:returnQty,
 
-note:"استرجاع من طلب"
+note:"استرجاع قطعة واحدة من طلب"
 
 });
 
 
 
 
-// تسجيل جدول returns
+
+// حفظ سجل الرجوع
 
 await supabase
 
@@ -2638,22 +2938,29 @@ order_item_id:item.id,
 
 variant_id:item.variant_id,
 
-quantity:item.quantity,
+quantity:returnQty,
 
-reason:"استرجاع"
+reason:"استرجاع قطعة"
 
 });
 
 
-// تصفير الكمية فقط وابقاء المنتج ظاهر
 
-const {error:updateItemError}=await supabase
+
+
+
+// انقاص قطعة واحدة من الطلب
+
+const {error:updateError}=await supabase
 
 .from("order_items")
 
 .update({
 
-quantity:item.quantity - 1
+quantity:item.quantity - 1,
+
+returned_quantity:
+(item.returned_quantity || 0) + 1
 
 })
 
@@ -2663,19 +2970,19 @@ item.id
 );
 
 
-if(updateItemError){
 
-console.log(updateItemError);
+if(updateError){
 
-alert(updateItemError.message);
-
+alert(updateError.message);
 return;
 
 }
 
 
 
-// تحديث سعر الطلب
+
+
+// تحديث مجموع الطلب
 
 const {data:items}=await supabase
 
@@ -2695,31 +3002,13 @@ let total=0;
 
 items?.forEach(i=>{
 
-if(i.quantity > 0){
-
 total += Number(i.price) * Number(i.quantity);
-
-}
 
 });
 
 
 
-await supabase
 
-.from("orders")
-
-.update({
-
-total_price:total
-
-})
-
-.eq(
-"id",
-item.order_id
-);
-// تحديث حالة الاسترجاع بعد تنفيذ الاسترجاع
 
 await supabase
 
@@ -2727,7 +3016,11 @@ await supabase
 
 .update({
 
-has_return:false
+total_price:total,
+
+has_return:true,
+
+finance_done:false
 
 })
 
@@ -2736,18 +3029,28 @@ has_return:false
 item.order_id
 );
 
-alert("تم ارجاع القطعة للمخزن ✅");
+
+
+
+await addActivity(
+
+"ارجاع قطعة واحدة للمخزن",
+
+"orders",
+
+item.order_id
+
+);
+
+
+
+alert("تم ارجاع قطعة واحدة ✅");
+
 
 modal.style.display="none";
 
+
 await loadOrders();
-
-// تحديث الجدول من البيانات الجديدة
-const updatedList = orders.filter(o =>
-    o.status === currentFilter
-);
-
-renderOrders(updatedList);
 
 
 }

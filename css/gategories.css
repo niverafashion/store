@@ -591,63 +591,6 @@ background:#ff6b81;
 
 
 
-
-
-
-/* =====================
- SCROLL TOP
-===================== */
-
-
-.scroll-top{
-
-
-position:fixed;
-
-bottom:25px;
-
-left:25px;
-
-width:55px;
-
-height:55px;
-
-border:none;
-
-border-radius:50%;
-
-background:#f7b6c8;
-
-color:white;
-
-font-size:22px;
-
-cursor:pointer;
-
-box-shadow:0 8px 25px #0003;
-
-z-index:999;
-
-transition:.3s;
-
-
-}
-
-
-
-
-.scroll-top:hover{
-
-transform:translateY(-5px);
-
-}
-
-
-
-
-
-
-
 /* =====================
  MOBILE
 ===================== */
@@ -755,6 +698,7 @@ html{
 -webkit-text-size-adjust:100%;
 
 }
+
 /* =====================
  CATEGORY CARDS
 ===================== */

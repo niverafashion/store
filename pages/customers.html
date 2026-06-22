@@ -6,17 +6,47 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NIVRA AI Customer Intelligence</title>
 
 
-<title>NIVRA Accounts</title>
+<link 
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
 
 
-<link rel="stylesheet" href="../css/order-management.css">
+<link 
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+rel="stylesheet">
 
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link 
+href="../css/customers.css"
+rel="stylesheet">
+
+
+
+<link 
+href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+rel="stylesheet">
+
+
+
+<script src="
+https://cdn.jsdelivr.net/npm/chart.js">
+</script>
+
+
+
+<script src="
+https://cdn.jsdelivr.net/npm/apexcharts">
+</script>
+
+
+
+<script src="
+https://cdn.jsdelivr.net/npm/@tensorflow/tfjs">
+</script>
+
 
 
 </head>
@@ -27,21 +57,135 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 
 
+<!-- NAV -->
 
-<header class="topbar">
-
-
-<div>
+<nav class="main-nav">
 
 
-<h1>
-NIVRA
-</h1>
+<div class="container-fluid d-flex justify-content-between align-items-center">
 
 
-<span>
-الحسابات النهائية
-</span>
+<div class="brand">
+
+NIVRA AI
+
+</div>
+
+
+<a href="index.html"
+class="back-btn">
+
+<i class="fa-solid fa-arrow-right"></i>
+
+</a>
+
+
+</div>
+
+
+</nav>
+
+
+
+
+
+
+
+
+
+<div class="container"
+style="margin-top:110px;">
+
+
+
+
+
+
+
+<!-- SECTION NAV -->
+
+
+<div class="section-nav">
+
+
+<a href="#overview"
+class="btn btn-dark">
+
+نظرة عامة
+
+</a>
+
+
+
+<a href="#audience"
+class="btn btn-outline-dark">
+
+الجمهور
+
+</a>
+
+
+
+<a href="#sources"
+class="btn btn-outline-dark">
+
+مصادر الطلبات
+
+</a>
+
+
+
+
+<a href="#behavior"
+class="btn btn-outline-dark">
+
+السلوك
+
+</a>
+
+
+
+
+
+<a href="#meta"
+class="btn btn-outline-dark">
+
+Meta AI
+
+</a>
+
+
+
+
+<a href="#metaAudience"
+class="btn btn-outline-dark">
+
+Audience Builder
+
+</a>
+
+
+
+
+
+<a href="#products"
+class="btn btn-outline-dark">
+
+المنتجات
+
+</a>
+
+
+
+
+
+<a href="#returns"
+class="btn btn-outline-dark">
+
+الرواجع
+
+</a>
+
 
 
 </div>
@@ -49,159 +193,121 @@ NIVRA
 
 
 
-<a class="back-btn"
-href="../dashboard.html">
-
-
-<i class="fa-solid fa-arrow-right"></i>
-
-
-</a>
-
-
-</header>
 
 
 
 
 
 
+<section id="overview">
+
+
+<h2>
+
+🤖 NIVRA Customer Intelligence
+
+</h2>
 
 
 
-<main>
+<div class="row g-4 mt-3">
 
 
 
+<div class="col-md-3">
+
+<div class="ai-card">
 
 
+<h5>👥 العملاء</h5>
 
-<!-- كروت الحسابات -->
+<div id="customersCount"
+class="number">
 
-
-<section class="order-status-cards">
-
-
-
-
-
-<button class="status-card all"
-data-status="">
-
-
-<i class="fa-solid fa-layer-group"></i>
-
-
-<h3>
-كل الطلبات
-</h3>
-
-
-<span id="allCount">
 0
-</span>
+
+</div>
 
 
-</button>
+</div>
+
+</div>
 
 
 
 
 
+<div class="col-md-3">
+
+<div class="ai-card">
 
 
-<button class="status-card done"
-data-status="completed">
+<h5>👑 VIP</h5>
 
 
-<i class="fa-solid fa-circle-check"></i>
+<div id="vipCount"
+class="number">
 
-
-<h3>
-مكتملة
-</h3>
-
-
-<span id="completedCount">
 0
-</span>
+
+</div>
 
 
-</button>
+</div>
+
+</div>
 
 
 
 
 
+<div class="col-md-3">
+
+<div class="ai-card">
 
 
-<button class="status-card rejected"
-data-status="cancelled">
+<h5>🔥 جمهور الإعلانات</h5>
 
 
-<i class="fa-solid fa-circle-xmark"></i>
+<div id="hotCount"
+class="number">
 
-
-<h3>
-ملغية
-</h3>
-
-
-<span id="cancelledCount">
 0
-</span>
+
+</div>
 
 
-</button>
+</div>
+
+</div>
 
 
 
 
 
+<div class="col-md-3">
+
+<div class="ai-card">
 
 
-<button class="status-card ready">
+<h5>⚠️ مفقودين</h5>
 
 
-<i class="fa-solid fa-money-bill-wave"></i>
+<div id="lostCount"
+class="number">
 
-
-<h3>
-المبلغ المكتمل
-</h3>
-
-
-<span id="totalFinance">
 0
-</span>
+
+</div>
 
 
-</button>
+</div>
+
+</div>
 
 
 
-
-
-
-
-<button class="status-card delayed">
-
-
-<i class="fa-solid fa-rotate-left"></i>
-
-
-<h3>
-رواجع غير مستلمة
-</h3>
-
-
-<span id="pendingReturns">
-0
-</span>
-
-
-</button>
-
+</div>
 
 
 
@@ -215,56 +321,193 @@ data-status="cancelled">
 
 
 
+<section id="audience"
+class="mt-5">
+
+
+<div class="chart-box">
+
+
+<h3>
+
+🎯 تحليل الجمهور
+
+</h3>
+
+
+<canvas id="govChart"></canvas>
+
+
+</div>
+
+
+</section>
 
 
 
 
-<!-- الطلبات -->
-
-
-<section class="card">
 
 
 
-<div class="orders-search-card">
+
+
+<section id="sources"
+class="mt-5">
+
+
+<div class="chart-box">
+
+
+<h3>
+
+📲 مصادر الطلبات
+
+</h3>
+
+
+<canvas id="sourceChart"></canvas>
+
+
+</div>
+
+
+</section>
 
 
 
-<div class="control-bar">
 
 
 
-<h2>
 
 
-<i class="fa-solid fa-wallet"></i>
+
+<section id="behavior"
+class="mt-5">
 
 
-الحسابات والطلبات
+<div class="chart-box">
 
+
+<h3>
+
+🧠 سلوك الشراء
+
+</h3>
+
+
+
+<div id="behaviorChart">
+
+</div>
+
+
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="meta"
+class="mt-5">
+
+
+<div class="ai-box">
+
+
+<h3>
+
+🤖 Meta Ads AI Strategist
+
+</h3>
+
+
+
+<div id="aiBox">
+
+جاري بناء الاستراتيجية...
+
+</div>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- NEW META AUDIENCE -->
+
+
+<section id="metaAudience"
+class="mt-5">
+
+
+<div class="chart-box">
+
+
+<h3>
+
+🎯 Meta Audience Builder
+
+</h3>
+
+
+
+<div class="row g-4">
+
+
+
+
+
+<div class="col-md-3">
+
+
+<div class="ai-card">
+
+
+<h5>
+👑 VIP Audience
+</h5>
+
+
+
+<h2 id="vipAudience">
+
+0
 
 </h2>
 
 
 
 
+<button 
+id="exportVIP"
+class="btn btn-dark">
 
+Export CSV
 
-<div class="search-mini">
+</button>
 
-
-<i class="fa-solid fa-magnifying-glass"></i>
-
-
-<input
-
-id="search"
-
-placeholder="بحث باسم الزبون او الرقم">
 
 
 </div>
-
 
 
 </div>
@@ -277,97 +520,154 @@ placeholder="بحث باسم الزبون او الرقم">
 
 
 
-<div class="table-box">
+<div class="col-md-3">
 
 
-<table>
+<div class="ai-card">
 
 
-<thead>
+<h5>
 
+🔥 Hot Audience
 
-<tr>
-
-
-
-<th>
-رقم
-</th>
+</h5>
 
 
 
-<th>
-الزبون
-</th>
+<h2 id="hotAudience">
+
+0
+
+</h2>
 
 
 
-<th>
-الهاتف
-</th>
+<button
+id="exportHot"
+
+class="btn btn-dark">
 
 
-
-<th>
-المحافظة
-</th>
+Export CSV
 
 
+</button>
 
-<th>
-المبلغ
-</th>
-
-
-
-<th>
-الرواجع
-</th>
-
-
-
-<th>
-الحالة
-</th>
-
-
-
-<th>
-المالية
-</th>
-
-
-
-<th>
-إجراء
-</th>
-
-
-
-</tr>
-
-
-
-</thead>
-
-
-
-
-
-<tbody id="accountsTable">
-
-
-</tbody>
-
-
-
-
-
-</table>
 
 
 </div>
 
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="col-md-3">
+
+
+<div class="ai-card">
+
+
+<h5>
+
+⚠️ Lost Audience
+
+</h5>
+
+
+
+<h2 id="lostAudience">
+
+0
+
+</h2>
+
+
+
+
+<button
+
+id="exportLost"
+
+class="btn btn-dark">
+
+
+Export CSV
+
+
+</button>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="col-md-3">
+
+
+<div class="ai-card">
+
+
+<h5>
+
+🤖 AI Lookalike
+
+</h5>
+
+
+
+<button
+
+id="generateAudience"
+
+class="btn btn-warning">
+
+
+Generate Audience
+
+
+</button>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+<div id="audienceResult"
+
+class="mt-4">
+
+
+</div>
 
 
 
@@ -384,78 +684,163 @@ placeholder="بحث باسم الزبون او الرقم">
 
 
 
+<section id="products"
+class="mt-5">
+
+
+<div class="chart-box">
+
+
+<h3>
+
+🛍 ذكاء المنتجات
+
+</h3>
+
+
+
+<canvas id="productChart"></canvas>
+
+
+
+</div>
+
+
+</section>
 
 
 
 
-<!-- تفاصيل الحساب -->
-
-
-<div id="modal">
 
 
 
-<div class="card modal-box">
+
+
+<section id="returns"
+class="mt-5">
+
+
+<div class="chart-box">
+
+
+<h3>
+
+🔄 تحليل الرواجع
+
+</h3>
 
 
 
-<button id="close">
+<canvas id="returnChart"></canvas>
 
 
-<i class="fa-solid fa-xmark"></i>
+
+</div>
 
 
+</section>
+
+
+
+
+
+
+
+
+
+<section class="mt-5">
+
+
+<div class="chart-box">
+
+
+<h3>
+
+👑 أفضل العملاء
+
+</h3>
+
+
+
+
+<table class="table">
+
+
+<thead>
+
+<tr>
+
+<th>
+الاسم
+</th>
+
+
+<th>
+طلبات
+</th>
+
+
+<th>
+صرف
+</th>
+
+
+<th>
+AI Score
+</th>
+
+
+<th>
+التوصية
+</th>
+
+
+</tr>
+
+</thead>
+
+
+
+<tbody id="vipTable">
+
+
+</tbody>
+
+
+</table>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+<button id="scrollTopBtn">
+<i class="fa-solid fa-arrow-up"></i>
 </button>
 
-
-
-
-
-
-<div id="details">
-
-
-</div>
-
-
-
-
-
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-</main>
-
-
-
-
-
-
+</body>
 
 
 
 <script type="module"
-
-src="../js/accounts.js">
+src="../js/customers.js">
 
 </script>
 
-
-
-
-
-</body>
 
 </html>

@@ -42,6 +42,16 @@ let scanner=null;
 let scannedCode="";
 
 
+async function finishStatusUpdate(message){
+
+alert(message);
+
+resetChecks();
+
+await loadOrders();
+
+}
+
 // =====================
 // تصفير التحديد
 // =====================
@@ -259,7 +269,36 @@ else{
 btn.style.display="block";
 
 }
+const selectAll =
+document.getElementById("selectAll");
 
+
+if(selectAll){
+
+
+let parent =
+selectAll.parentElement;
+
+
+
+if(
+currentFilter === "completed" ||
+currentFilter === "cancelled"
+){
+
+parent.style.display="none";
+
+
+}
+else{
+
+parent.style.display="flex";
+
+
+}
+
+
+}
 }
 
 function updateBulkDelete(){
@@ -438,7 +477,10 @@ ${statusName(o.status)}
 
 
 ${
-o.status !== "delivery"
+(o.status !== "delivery" &&
+ o.status !== "completed" &&
+ o.status !== "cancelled" &&
+ o.status !== "postponed")
 ?
 `
 
@@ -450,7 +492,6 @@ onclick="editOrder('${o.id}')">
 
 </button>
 
-
 `
 :
 ""
@@ -459,7 +500,10 @@ onclick="editOrder('${o.id}')">
 
 
 ${
-(o.status !== "prepared" && currentFilter !== "new")
+(o.status !== "prepared" &&
+ currentFilter !== "new" &&
+ o.status !== "completed" &&
+ o.status !== "cancelled")
 ?
 `
 
@@ -477,9 +521,11 @@ onclick="openOrder('${o.id}')">
 }
 
 
-
 ${
-o.status !== "delivery"
+(o.status !== "delivery" &&
+ o.status !== "completed" &&
+ o.status !== "cancelled" &&
+ o.status !== "postponed")
 ?
 `
 
@@ -491,23 +537,31 @@ onclick="deleteOrder('${o.id}')">
 
 </button>
 
-
 `
 :
 ""
 }
 
 
-
-
-
+${
+(o.status !== "completed" &&
+ o.status !== "cancelled")
+?
+`
 
 <button class="action-btn update-btn"
+
 data-id="${o.id}">
 
 <i class="fa-solid fa-rotate"></i>
 
 </button>
+
+`
+:
+""
+}
+
 
 
 </td>
@@ -664,22 +718,6 @@ box.checked = e.target.checked;
 
 }
 
-
-
-});
-
-
-let checked =
-document.getElementById("selectAll").checked;
-
-
-
-document
-.querySelectorAll(".order-check")
-.forEach(box=>{
-
-
-box.checked = checked;
 
 
 });
@@ -980,8 +1018,6 @@ customer_id_input:order.customer_id
 
 }
 
-
-
 await addActivity(
 
 "تحديث حالة طلب",
@@ -991,26 +1027,12 @@ await addActivity(
 order.id
 
 );
-
-
 
 }
 
-await addActivity(
-
-"تحديث حالة طلب",
-
-"orders",
-
-order.id
-
+await finishStatusUpdate(
+"تم تحديث الطلبات 🔥"
 );
-
-alert("تم تحديث الطلبات 🔥");
-
-resetChecks();
-
-await loadOrders();
 
 };
 
@@ -1886,13 +1908,9 @@ id
 
 
 
-alert(
+await finishStatusUpdate(
 "تم تجهيز الطلب ✅"
 );
-
-
-
-await loadOrders();
 
 
 
@@ -1926,15 +1944,19 @@ let choice = prompt(
 if(choice==="1"){
 
 
-/*
-فحص الاسترجاعات
-*/
+// فحص الاسترجاع الجزئي قبل الإكمال
+
+if(order.has_return){
+
 
 const {data:returnItems,error:returnError}=await supabase
 
 .from("returns")
 
-.select("id,quantity")
+.select(`
+quantity,
+order_item_id
+`)
 
 .eq(
 "order_id",
@@ -1952,26 +1974,59 @@ return;
 }
 
 
-// اكو استرجاع مسجل
 
-if(returnItems && returnItems.length > 0){
+// حساب مجموع القطع التي رجعت
+
+let returnedQty = 0;
 
 
-let ok = confirm(
+returnItems?.forEach(r=>{
 
-"⚠️ هذا الطلب يحتوي على استرجاع\n\nتم ارجاع القطعة؟\n\nهل تريد إكمال الطلب؟"
 
+returnedQty += Number(r.quantity || 0);
+
+
+});
+
+
+
+// حساب القطع التي كان لازم ترجع
+
+let expectedReturn = 0;
+
+
+order.order_items.forEach(item=>{
+
+
+expectedReturn += Number(
+item.returned_quantity || 0
 );
 
 
-if(!ok){
+});
+
+
+
+
+// اذا يوجد طلب استرجاع لكن ما رجعت القطعة
+
+if(returnedQty <= 0){
+
+
+alert(
+"⚠️ هذا الطلب يحتوي على استرجاع جزئي\n\nيجب إرجاع القطعة للمخزن أولاً قبل إكمال الطلب"
+);
+
 
 return;
 
+
 }
 
 
+
 }
+
 
 
 
@@ -2037,7 +2092,6 @@ return;
 else if(order.status==="postponed"){
 
 
-
 let choice = prompt(
 "اختر:\n\n1 - مكتمل\n2 - مرفوض"
 );
@@ -2046,15 +2100,104 @@ let choice = prompt(
 
 if(choice==="1"){
 
-nextStatus="completed";
+
+// نفس فحص قيد التوصيل
+
+if(order.has_return){
+
+
+const {data:returnItems,error:returnError}=await supabase
+
+.from("returns")
+
+.select(`
+quantity,
+order_item_id
+`)
+
+.eq(
+"order_id",
+order.id
+);
+
+
+
+if(returnError){
+
+alert(returnError.message);
+
+return;
 
 }
 
 
 
+let returnedQty = 0;
+
+
+returnItems?.forEach(r=>{
+
+
+returnedQty += Number(r.quantity || 0);
+
+
+});
+
+
+
+
+// اذا موجود استرجاع لكن ما رجعت القطعة
+
+if(returnedQty <= 0){
+
+
+alert(
+
+"⚠️ هذا الطلب يحتوي على استرجاع جزئي\n\nيجب إرجاع القطعة للمخزن أولاً قبل إكمال الطلب"
+
+);
+
+
+return;
+
+
+}
+
+
+
+}
+
+
+nextStatus="completed";
+
+
+}
+
+
+
+
+
 else if(choice==="2"){
 
+
+
+let ok = confirm(
+
+"⚠️ سيتم رفض الطلب وإرجاع جميع القطع للمخزن\n\nهل أنت متأكد؟"
+
+);
+
+
+
+if(!ok){
+
+return;
+
+}
+
+
 nextStatus="cancelled";
+
 
 }
 
@@ -2070,66 +2213,8 @@ return;
 }
 
 
-
 if(!nextStatus)
 return;
-
-
-
-
-
-// =====================
-// فحص الاسترجاع قبل الاكمال
-// =====================
-
-
-if(nextStatus==="completed"){
-
-
-
-// فحص هل بعد اكو قطعة لازم ترجع
-
-if(nextStatus==="completed"){
-
-
-const {data:returnItems}=await supabase
-
-.from("returns")
-
-.select("id")
-
-.eq(
-"order_id",
-order.id
-);
-
-
-
-if(returnItems && returnItems.length > 0){
-
-
-let ok = confirm(
-
-"⚠️ هذا الطلب يحتوي على استرجاع\n\nهل تم التأكد من إرجاع القطع؟\n\nسيتم إكمال الطلب"
-
-);
-
-
-if(!ok){
-
-return;
-
-}
-
-
-}
-
-
-}
-
-
-}
-
 
 
 
@@ -2140,12 +2225,6 @@ return;
 
 
 if(nextStatus==="cancelled"){
-
-
-let ok = confirm(
-"سيتم رفض الطلب وإرجاع جميع القطع للمخزن؟"
-);
-
 
 
 if(!ok)
@@ -2363,13 +2442,9 @@ id
 
 
 
-alert(
+await finishStatusUpdate(
 "تم تحديث الحالة ✅"
 );
-
-
-
-await loadOrders();
 
 
 
@@ -3062,19 +3137,4 @@ modal.style.display="none";
 
 
 }
-
-loadOrders().then(()=>{
-
-
-renderOrders(
-
-orders.filter(o=>
-
-o.status === currentFilter
-
-)
-
-);
-
-
-});
+loadOrders();

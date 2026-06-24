@@ -3464,3 +3464,107 @@ height:130px;
 
 
 }
+/* زر استرجاع القطعة */
+.return-btn,
+.cancel-return-btn{
+
+width:35px;
+height:35px;
+
+border:none;
+
+border-radius:50%;
+
+display:inline-flex;
+
+align-items:center;
+
+justify-content:center;
+
+margin-left:5px;
+
+cursor:pointer;
+
+font-size:15px;
+
+transition:0.2s;
+
+}
+
+
+/* ايقونة الاسترجاع */
+.return-btn{
+
+background:#3498db;
+
+color:white;
+
+}
+
+
+
+/* الغاء الاسترجاع */
+.cancel-return-btn{
+
+background:#e74c3c;
+
+color:white;
+
+}
+
+
+
+/* حركة عند المرور */
+.return-btn:hover,
+.cancel-return-btn:hover{
+
+transform:scale(1.1);
+
+}
+
+
+
+/* نخليهم بنفس السطر */
+.return-info{
+
+position:relative;
+
+}
+
+
+
+/* مجموعة الازرار */
+.return-info button{
+
+vertical-align:middle;
+
+}
+.accounts-btn{
+
+position:absolute;
+
+right:20px;
+
+top:50%;
+
+transform:translateY(-50%);
+
+
+width:42px;
+height:42px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+border-radius:50%;
+
+background:#2563eb;
+
+color:white;
+
+text-decoration:none;
+
+font-size:18px;
+
+}

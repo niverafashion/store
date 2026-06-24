@@ -127,8 +127,6 @@ finance_done,
 
 phone,
 
-phone,
-
 governorate,
 
 address,
@@ -311,10 +309,15 @@ if(!btn)
 return;
 
 
+let selectedStatus = currentFilter;
+
+
+
 if(
-    currentFilter === "delivery" ||
-    currentFilter === "completed" ||
-    currentFilter === "cancelled"
+selectedStatus === "delivery" ||
+selectedStatus === "completed" ||
+selectedStatus === "cancelled" ||
+selectedStatus === "postponed"
 ){
 
 btn.style.display="none";
@@ -413,10 +416,18 @@ html += `
 <div class="order-select-box">
 
 
+${
+(o.status === "completed" || o.status === "cancelled")
+?
+""
+:
+`
 <input 
 type="checkbox"
 class="order-check"
 data-id="${o.id}">
+`
+}
 
 <span 
 class="order-id copy-code"
@@ -428,9 +439,9 @@ ${o.delivery_code || "#" + o.id}
 </span>
 ${o.has_return ? `
 
-<span class="return-order-icon" title="طلب يحتوي على استرجاع">
+<span class="return-order-icon">
 
-<i class="fa-solid fa-arrow-right-arrow-left"></i></span>
+<i class="fa-solid fa-arrow-right-arrow-left"></i>
 
 </span>
 
@@ -544,8 +555,12 @@ onclick="deleteOrder('${o.id}')">
 
 
 ${
-(o.status !== "completed" &&
- o.status !== "cancelled")
+(
+o.status === "new" ||
+o.status === "prepared" ||
+o.status === "delivery" ||
+o.status === "postponed"
+)
 ?
 `
 
@@ -821,42 +836,60 @@ nextStatus="delivery";
 else if(
 
 statuses.length === 1 &&
-statuses[0] === "delivery"
+(
+statuses[0] === "delivery" ||
+statuses[0] === "postponed"
+)
 
 ){
 
-
-
 let choice = prompt(
-
-"اختار الحالة:\n\n1 - مكتمل\n2 - مؤجل\n3 - مرفوض"
-
+"اختر الحالة:\n\n1 - مكتمل\n2 - مرفوض"
 );
 
 
 
 if(choice==="1"){
 
-nextStatus="completed";
+
+// فحص الاسترجاع لكل الطلبات
+
+for(let order of selected){
+
+
+let canComplete =
+await checkReturnBeforeComplete(order);
+
+
+if(!canComplete){
+
+return;
 
 }
+
+
+}
+
+
+nextStatus="completed";
+
+
+}
+
 
 
 else if(choice==="2"){
 
-nextStatus="postponed";
-
-}
-
-
-else if(choice==="3"){
 
 nextStatus="cancelled";
 
+
 }
 
 
+
 else{
+
 
 alert("اختيار غير صحيح");
 
@@ -865,27 +898,7 @@ return;
 }
 
 
-
 }
-
-
-
-else{
-
-
-alert(
-"لازم تكون الطلبات بنفس الحالة حتى تتحدث"
-);
-
-return;
-
-
-}
-
-
-
-
-
 
 
 let ok = confirm(
@@ -1046,9 +1059,7 @@ await finishStatusUpdate(
 
 
 document
-
 .getElementById("bulkDelete")
-
 .onclick = async()=>{
 
 
@@ -1059,12 +1070,9 @@ document
 .querySelectorAll(".order-check:checked")
 .forEach(box=>{
 
-
 ids.push(box.dataset.id);
 
-
 });
-
 
 
 if(ids.length===0){
@@ -1077,14 +1085,9 @@ return;
 
 
 
-
-
-let ok = confirm(
-
+let ok=confirm(
 `هل تريد حذف ${ids.length} طلب؟`
-
 );
-
 
 
 if(!ok)
@@ -1092,36 +1095,19 @@ return;
 
 
 
-
-const {error}=await supabase
-
-.from("orders")
-
-.delete()
-
-.in(
-"id",
-ids
-);
+for(let id of ids){
 
 
+await window.deleteOrder(id);
 
-if(error){
-
-alert(error.message);
-
-return;
 
 }
 
 
-
 alert("تم حذف الطلبات");
-resetChecks();
 
 
 await loadOrders();
-
 
 
 };
@@ -1344,260 +1330,6 @@ loadOrders();
 
 }
 
-
-
-
-// =====================
-// ارجاع قطعة للمخزن
-// =====================
-
-
-async function returnSingleItem(item){
-
-
-let variant =
-item.variant_id;
-
-
-
-let qty =
-item.quantity;
-
-
-
-// جلب المخزون الحالي
-
-const {data:variantData,error:vError}=
-
-await supabase
-
-.from("product_variants")
-
-.select("stock_quantity")
-
-.eq("id",variant)
-
-.single();
-
-
-
-if(vError)
-return;
-
-
-
-// زيادة المخزون
-
-
-await supabase
-
-.from("product_variants")
-
-.update({
-
-stock_quantity:
-
-variantData.stock_quantity + qty
-
-})
-
-.eq(
-
-"id",
-
-variant
-
-);
-
-
-
-
-
-// تسجيل حركة
-
-
-await supabase
-
-.from("stock_movements")
-
-.insert({
-
-variant_id:variant,
-
-type:"return",
-
-quantity:qty,
-
-note:"ارجاع من طلب"
-
-});
-
-
-
-
-
-// تسجيل returns
-
-
-await supabase
-
-.from("returns")
-
-.insert({
-
-order_id:item.order_id,
-
-order_item_id:item.id,
-
-variant_id:variant,
-
-quantity:qty,
-
-reason:"استرجاع من الطلب"
-
-});
-
-
-
-
-await supabase
-
-// اذا الكمية اكثر من 1 نقص وحدة فقط
-
-if(item.quantity > 1){
-
-
-await supabase
-
-.from("order_items")
-
-.update({
-
-quantity: 1
-
-})
-
-.eq(
-
-"id",
-
-item.id
-
-);
-
-
-
-}
-
-else{
-
-await supabase
-
-.from("order_items")
-
-.delete()
-
-.eq(
-
-"id",
-
-item.id
-
-);
-
-
-}
-const {data:remainingItems}=await supabase
-
-.from("order_items")
-
-.select("id")
-
-.eq(
-"order_id",
-item.order_id
-);
-
-
-if(!remainingItems || remainingItems.length===0){
-
-
-await supabase
-
-.from("orders")
-
-.update({
-
-total_price:0
-
-})
-
-.eq(
-"id",
-item.order_id
-);
-
-
-}
-// تحديث مجموع الطلب
-
-const {data:items}=await supabase
-
-.from("order_items")
-
-.select("price,quantity")
-
-.eq(
-"order_id",
-item.order_id
-);
-
-
-
-let newTotal=0;
-
-
-items?.forEach(i=>{
-
-
-newTotal += i.price*i.quantity;
-
-
-});
-
-
-
-await supabase
-
-.from("orders")
-
-.update({
-
-total_price:newTotal
-
-})
-
-.eq(
-
-"id",
-
-item.order_id
-
-);
-
-
-await addActivity(
-
-"ارجاع قطعة للمخزن",
-
-"orders",
-
-item.order_id
-
-);
-
-
-}
 async function confirmDeliveryCode(code,callback){
 
 
@@ -1721,9 +1453,13 @@ document
 
 
 }
-function openScanner(callback){
+async function openScanner(callback){
 
+if(scanner){
 
+await closeScanner();
+
+}
 document
 .getElementById("scanModal")
 .style.display="flex";
@@ -1818,7 +1554,163 @@ closeScanner();
 
 
 };
+async function checkReturnBeforeComplete(order){
 
+
+const {data:returnItems,error}=await supabase
+
+.from("returns")
+
+.select("quantity")
+
+.eq(
+"order_id",
+order.id
+);
+
+
+
+if(error){
+
+alert(error.message);
+
+return false;
+
+}
+
+
+
+let returnedQty = 0;
+
+
+returnItems?.forEach(r=>{
+
+returnedQty += Number(r.quantity || 0);
+
+});
+
+
+
+
+// اذا عنده استرجاع لكن ما رجع ولا قطعة
+
+if(order.has_return && returnedQty < 1){
+
+
+alert(
+"⚠️ هذا الطلب يحتوي على استرجاع\n\nيجب إرجاع قطعة واحدة على الأقل للمخزن قبل الإكمال"
+);
+
+
+return false;
+
+
+}
+
+
+
+return true;
+
+
+}
+window.cancelReturn = async function(orderId){
+
+
+let ok = confirm(
+"هل تريد إلغاء الاسترجاع لهذا الطلب؟\n\nسيتم السماح بإكمال الطلب."
+);
+
+
+if(!ok)
+return;
+
+
+
+// حذف سجلات الاسترجاع
+
+const {error:returnError}=await supabase
+
+.from("returns")
+
+.delete()
+
+.eq(
+"order_id",
+orderId
+);
+
+
+
+if(returnError){
+
+alert(returnError.message);
+
+return;
+
+}
+
+
+
+// إلغاء حالة الاسترجاع من الطلب
+
+const {error}=await supabase
+
+.from("orders")
+
+.update({
+
+has_return:false,
+
+has_partial_refund:false,
+
+refund_amount:0,
+
+finance_done:false
+
+})
+
+.eq(
+"id",
+orderId
+);
+
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+
+await addActivity(
+
+"إلغاء استرجاع طلب",
+
+"orders",
+
+orderId
+
+);
+
+
+
+alert(
+"تم إلغاء الاسترجاع ✅"
+);
+
+
+
+modal.style.display="none";
+
+
+await loadOrders();
+
+
+}
 // =====================
 // تحديث الحالة
 // =====================
@@ -1838,7 +1730,7 @@ return;
 
 
 let nextStatus=null;
-
+let reason="";
 
 
 // =====================
@@ -1944,89 +1836,12 @@ let choice = prompt(
 if(choice==="1"){
 
 
-// فحص الاسترجاع الجزئي قبل الإكمال
-
-if(order.has_return){
-
-
-const {data:returnItems,error:returnError}=await supabase
-
-.from("returns")
-
-.select(`
-quantity,
-order_item_id
-`)
-
-.eq(
-"order_id",
-order.id
-);
+let canComplete =
+await checkReturnBeforeComplete(order);
 
 
-
-if(returnError){
-
-alert(returnError.message);
-
+if(!canComplete)
 return;
-
-}
-
-
-
-// حساب مجموع القطع التي رجعت
-
-let returnedQty = 0;
-
-
-returnItems?.forEach(r=>{
-
-
-returnedQty += Number(r.quantity || 0);
-
-
-});
-
-
-
-// حساب القطع التي كان لازم ترجع
-
-let expectedReturn = 0;
-
-
-order.order_items.forEach(item=>{
-
-
-expectedReturn += Number(
-item.returned_quantity || 0
-);
-
-
-});
-
-
-
-
-// اذا يوجد طلب استرجاع لكن ما رجعت القطعة
-
-if(returnedQty <= 0){
-
-
-alert(
-"⚠️ هذا الطلب يحتوي على استرجاع جزئي\n\nيجب إرجاع القطعة للمخزن أولاً قبل إكمال الطلب"
-);
-
-
-return;
-
-
-}
-
-
-
-}
-
 
 
 
@@ -2048,13 +1863,14 @@ let ok = confirm(
 
 );
 
-
-
 if(!ok){
-
 return;
-
 }
+
+
+reason = prompt(
+"اكتب سبب الرفض:"
+);
 
 
 
@@ -2097,82 +1913,22 @@ let choice = prompt(
 );
 
 
-
 if(choice==="1"){
 
 
-// نفس فحص قيد التوصيل
-
-if(order.has_return){
-
-
-const {data:returnItems,error:returnError}=await supabase
-
-.from("returns")
-
-.select(`
-quantity,
-order_item_id
-`)
-
-.eq(
-"order_id",
-order.id
-);
+let canComplete =
+await checkReturnBeforeComplete(order);
 
 
-
-if(returnError){
-
-alert(returnError.message);
-
+if(!canComplete)
 return;
 
-}
-
-
-
-let returnedQty = 0;
-
-
-returnItems?.forEach(r=>{
-
-
-returnedQty += Number(r.quantity || 0);
-
-
-});
-
-
-
-
-// اذا موجود استرجاع لكن ما رجعت القطعة
-
-if(returnedQty <= 0){
-
-
-alert(
-
-"⚠️ هذا الطلب يحتوي على استرجاع جزئي\n\nيجب إرجاع القطعة للمخزن أولاً قبل إكمال الطلب"
-
-);
-
-
-return;
-
-
-}
-
-
-
-}
 
 
 nextStatus="completed";
 
 
 }
-
 
 
 
@@ -2187,13 +1943,14 @@ let ok = confirm(
 
 );
 
-
-
 if(!ok){
-
 return;
-
 }
+
+
+reason = prompt(
+"اكتب سبب الرفض:"
+);
 
 
 nextStatus="cancelled";
@@ -2226,16 +1983,46 @@ return;
 
 if(nextStatus==="cancelled"){
 
-
-if(!ok)
-return;
-
-
-
-
 for(let item of order.order_items){
 
+// فحص الكمية المتبقية فقط
 
+if(item.quantity <= 0)
+continue;
+
+
+
+const {data:returned}=await supabase
+
+.from("returns")
+
+.select("quantity")
+
+.eq(
+"order_item_id",
+item.id
+);
+
+
+
+let returnedQty=0;
+
+
+returned?.forEach(r=>{
+
+returnedQty += Number(r.quantity || 0);
+
+});
+
+
+
+let availableQty =
+item.quantity - returnedQty;
+
+
+
+if(availableQty <= 0)
+continue;
 
 // جلب المخزون الحالي
 
@@ -2338,8 +2125,16 @@ new Date()
 null,
 
 
-finance_done:false
+cancelled_reason:
 
+nextStatus==="cancelled"
+?
+reason || "بدون سبب"
+:
+null,
+
+
+finance_done:false
 
 })
 
@@ -2655,6 +2450,12 @@ String(o.id).includes(value)
 
 ||
 
+(o.delivery_code || "")
+.toLowerCase()
+.includes(value)
+
+||
+
 (o.customer_name || "")
 .toLowerCase()
 .includes(value)
@@ -2797,7 +2598,7 @@ ${o.nearest_point || "-"}
 
 
 
-${o.order_items.map(i=>`
+${o.order_items?.map(i=>`
 
 
 <div class="return-product-card">
@@ -2831,11 +2632,36 @@ ${i.quantity}
 
 <button 
 onclick="returnItem('${i.id}')"
-class="return-btn">
+class="return-btn"
+title="استرجاع قطعة">
 
 <i class="fa-solid fa-rotate-left"></i>
 
 </button>
+
+
+${
+o.has_return
+?
+`
+
+<button
+
+onclick="cancelReturn('${o.id}')"
+
+class="cancel-return-btn"
+
+title="الغاء الاسترجاع">
+
+<i class="fa-solid fa-ban"></i>
+
+</button>
+
+`
+:
+""
+
+}
 
 
 </div>
@@ -2913,6 +2739,8 @@ quantity,
 
 price,
 
+returned_quantity,
+
 product_variants(
 
 stock_quantity
@@ -2937,11 +2765,42 @@ return;
 
 
 // اذا خلصت الكمية كلها
-if(item.quantity <= 0){
+// فحص اذا القطعة رجعت بالكامل
 
-alert("⚠️ تم ارجاع هذه القطعة بالكامل مسبقاً");
+let {data:alreadyReturned}=await supabase
+
+.from("returns")
+
+.select("quantity")
+
+.eq(
+"order_item_id",
+item.id
+);
+
+
+
+let returnedBefore = 0;
+
+
+alreadyReturned?.forEach(r=>{
+
+returnedBefore += Number(r.quantity || 0);
+
+});
+
+
+
+if(returnedBefore >= item.quantity){
+
+
+alert(
+"⚠️ تم إرجاع هذه القطعة بالكامل مسبقاً"
+);
+
 
 return;
+
 
 }
 
@@ -3020,19 +2879,44 @@ reason:"استرجاع قطعة"
 });
 
 
-
-
-
-
 // انقاص قطعة واحدة من الطلب
 
-const {error:updateError}=await supabase
+let updateResult;
+
+
+if(item.quantity > 1){
+
+
+updateResult = await supabase
 
 .from("order_items")
 
 .update({
 
 quantity:item.quantity - 1,
+
+returned_quantity:
+(item.returned_quantity || 0)+1
+
+})
+
+.eq(
+"id",
+item.id
+);
+
+
+}
+else{
+
+
+updateResult = await supabase
+
+.from("order_items")
+
+.update({
+
+quantity:0,
 
 returned_quantity:
 (item.returned_quantity || 0) + 1
@@ -3045,14 +2929,15 @@ item.id
 );
 
 
+}
 
-if(updateError){
+if(updateResult.error){
 
-alert(updateError.message);
+alert(updateResult.error.message);
+
 return;
 
 }
-
 
 
 

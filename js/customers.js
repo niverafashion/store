@@ -955,8 +955,112 @@ exportLost.onclick=
 
 
 
-generateAudience.onclick=
-()=>{
+generateAudience.onclick = async ()=>{
+
+
+if(vipAudience.length === 0){
+
+audienceResult.innerHTML = `
+
+<div class="alert alert-warning">
+
+لا يوجد عملاء VIP كفاية لبناء Lookalike
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+
+audienceResult.innerHTML=
+
+`
+
+<div class="alert alert-success">
+
+<h4>
+🤖 AI Audience Ready
+</h4>
+
+
+<p>
+تم تحليل العملاء بواسطة NIVRA AI
+</p>
+
+
+<button 
+id="pushMeta"
+class="btn btn-primary">
+
+🚀 Push To Meta
+
+</button>
+
+
+</div>
+
+`;
+
+
+
+document
+.getElementById("pushMeta")
+.onclick =
+pushMeta;
+
+
+// تجهيز بيانات التدريب
+
+
+let trainingData =
+customers.map(c=>[
+
+
+Number(c.spend || 0),
+
+Number(c.orders || 0),
+
+Number(c.completed || 0)
+
+
+]);
+
+
+
+
+
+let labels =
+customers.map(c=>
+
+
+c.score >= 80 ? 1 : 0
+
+
+);
+
+
+
+
+
+const xs =
+tf.tensor2d(trainingData);
+
+
+
+const ys =
+tf.tensor2d(
+labels.map(x=>[x])
+);
+
+
+
+
+
+// إنشاء موديل
 
 
 let model =
@@ -968,9 +1072,25 @@ model.add(
 
 tf.layers.dense({
 
-units:16,
+units:32,
+
+activation:"relu",
 
 inputShape:[3]
+
+})
+
+);
+
+
+
+model.add(
+
+tf.layers.dense({
+
+units:16,
+
+activation:"relu"
 
 })
 
@@ -992,47 +1112,228 @@ activation:"sigmoid"
 
 
 
-audienceResult.innerHTML=
 
 
-`
+model.compile({
 
-<h4>
+optimizer:
+"adam",
 
-🤖 AI Generated Audience
 
-</h4>
+loss:
+"binaryCrossentropy",
+
+
+metrics:
+["accuracy"]
+
+
+});
+
+
+
+
+
+await model.fit(xs,ys,{
+
+epochs:30,
+shuffle:true
+
+});
+
+
+
+// اختبار العملاء
+
+
+let predictions =
+model.predict(xs);
+
+
+
+let scores =
+await predictions.data();
+
+
+xs.dispose();
+ys.dispose();
+
+
+
+
+let lookalike =
+customers.map((c,i)=>({
+
+
+...c,
+
+
+aiSimilarity:
+
+Math.round(scores[i]*100)
+
+
+}))
+
+.filter(c=>
+
+c.aiSimilarity > 70
+
+)
+
+.sort((a,b)=>
+
+b.aiSimilarity-a.aiSimilarity
+
+);
+
+
+
+
+
+
+
+audienceResult.innerHTML = `
+
+
+<div class="ai-box">
+
+
+<h3>
+
+🤖 AI Lookalike Audience Created
+
+</h3>
+
+
+<hr>
+
+
+
+<h5>
+
+عدد الجمهور المقترح:
+
+${lookalike.length}
+
+شخص
+
+</h5>
+
 
 
 <p>
 
-تم إنشاء نموذج Lookalike بناءً على:
+تم التحليل اعتماداً على:
 
 </p>
 
 
+
 <ul>
 
-<li>قيمة العميل</li>
 
-<li>عدد الطلبات</li>
+<li>
+💰 قيمة العميل
+</li>
 
-<li>آخر تفاعل</li>
+
+<li>
+🛒 تكرار الشراء
+</li>
+
+
+<li>
+✅ الطلبات المكتملة
+</li>
+
+
+<li>
+🔥 سلوك VIP
+</li>
 
 
 </ul>
 
 
-<p>
+
+
+<h5>
+
+أفضل العملاء المشابهين:
+
+</h5>
+
+
+
+<table class="table">
+
+
+<tr>
+
+<th>
+الاسم
+</th>
+
+
+<th>
+AI Similarity
+</th>
+
+
+</tr>
+
+
+
+${lookalike
+.slice(0,10)
+.map(c=>`
+
+
+<tr>
+
+<td>
+
+${c.name || "بدون اسم"}
+
+</td>
+
+
+<td>
+
+${c.aiSimilarity}%
+
+</td>
+
+
+</tr>
+
+
+`).join("")}
+
+
+
+</table>
+
+
+
+<span class="badge bg-success">
 
 جاهز للتصدير إلى Meta Ads
 
-</p>
+</span>
+
+
+
+</div>
+
+
 
 `;
 
 
-}
+
+};
 // ===============================
 // SCROLL TO TOP
 // ===============================
@@ -1079,3 +1380,165 @@ behavior:"smooth"
 
 
 });
+async function sha256(text){
+
+const encoder = new TextEncoder();
+
+const data =
+encoder.encode(text);
+
+
+const hashBuffer =
+await crypto.subtle.digest(
+"SHA-256",
+data
+);
+
+
+return Array.from(
+new Uint8Array(hashBuffer)
+)
+.map(
+b=>b.toString(16).padStart(2,"0")
+)
+.join("");
+
+}
+async function pushMeta(){
+
+
+if(vipAudience.length === 0){
+
+alert(
+"لا يوجد جمهور VIP"
+);
+
+return;
+
+}
+
+
+
+
+let users = await Promise.all(
+
+vipAudience.map(async c=>{
+
+
+return {
+
+
+email_hash:
+
+c.email
+?
+await sha256(
+c.email.trim().toLowerCase()
+)
+:
+null,
+
+
+
+phone_hash:
+
+c.phone
+?
+await sha256(
+c.phone.replace(/\D/g,"")
+)
+:
+null,
+
+
+city:
+
+c.governorate
+?
+await sha256(
+c.governorate
+)
+:
+null,
+
+
+
+purchase_value:
+
+c.spend,
+
+
+
+orders:
+
+c.orders
+
+
+
+}
+
+
+})
+
+);
+
+
+
+
+
+let response = await fetch(
+
+"http://localhost:3000/push-meta",
+
+{
+
+
+method:"POST",
+
+
+headers:{
+
+
+"Content-Type":
+
+"application/json"
+
+
+},
+
+
+body:
+
+JSON.stringify({
+
+users
+
+})
+
+
+}
+
+
+);
+
+
+
+
+let result =
+await response.json();
+
+
+
+console.log(result);
+
+
+
+alert(
+
+"🚀 تم تجهيز الجمهور للإرسال إلى Meta"
+
+);
+
+
+
+}

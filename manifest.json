@@ -1,7 +1,7 @@
 {
   "name": "NIVRA Store",
   "short_name": "NIVRA",
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#fff9fb",
   "theme_color": "#f7b6c8",

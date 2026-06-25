@@ -1777,82 +1777,125 @@ loadCategories();
 loadGovernorates();
 let deferredPrompt = null;
 
-const btn = document.getElementById("installApp");
+const installBtn = document.getElementById("installApp");
 
-// فحص التثبيت الحقيقي
+// =========================
+// 🔍 فحص التثبيت الحقيقي
+// =========================
 function isInstalled() {
-  return window.matchMedia("(display-mode: standalone)").matches
-    || window.navigator.standalone === true;
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true
+  );
 }
 
-// UI update
-function updateUI() {
+// =========================
+// 📱 كشف iOS
+// =========================
+function isIOS() {
+  return /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+}
+
+// =========================
+// 🌐 إخفاء الزر نهائياً إذا مثبت
+// =========================
+function handleInstallUI() {
   if (isInstalled()) {
-    console.log("✅ App already installed");
-    btn.innerText = "✔ التطبيق مثبت";
-    btn.disabled = true;
-    return;
+    console.log("✔ App Installed");
+
+    installBtn.style.display = "none"; // 🔥 أهم تعديل
+
+    return true;
   }
 
-  btn.innerText = "📲 تثبيت التطبيق";
-  btn.disabled = false;
+  console.log("ℹ️ App NOT installed");
+
+  installBtn.style.display = "flex";
+
+  installBtn.innerHTML = `
+    📲 تثبيت التطبيق
+    <i class="fa-solid fa-download download-icon"></i>
+  `;
+
+  return false;
 }
 
-updateUI();
+handleInstallUI();
 
-// Chrome event
+
+// =========================
+// 🔥 beforeinstallprompt (Chrome / Edge فقط)
+// =========================
 window.addEventListener("beforeinstallprompt", (e) => {
-  console.log("🔥 beforeinstallprompt fired");
-
   e.preventDefault();
+
   deferredPrompt = e;
 
-  btn.style.display = "flex";
+  console.log("🔥 Install prompt ready");
+
+  if (!isInstalled()) {
+    installBtn.style.display = "flex";
+  }
 });
 
-// click install
-btn.addEventListener("click", async () => {
 
-  console.log("📲 install clicked");
+// =========================
+// 🧠 زر التثبيت
+// =========================
+installBtn.addEventListener("click", async () => {
+  console.log("📲 Install clicked");
 
+  // إذا مثبت
   if (isInstalled()) {
-    alert("التطبيق مثبت مسبقاً");
+    installBtn.style.display = "none";
     return;
   }
 
-  // Chrome install supported
+  // Chrome / Edge install
   if (deferredPrompt) {
-
     deferredPrompt.prompt();
 
-    const result = await deferredPrompt.userChoice;
+    const choice = await deferredPrompt.userChoice;
 
-    console.log("choice:", result);
+    console.log("User choice:", choice);
 
     deferredPrompt = null;
 
-    updateUI();
+    handleInstallUI();
 
     return;
   }
 
-  // fallback
-  showManualInstall();
+  // fallback iOS / others
+  showInstallGuide();
 });
 
-function showManualInstall() {
 
-  const ua = navigator.userAgent.toLowerCase();
-
-  if (ua.includes("iphone")) {
-    alert("📱 Safari:\nاضغط Share ➜ Add to Home Screen");
+// =========================
+// 🍎 iOS / fallback guide
+// =========================
+function showInstallGuide() {
+  if (isIOS()) {
+    alert(
+      "📲 تثبيت التطبيق على الآيفون:\n\n" +
+      "1- اضغط زر المشاركة ⬆️\n" +
+      "2- اختر Add to Home Screen\n" +
+      "3- اضغط Add"
+    );
   } else {
-    alert("🌐 Chrome:\n⋮ ➜ Add to Home Screen");
+    alert(
+      "📲 لتثبيت التطبيق:\n\n" +
+      "افتح Chrome ➜ ⋮ ➜ Add to Home Screen"
+    );
   }
 }
 
-// بعد التثبيت
+
+// =========================
+// 🎉 بعد التثبيت الحقيقي
+// =========================
 window.addEventListener("appinstalled", () => {
-  console.log("🎉 Installed successfully");
-  updateUI();
+  console.log("🎉 App installed");
+
+  installBtn.style.display = "none"; // 🔥 يخفي الزر نهائياً
 });

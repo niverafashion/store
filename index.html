@@ -694,7 +694,7 @@ target="_blank">
 
 
 </body>
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="./manifest.json">
 
 <meta name="theme-color" content="#f7b6c8">
 
@@ -704,7 +704,7 @@ target="_blank">
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      const reg = await navigator.serviceWorker.register("/sw.js");
+      const reg = await navigator.serviceWorker.register("./sw.js");
       console.log("SW OK", reg);
     } catch (err) {
       console.log("SW failed", err);

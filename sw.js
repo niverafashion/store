@@ -1,5 +1,3 @@
-// sw.js
-
 console.log("NIVRA SW Loaded");
 
 self.addEventListener("install", (event) => {

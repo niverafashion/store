@@ -2,11 +2,10 @@
   "name": "NIVRA Store",
   "short_name": "NIVRA",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#fff9fb",
   "theme_color": "#f7b6c8",
-  "id": "/index.html",
-
   "icons": [
     {
       "src": "/assets/icon-192.png",
@@ -18,7 +17,7 @@
       "src": "/assets/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }

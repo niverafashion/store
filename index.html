@@ -701,31 +701,15 @@ target="_blank">
 
 <script>
 
-if("serviceWorker" in navigator){
-
-window.addEventListener("load",()=>{
-
-
-navigator.serviceWorker.register("./sw.js")
-
-.then(reg=>{
-
-console.log("✅ SW OK");
-console.log(reg);
-
-
-})
-
-.catch(err=>{
-
-console.error("❌ SW ERROR",err);
-
-
-});
-
-
-});
-
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      const reg = await navigator.serviceWorker.register("/sw.js");
+      console.log("✅ SW OK", reg);
+    } catch (err) {
+      console.log("❌ SW failed", err);
+    }
+  });
 }
 
 </script>

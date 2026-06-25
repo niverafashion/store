@@ -10,7 +10,9 @@
 content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NIVRA Store</title>
 
-<link rel="manifest" href="./manifest.json">
+<link rel="manifest" href="/manifest.json">
+
+<meta name="theme-color" content="#f7b6c8">
 <link rel="stylesheet" href="./css/store.css">
 
 
@@ -174,14 +176,6 @@ class="hero">
 
 
 </section>
-
-
-
-
-
-
-
-
 
 <section id="categories">
 
@@ -700,19 +694,43 @@ target="_blank">
 
 
 </body>
+<link rel="manifest" href="/manifest.json">
+
+<meta name="theme-color" content="#f7b6c8">
+
+
 <script>
 
 if("serviceWorker" in navigator){
 
-navigator.serviceWorker.register("./js/sw.js");
+window.addEventListener("load",()=>{
+
+
+navigator.serviceWorker.register("./sw.js")
+
+.then(reg=>{
+
+console.log("✅ SW OK");
+console.log(reg);
+
+
+})
+
+.catch(err=>{
+
+console.error("❌ SW ERROR",err);
+
+
+});
+
+
+});
 
 }
 
 </script>
-<script type="module"
 
-src="./js/store.js">
 
-</script>
+<script type="module" src="./js/store.js"></script>
 
 </html>

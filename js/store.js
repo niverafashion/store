@@ -1775,82 +1775,98 @@ behavior:"smooth"
 loadCategories();
 
 loadGovernorates();
-// =====================
-// تثبيت التطبيق PWA
-// =====================
-
-
 let deferredPrompt = null;
 
+const installBtn = document.getElementById("installApp");
 
-const installBtn = 
-document.getElementById("installApp");
+// 🔍 فحص هل التطبيق مثبت
+function isInstalled() {
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true
+  );
+}
 
+// 🔥 كشف نوع المتصفح
+function isChrome() {
+  return /chrome/i.test(navigator.userAgent) && !/edge/i.test(navigator.userAgent);
+}
 
+// 🎯 فحص الحالة عند البداية
+function checkInstallState() {
+  if (isInstalled()) {
+    console.log("✅ App already installed");
+    installBtn.style.display = "none";
+    return true;
+  }
 
-if(installBtn){
+  console.log("ℹ️ App NOT installed");
+  return false;
+}
 
+checkInstallState();
+window.addEventListener("beforeinstallprompt", (e) => {
+  console.log("🔥 beforeinstallprompt fired");
 
-installBtn.style.display="flex";
+  e.preventDefault();
+  deferredPrompt = e;
 
-
-
-window.addEventListener(
-"beforeinstallprompt",
-(e)=>{
-
-
-e.preventDefault();
-
-
-deferredPrompt = e;
-
-
-installBtn.style.display="block";
-
-
+  installBtn.style.display = "flex";
 });
+installBtn.onclick = async () => {
+  console.log("📲 install button clicked");
 
+  // إذا مثبت
+  if (isInstalled()) {
+    alert("✅ التطبيق مثبت بالفعل");
+    return;
+  }
 
+  // إذا Chrome يدعم
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
 
+    const choice = await deferredPrompt.userChoice;
 
+    console.log("User choice:", choice);
 
-installBtn.onclick = async()=>{
+    if (choice.outcome === "accepted") {
+      console.log("🎉 Installed");
+    } else {
+      console.log("❌ Cancelled");
+    }
 
+    deferredPrompt = null;
+    return;
+  }
 
-if(!deferredPrompt){
-
-alert(
-"افتح الموقع من Chrome ثم اختار إضافة إلى الشاشة الرئيسية"
-);
-
-return;
-
-}
-
-
-
-deferredPrompt.prompt();
-
-
-
-let choice =
-await deferredPrompt.userChoice;
-
-
-
-if(choice.outcome === "accepted"){
-
-console.log("تم التثبيت");
-
-}
-
-
-
-deferredPrompt = null;
-
-
+  // fallback قوي
+  showInstallGuide();
 };
+function showInstallGuide() {
+  const ua = navigator.userAgent.toLowerCase();
 
+  if (ua.includes("android")) {
+    alert(
+      "📲 لتثبيت التطبيق:\n\n" +
+      "1- افتح الموقع في Chrome\n" +
+      "2- اضغط ⋮ من الأعلى\n" +
+      "3- اختر 'إضافة إلى الشاشة الرئيسية'"
+    );
+  }
 
+  else if (ua.includes("iphone")) {
+    alert(
+      "📲 لتثبيت التطبيق:\n\n" +
+      "1- اضغط زر المشاركة\n" +
+      "2- اختر 'Add to Home Screen'"
+    );
+  }
+
+  else {
+    alert("⚠️ افتح الموقع من Chrome لتفعيل التثبيت");
+  }
+}
+if (!window.matchMedia("(display-mode: standalone)").matches) {
+  console.log("🌐 Running in browser mode");
 }

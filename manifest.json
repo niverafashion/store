@@ -1,15 +1,24 @@
 {
   "name": "NIVRA Store",
   "short_name": "NIVRA",
-  "start_url": "./index.html",
+  "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#fff9fb",
+  "theme_color": "#f7b6c8",
+  "id": "/index.html",
+
   "icons": [
     {
-      "src": "./assets/icon-192.jpeg",
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

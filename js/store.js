@@ -1779,55 +1779,58 @@ let deferredPrompt = null;
 
 const btn = document.getElementById("installApp");
 
-// فحص التثبيت
+// فحص التثبيت الحقيقي
 function isInstalled() {
-  return (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    window.navigator.standalone === true
-  );
+  return window.matchMedia("(display-mode: standalone)").matches
+    || window.navigator.standalone === true;
 }
 
-// تحديث حالة الزر
+// UI update
 function updateUI() {
   if (isInstalled()) {
+    console.log("✅ App already installed");
     btn.innerText = "✔ التطبيق مثبت";
     btn.disabled = true;
-    return true;
+    return;
   }
 
-  btn.innerText = "تثبيت التطبيق";
-  return false;
+  btn.innerText = "📲 تثبيت التطبيق";
+  btn.disabled = false;
 }
 
 updateUI();
 
-// قبل التثبيت (Chrome فقط)
+// Chrome event
 window.addEventListener("beforeinstallprompt", (e) => {
+  console.log("🔥 beforeinstallprompt fired");
+
   e.preventDefault();
   deferredPrompt = e;
 
-  console.log("🔥 install prompt ready");
+  btn.style.display = "flex";
 });
 
-// زر التثبيت
+// click install
 btn.addEventListener("click", async () => {
-  console.log("📲 click install");
 
-  // إذا مثبت
+  console.log("📲 install clicked");
+
   if (isInstalled()) {
-    alert("التطبيق مثبت بالفعل");
+    alert("التطبيق مثبت مسبقاً");
     return;
   }
 
-  // إذا Chrome يدعم install
+  // Chrome install supported
   if (deferredPrompt) {
+
     deferredPrompt.prompt();
 
-    const choice = await deferredPrompt.userChoice;
+    const result = await deferredPrompt.userChoice;
 
-    console.log(choice);
+    console.log("choice:", result);
 
     deferredPrompt = null;
+
     updateUI();
 
     return;
@@ -1837,13 +1840,19 @@ btn.addEventListener("click", async () => {
   showManualInstall();
 });
 
-// fallback تعليمات
 function showManualInstall() {
+
   const ua = navigator.userAgent.toLowerCase();
 
   if (ua.includes("iphone")) {
-    alert("اضغط زر المشاركة ➜ Add to Home Screen");
+    alert("📱 Safari:\nاضغط Share ➜ Add to Home Screen");
   } else {
-    alert("افتح Chrome ➜ ⋮ ➜ Add to Home Screen");
+    alert("🌐 Chrome:\n⋮ ➜ Add to Home Screen");
   }
 }
+
+// بعد التثبيت
+window.addEventListener("appinstalled", () => {
+  console.log("🎉 Installed successfully");
+  updateUI();
+});

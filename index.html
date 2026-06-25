@@ -705,9 +705,9 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
       const reg = await navigator.serviceWorker.register("/sw.js");
-      console.log("✅ SW OK", reg);
+      console.log("SW OK", reg);
     } catch (err) {
-      console.log("❌ SW failed", err);
+      console.log("SW failed", err);
     }
   });
 }

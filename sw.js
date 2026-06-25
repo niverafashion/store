@@ -1,13 +1,11 @@
-console.log("NIVRA SW Loaded");
-
 self.addEventListener("install", (event) => {
   console.log("SW installing...");
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  console.log("SW activated");
   event.waitUntil(self.clients.claim());
+  console.log("SW activated");
 });
 
 self.addEventListener("fetch", (event) => {

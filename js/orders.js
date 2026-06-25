@@ -344,45 +344,42 @@ ${p.name}
 
 };
 
-
-
-
-
 // =====================
-// الأحجام
+// الأحجام حسب المنتج
 // =====================
 
+let productVariants = [];
 
-productSelect.onchange=async()=>{
+
+productSelect.onchange = async()=>{
 
 
-sizeSelect.innerHTML=`
-
+sizeSelect.innerHTML = `
 <option>
 اختار الحجم
 </option>
-
 `;
 
 
-colorSelect.innerHTML=`
-
+colorSelect.innerHTML = `
 <option>
 اختار اللون
 </option>
-
 `;
 
 
 
-
-const {data}=await supabase
+const {data,error}=await supabase
 
 .from("product_variants")
 
-.select(
-"size,stock_quantity"
-)
+.select(`
+id,
+size,
+color,
+image,
+stock_quantity
+`)
 
 .eq(
 "product_id",
@@ -396,8 +393,21 @@ productSelect.value
 
 
 
+if(error){
 
-let sizes=[];
+console.log(error);
+
+return;
+
+}
+
+
+
+productVariants = data;
+
+
+
+let sizes = [];
 
 
 
@@ -413,9 +423,7 @@ sizes.push(v.size);
 }
 
 
-
 });
-
 
 
 
@@ -425,9 +433,7 @@ sizes.forEach(s=>{
 sizeSelect.innerHTML +=`
 
 <option value="${s}">
-
 ${s}
-
 </option>
 
 `;
@@ -443,14 +449,14 @@ ${s}
 
 
 // =====================
-// الألوان
+// الألوان حسب الحجم
 // =====================
 
 
-sizeSelect.onchange=async()=>{
+sizeSelect.onchange = ()=>{
 
 
-colorSelect.innerHTML=`
+colorSelect.innerHTML = `
 
 <option>
 اختار اللون
@@ -460,32 +466,11 @@ colorSelect.innerHTML=`
 
 
 
+productVariants
 
-const {data}=await supabase
+.filter(v=>v.size === sizeSelect.value)
 
-.from("product_variants")
-
-.select("*")
-
-.eq(
-"product_id",
-productSelect.value
-)
-
-.eq(
-"size",
-sizeSelect.value
-)
-
-.gt(
-"stock_quantity",
-0
-);
-
-
-
-
-data.forEach(v=>{
+.forEach(v=>{
 
 
 colorSelect.innerHTML +=`
@@ -493,6 +478,7 @@ colorSelect.innerHTML +=`
 <option value="${v.id}">
 
 ${v.color}
+
 (متوفر ${v.stock_quantity})
 
 </option>
@@ -504,11 +490,6 @@ ${v.color}
 
 
 };
-
-
-
-
-
 // =====================
 // المحافظات
 // =====================

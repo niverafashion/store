@@ -10,15 +10,12 @@
 content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NIVRA Store</title>
 
-
+<link rel="manifest" href="./manifest.json">
 <link rel="stylesheet" href="./css/store.css">
 
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-
-</head>
 
 
 <body>
@@ -159,10 +156,15 @@ class="hero">
 
 
 
+<button id="installApp" class="install-btn">
 
-<button id="shopButton">
+<i class="fa-solid fa-mobile-screen-button"></i>
 
-اكتشفي المجموعة
+<span>
+تثبيت تطبيق NIVRA
+</span>
+
+<i class="fa-solid fa-download download-icon"></i>
 
 </button>
 
@@ -698,6 +700,15 @@ target="_blank">
 
 
 </body>
+<script>
+
+if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register("./js/sw.js");
+
+}
+
+</script>
 <script type="module"
 
 src="./js/store.js">

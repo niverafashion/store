@@ -1132,13 +1132,6 @@ modal.style.display="flex";
 }
 
 
-
-
-
-
-
-
-
 function statusName(s){
 
 

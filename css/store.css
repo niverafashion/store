@@ -476,8 +476,8 @@ margin:8px;
 
 background:linear-gradient(
 135deg,
-#f7b6c8,
-#d987a0
+#d63384,
+#ff85a2
 );
 
 
@@ -912,62 +912,6 @@ color:#25D366;
 transform:translateY(-5px);
 
 }
-
-
-.scroll-top{
-
-position:fixed;
-
-bottom:25px;
-
-left:25px;
-
-width:50px;
-
-height:50px;
-
-border-radius:50%;
-
-border:none;
-
-background:#f7b6c8;
-
-color:white;
-
-font-size:22px;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-cursor:pointer;
-
-box-shadow:0 10px 25px #f7b6c855;
-
-transition:.3s;
-
-bottom:25px;
-
-left:25px;
-
-}
-
-
-
-
-.scroll-top:hover{
-
-
-transform:translateY(-5px);
-
-
-background:#d987a0;
-
-
-}
-
 
 /* ===== FINAL MOBILE RESPONSIVE ===== */
 
@@ -1837,4 +1781,256 @@ width:90% !important;
 
 height:45px;
 
+}
+/* ===== INSTALL APP BUTTON ===== */
+
+
+.install-btn{
+
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:12px;
+
+
+background:linear-gradient(
+135deg,
+#d63384,
+#ff85a2
+);
+
+color:white;
+
+
+border:none;
+
+
+padding:16px 35px;
+
+
+border-radius:50px;
+
+
+font-family:'Cairo',sans-serif;
+
+
+font-size:18px;
+
+
+font-weight:bold;
+
+
+cursor:pointer;
+
+
+margin-top:25px;
+
+
+box-shadow:
+
+0 10px 30px #d987a077;
+
+
+transition:.3s;
+
+
+position:relative;
+
+
+overflow:hidden;
+
+
+}
+
+
+/* ===== INSTALL APP BUTTON STYLE ===== */
+
+#installApp.install-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:12px;
+
+
+    background:linear-gradient(
+        135deg,
+        #111,
+        #00bfffe1
+    );
+
+
+    color:white;
+
+
+    border:none;
+
+
+    padding:16px 40px;
+
+
+    border-radius:50px;
+
+
+    font-family:'Cairo',sans-serif;
+
+
+    font-size:18px;
+
+
+    font-weight:700;
+
+
+    cursor:pointer;
+
+
+    margin:25px auto 0;
+
+
+    box-shadow:
+    0 10px 30px rgba(214,51,132,.45);
+
+
+    transition:.3s;
+
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+
+
+#installApp.install-btn:hover{
+
+
+    transform:translateY(-5px) scale(1.05);
+
+
+    box-shadow:
+    0 15px 45px rgba(214,51,132,.65);
+
+
+}
+
+
+
+/* النص */
+
+#installApp.install-btn span{
+
+    color:white;
+
+}
+
+
+
+/* ايقونة الموبايل */
+
+#installApp.install-btn i:first-child{
+
+    font-size:25px;
+
+}
+
+
+
+/* ايقونة التحميل */
+
+#installApp .download-icon{
+
+
+    font-size:22px;
+
+
+    animation:downloadMove 1.4s infinite;
+
+
+}
+
+
+
+@keyframes downloadMove{
+
+
+    0%{
+
+        transform:translateY(-4px);
+
+    }
+
+
+    50%{
+
+        transform:translateY(5px);
+
+    }
+
+
+    100%{
+
+        transform:translateY(-4px);
+
+    }
+
+
+}
+
+
+
+/* تأثير لمعان */
+
+#installApp.install-btn::before{
+
+
+    content:"";
+
+
+    position:absolute;
+
+
+    width:120px;
+
+    height:120px;
+
+
+    background:white;
+
+
+    opacity:.15;
+
+
+    border-radius:50%;
+
+
+    top:-60px;
+
+
+    right:-50px;
+
+
+}
+.scroll-top{
+position:fixed;
+bottom:25px;
+left:25px;
+width:40px;
+height:40px;
+border:none;
+border-radius:90%;
+background:#00bfffe1;
+color:white;
+font-size:15px;
+cursor:pointer;
+box-shadow:0 8px 25px #0003;
+z-index:999;
+transition:.3s;
 }

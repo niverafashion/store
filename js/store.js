@@ -251,7 +251,7 @@ productsContainer.innerHTML="";
 products.forEach(product=>{
 
 
-productsContainer.innerHTML =`
+productsContainer.innerHTML +=`
 
 
 <div class="product-card">
@@ -260,27 +260,20 @@ productsContainer.innerHTML =`
 <img src="${product.main_image || product.image || './assets/images/no-image.jpg'}">
 
 <h3>
-
 ${product.name}
-
 </h3>
 
 
-
 <p>
-
 ${product.price}
-
 دينار
-
 </p>
 
 
 <div class="product-description">
-
 ${product.description || ""}
-
 </div>
+
 
 <div class="cart-action">
 
@@ -292,7 +285,6 @@ data-id="${product.id}">
 🛒 إضافة للسلة
 
 </button>
-
 
 
 <div class="product-controls">
@@ -323,7 +315,6 @@ style="display:none">
 
 
 </div>
-
 
 
 </div>
@@ -1784,3 +1775,82 @@ behavior:"smooth"
 loadCategories();
 
 loadGovernorates();
+// =====================
+// تثبيت التطبيق PWA
+// =====================
+
+
+let deferredPrompt = null;
+
+
+const installBtn = 
+document.getElementById("installApp");
+
+
+
+if(installBtn){
+
+
+installBtn.style.display="flex";
+
+
+
+window.addEventListener(
+"beforeinstallprompt",
+(e)=>{
+
+
+e.preventDefault();
+
+
+deferredPrompt = e;
+
+
+installBtn.style.display="block";
+
+
+});
+
+
+
+
+
+installBtn.onclick = async()=>{
+
+
+if(!deferredPrompt){
+
+alert(
+"افتح الموقع من Chrome ثم اختار إضافة إلى الشاشة الرئيسية"
+);
+
+return;
+
+}
+
+
+
+deferredPrompt.prompt();
+
+
+
+let choice =
+await deferredPrompt.userChoice;
+
+
+
+if(choice.outcome === "accepted"){
+
+console.log("تم التثبيت");
+
+}
+
+
+
+deferredPrompt = null;
+
+
+};
+
+
+}

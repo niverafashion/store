@@ -21,6 +21,8 @@ document.getElementById("price");
 const imageInput =
 document.getElementById("image");
 
+const imagesInput =
+document.getElementById("images");
 
 const saveBtn =
 document.getElementById("save");
@@ -141,9 +143,11 @@ supabase
 *,
 
 categories(
-
 name
+),
 
+product_images(
+image_url
 )
 
 `)
@@ -204,8 +208,16 @@ list.innerHTML +=`
 <div class="category-card">
 
 
-<img src="${product.main_image || '../assets/images/default.jpg'}">
-
+<img 
+src="
+${
+product.product_images?.[0]?.image_url 
+||
+product.main_image 
+||
+'../assets/images/default.jpg'
+}
+">
 
 
 
@@ -362,6 +374,9 @@ priceInput.value.trim();
 let image =
 imageInput.value.trim();
 
+let images =
+imagesInput.value.trim();
+
 
 
 
@@ -452,17 +467,11 @@ return false;
 
 if(!image){
 
-
-alert("ادخل مسار الصورة");
-
-imageInput.focus();
+alert("ادخل الصورة الرئيسية");
 
 return false;
 
-
 }
-
-
 
 return true;
 
@@ -629,7 +638,76 @@ editId
 );
 
 
+// حذف الصور القديمة
 
+await supabase
+
+.from("product_images")
+
+.delete()
+
+.eq(
+"product_id",
+editId
+);
+
+
+
+
+
+// إعادة حفظ الصور الموجودة بالـ textbox فقط
+
+if(imagesInput.value.trim()){
+
+
+
+let images =
+
+imagesInput.value
+
+.split(",")
+
+.map(x=>x.trim())
+
+.filter(x=>x);
+
+
+
+let rows = images.map((img,index)=>({
+
+
+product_id: editId,
+
+image_url: img,
+
+sort_order:index + 1
+
+
+}));
+
+
+
+
+const {error:imageError}=
+
+await supabase
+
+.from("product_images")
+
+.insert(rows);
+
+
+
+if(imageError){
+
+alert(imageError.message);
+
+return;
+
+}
+
+
+}
 
 
 if(error){
@@ -679,14 +757,78 @@ else{
 
 
 
-const {error}=
+const {data:newProduct,error}=
 
 await supabase
 
 .from("products")
 
-.insert(product);
+.insert(product)
 
+.select()
+
+.single();
+
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+
+
+// حفظ الصور الإضافية
+
+if(imagesInput.value.trim()){
+
+
+let images =
+
+imagesInput.value
+
+.split(/,|\n/)
+
+.map(x=>x.trim())
+
+.filter(x=>x);
+
+
+let rows = images.map((img,index)=>({
+
+
+product_id:newProduct.id,
+
+image_url:img,
+
+sort_order:index
+
+
+}));
+
+
+
+const {error:imageError}=
+
+await supabase
+
+.from("product_images")
+
+.insert(rows);
+
+
+
+if(imageError){
+
+console.log(imageError);
+
+}
+
+}
 
 
 
@@ -752,7 +894,16 @@ await supabase
 
 .from("products")
 
-.select("*")
+.select(`
+
+*,
+
+product_images(
+id,
+image_url
+)
+
+`)
 
 .eq(
 "id",
@@ -760,7 +911,6 @@ id
 )
 
 .single();
-
 
 
 
@@ -776,25 +926,22 @@ return;
 
 
 
+// تعبئة البيانات
 
 categorySelect.value =
 data.category_id;
-
 
 
 nameInput.value =
 data.name;
 
 
-
 descriptionInput.value =
 data.description;
 
 
-
 priceInput.value =
 data.price;
-
 
 
 imageInput.value =
@@ -803,13 +950,24 @@ data.main_image;
 
 
 
+// جلب الصور الإضافية
 
-editId=id;
+imagesInput.value =
+
+data.product_images
+?.map(x=>x.image_url)
+.join(",\n") || "";
 
 
 
 
-saveBtn.innerHTML=`
+
+editId = id;
+
+
+
+
+saveBtn.innerHTML = `
 
 <i class="fa-solid fa-pen"></i>
 
@@ -833,26 +991,15 @@ behavior:"smooth"
 };
 
 
-
-
-
-
-
-
-
-
-
 // ==========================
 // حذف المنتج
 // ==========================
-
-
 
 window.deleteProduct = async function(id){
 
 
 
-let ok=
+let ok =
 
 confirm(
 "هل تريد حذف المنتج ؟"
@@ -861,6 +1008,7 @@ confirm(
 
 
 if(!ok)
+
 return;
 
 
@@ -872,7 +1020,6 @@ return;
 
 
 // فحص الارتباط بالحجم واللون
-
 
 const {data:variants,error:vError}=
 
@@ -912,7 +1059,9 @@ if(variants.length > 0){
 
 
 alert(
+
 "لا يمكن حذف المنتج لأنه مرتبط بالأحجام والألوان والمخزون. احذف الارتباطات أولا."
+
 );
 
 
@@ -929,6 +1078,59 @@ return;
 
 
 
+// ==========================
+// حذف الصور المرتبطة
+// ==========================
+
+
+const {error:imageError}=
+
+await supabase
+
+.from("product_images")
+
+.delete()
+
+.eq(
+
+"product_id",
+
+id
+
+);
+
+
+
+
+
+if(imageError){
+
+
+console.log(imageError);
+
+alert(
+"خطأ بحذف صور المنتج"
+);
+
+
+return;
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// حذف المنتج
+// ==========================
+
+
 const {error}=
 
 await supabase
@@ -938,8 +1140,11 @@ await supabase
 .delete()
 
 .eq(
+
 "id",
+
 id
+
 );
 
 
@@ -961,7 +1166,7 @@ return;
 
 
 
-alert("تم حذف المنتج");
+alert("تم حذف المنتج والصور");
 
 
 
@@ -970,11 +1175,6 @@ loadProducts(categorySelect.value);
 
 
 };
-
-
-
-
-
 
 
 
@@ -1004,7 +1204,7 @@ priceInput.value="";
 
 imageInput.value="";
 
-
+imagesInput.value="";
 
 }
 // ==========================

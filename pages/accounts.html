@@ -1,493 +1,159 @@
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
 
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 
 <title>NIVRA Accounts</title>
 
-
 <link rel="stylesheet" href="../css/accounts.css">
-
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-
-
 
 <body>
 
-
-
-
 <header class="topbar">
 
-
 <div>
-
-
-<h1>
-NIVRA
-</h1>
-
-
-<span>
-الحسابات النهائية
-</span>
-
-
+<h1>NIVRA</h1>
+<span>الحسابات النهائية</span>
 </div>
 
-
-
-
-<a class="back-btn"
-href="../dashboard.html">
-
-
+<a class="back-btn" href="../dashboard.html">
 <i class="fa-solid fa-arrow-right"></i>
-
-
 </a>
-
 
 </header>
 
-
-
-
-
-
-
-
-
 <main>
 
-
-
-
-
-
 <!-- كروت الحسابات -->
-
-
 <section class="order-status-cards">
 
-
-
-
-
-<button class="status-card all"
-data-status="">
-
-
-<i class="fa-solid fa-layer-group"></i>
-
-
-<h3>
-كل الطلبات
-</h3>
-
-
-<span id="allCount">
-0
-</span>
-
-
-</button>
-
-
-
-
-
-
-
-<button class="status-card done"
-data-status="completed">
-
-
+<!-- مكتملة -->
+<button class="status-card done" data-status="completed">
 <i class="fa-solid fa-circle-check"></i>
-
-
-<h3>
-مكتملة
-</h3>
-
-
-<span id="completedCount">
-0
-</span>
-
-
+<h3>مكتملة</h3>
+<span id="completedCount">0</span>
 </button>
 
-
-
-
-
-
-
-<button class="status-card rejected"
-data-status="cancelled">
-
-
+<!-- ملغية -->
+<button class="status-card rejected" data-status="cancelled">
 <i class="fa-solid fa-circle-xmark"></i>
-
-
-<h3>
-ملغية
-</h3>
-
-
-<span id="cancelledCount">
-0
-</span>
-
-
+<h3>ملغية</h3>
+<span id="cancelledCount">0</span>
 </button>
 
-
-
-
-
-
-
+<!-- المبلغ الكلي -->
 <button class="status-card ready">
-
-
 <i class="fa-solid fa-money-bill-wave"></i>
-
-
-<h3>
-المبلغ المكتمل
-</h3>
-
-
-<span id="totalFinance">
-0
-</span>
-
-
+<h3>المبلغ المكتمل</h3>
+<span id="totalFinance">0</span>
 </button>
 
-
-
-
-
-
-
-<button class="status-card delayed">
-
-
+<!-- رواجع غير مستلمة -->
+<button class="status-card delayed" data-status="returns">
 <i class="fa-solid fa-rotate-left"></i>
-
-
-<h3>
-رواجع غير مستلمة
-</h3>
-
-
-<span id="pendingReturns">
-0
-</span>
-
-
+<h3>رواجع غير مستلمة</h3>
+<span id="pendingReturns">0</span>
 </button>
 
-
-
+<!-- الصافي بدون توصيل -->
+<button class="status-card net">
+<i class="fa-solid fa-coins"></i>
+<h3>الصافي</h3>
+<span id="netFinance">0</span>
+</button>
 
 </section>
 
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- الطلبات -->
-
-
 <section class="card">
-
-
 
 <div class="orders-search-card">
 
-
-
 <div class="control-bar">
 
-
-
 <h2>
-
-
 <i class="fa-solid fa-wallet"></i>
-
-
 الحسابات والطلبات
-
-
 </h2>
 
-
-
-
-
-
+<!-- البحث -->
 <div class="search-mini">
-
-
 <i class="fa-solid fa-magnifying-glass"></i>
-
-
-<input
-
-id="search"
-
-placeholder="بحث باسم الزبون او الرقم">
-
-
+<input id="search" placeholder="بحث باسم الزبون او الرقم">
 </div>
+
+<!-- تحديد الكل -->
 <label class="select-all">
-
-<input 
-type="checkbox" 
-id="selectAllAccounts">
-
+<input type="checkbox" id="selectAllAccounts">
 تحديد الكل
-
 </label>
 
-
-
+<!-- الأزرار -->
 <div class="control-icons">
 
-
-<button id="receiveMoney"
-title="استلام الأموال">
-
+<button id="receiveMoney" title="استلام الأموال">
 <i class="fa-solid fa-money-bill-transfer"></i>
-
 </button>
 
-
-
-<button id="receiveReturns"
-title="استلام الرواجع">
-
+<button id="receiveReturns" title="استلام الرواجع">
 <i class="fa-solid fa-arrow-rotate-left"></i>
-
 </button>
 
+</div>
 
 </div>
 
-
-</div>
-
-
-
-
-
-
-
-
-
+<!-- الجدول -->
 <div class="table-box">
-
 
 <table>
 
-
 <thead>
-
-
 <tr>
-
-
-
-<th>
-رقم
-</th>
-
-
-
-<th>
-الزبون
-</th>
-
-
-
-<th>
-الهاتف
-</th>
-
-
-
-<th>
-المحافظة
-</th>
-
-
-
-<th>
-المبلغ
-</th>
-
-
-
-<th>
-الرواجع
-</th>
-
-
-
-<th>
-الحالة
-</th>
-
-
-
-<th>
-المالية
-</th>
-
-
-
-<th>
-إجراء
-</th>
-
-
-
+<th>رقم</th>
+<th>الزبون</th>
+<th>الهاتف</th>
+<th>المحافظة</th>
+<th>المبلغ</th>
+<th>الرواجع</th>
+<th>الحالة</th>
+<th>المالية</th>
+<th>إجراء</th>
 </tr>
-
-
-
 </thead>
 
-
-
-
-
-<tbody id="accountsTable">
-
-
-</tbody>
-
-
-
-
+<tbody id="accountsTable"></tbody>
 
 </table>
 
-
 </div>
 
-
-
-
 </div>
-
 
 </section>
 
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- تفاصيل الحساب -->
-
-
 <div id="modal">
-
-
 
 <div class="card modal-box">
 
-
-
 <button id="close">
-
-
 <i class="fa-solid fa-xmark"></i>
-
-
 </button>
 
-
-
-
-
-
-<div id="details">
-
+<div id="details"></div>
 
 </div>
 
-
-
-
-
-
-
 </div>
-
-
-</div>
-
-
-
-
-
-
-
-
 
 </main>
 
-
-
-
-
-
-
-
-
-<script type="module"
-
-src="../js/accounts.js">
-
-</script>
-
-
-
-
+<script type="module" src="../js/accounts.js"></script>
 
 </body>
-
 </html>

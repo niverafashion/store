@@ -1067,12 +1067,11 @@ border-radius:20px;
 
 
 
-#productsContainer .product-card img{
+#productsContainer .product-slider{
 
 height:190px;
 
 }
-
 
 
 #productsContainer .product-card h3{
@@ -1660,7 +1659,7 @@ width:100%;
 
 .qtyPlus{
 
-height:45px !important;
+height:35px !important;
 
 width:60% !important;
 
@@ -1708,7 +1707,7 @@ box-shadow:0 8px 20px #25D36655;
 
 .removeProduct{
 
-height:45px !important;
+height:35px !important;
 
 
 width:45px !important;
@@ -2033,4 +2032,350 @@ cursor:pointer;
 box-shadow:0 8px 25px #0003;
 z-index:999;
 transition:.3s;
+}
+.product-slider{
+    position:relative;
+}
+
+
+.product-slider .prev-img,
+.product-slider .next-img{
+
+position:absolute !important;
+
+top:50% !important;
+
+font-size:60px !important;
+
+font-family:Arial, sans-serif !important;
+
+font-weight:10 !important;
+
+line-height:0.5 !important;
+
+color:white !important;
+
+background:transparent !important;
+
+border:none !important;
+
+box-shadow:none !important;
+
+padding:0 !important;
+
+margin:-30 !important;
+
+width:auto !important;
+
+height:auto !important;
+
+min-width:auto !important;
+
+z-index:999 !important;
+
+transform:translateY(-50%) !important;
+
+text-shadow:0 3px 10px black !important;
+
+}
+
+
+.product-slider .prev-img{
+
+right:10px !important;
+
+}
+
+
+.product-slider .next-img{
+
+left:10px !important;
+
+}
+/* تثبيت ارتفاع الكروت */
+.product-card{
+
+display:flex;
+
+flex-direction:column;
+
+height:100%;
+
+}
+
+
+/* السلايدر والصورة */
+.product-slider{
+
+height:340px;
+
+flex-shrink:0;
+
+}
+
+
+/* الصورة */
+.product-main-img{
+
+height:100% !important;
+
+}
+
+
+
+/* اسم المنتج */
+
+.product-card h3{
+
+min-height:55px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+}
+
+
+
+/* السعر */
+
+.product-card p{
+
+min-height:35px;
+
+}
+
+
+
+/* الوصف */
+
+.product-description{
+
+height:65px;
+
+overflow:hidden;
+
+display:-webkit-box;
+
+-webkit-line-clamp:3;
+
+-webkit-box-orient:vertical;
+
+}
+
+
+
+/* يخلي الازرار دائماً تحت */
+
+.cart-action{
+
+margin-top:auto;
+
+padding-top:15px;
+
+}
+
+
+
+
+.openProduct{
+
+height:45px !important;
+
+}
+
+
+
+/* مكان ازرار + و X */
+
+.product-controls{
+
+height:10px;
+
+}
+/* ضبط كروت المنتجات بدون تغيير JS */
+
+.product-card{
+
+display:flex;
+
+flex-direction:column;
+
+padding-bottom:10px;
+
+min-height:390px;
+
+}
+
+
+
+/* الصورة */
+
+.product-slider{
+
+height:210px;
+
+}
+
+
+
+
+.product-card h3{
+
+font-size:15px;
+
+margin:8px 5px 2px;
+
+line-height:1.4;
+
+min-height:auto;
+
+}
+
+
+
+
+.product-card p{
+
+font-size:15px;
+
+margin:2px 5px;
+
+line-height:1.3;
+
+}
+
+
+
+
+.product-description{
+
+font-size:12px;
+
+margin:3px 8px;
+
+line-height:1.4;
+
+height:35px;
+
+overflow:hidden;
+
+display:-webkit-box;
+
+-webkit-line-clamp:2;
+
+-webkit-box-orient:vertical;
+
+}
+
+
+
+
+
+.cart-action{
+
+margin-top:auto;
+
+padding:8px 10px 0;
+
+gap:8px;
+
+}
+
+
+
+
+
+.openProduct{
+
+height:40px !important;
+
+width:95% !important;
+
+font-size:12px !important;
+
+padding:8px !important;
+
+}
+
+
+
+
+.product-controls{
+
+height:40px;
+
+}
+
+
+
+
+
+/* موبايل */
+
+@media(max-width:700px){
+
+
+.product-card{
+
+min-height:330px;
+
+border-radius:18px;
+
+}
+
+
+
+.product-slider{
+
+height:160px;
+
+}
+
+
+
+.product-card h3{
+
+font-size:13px;
+
+margin:6px 3px 1px;
+
+}
+
+
+
+.product-card p{
+
+font-size:13px;
+
+margin:1px;
+
+}
+
+
+
+.product-description{
+
+font-size:11px;
+
+height:30px;
+
+margin:2px 5px;
+
+}
+
+
+
+.openProduct{
+
+height:36px !important;
+
+font-size:11px !important;
+
+}
+
+
+
 }

@@ -1,1171 +1,380 @@
-import {supabase} from "./supabase.js";
-
+import { supabase } from "./supabase.js";
 
 // =====================
 // العناصر
 // =====================
 
+let orders = [];
+let currentFilter = "";
 
-let orders=[];
-
-let currentFilter="";
-
-
-
-const table =
-document.getElementById("accountsTable");
-
-
-const search =
-document.getElementById("search");
-
-
-const modal =
-document.getElementById("modal");
-
-
-const details =
-document.getElementById("details");
-
-
-const close =
-document.getElementById("close");
-
-
-const selectAll =
-document.getElementById("selectAllAccounts");
-
-
-const receiveMoney =
-document.getElementById("receiveMoney");
-
-
-const receiveReturns =
-document.getElementById("receiveReturns");
-
-
-
-
-
-// =====================
-// النشاط
-// =====================
-
-
-async function addActivity(action,id){
-
-
-await supabase
-
-.from("activity_logs")
-
-.insert({
-
-action,
-
-table_name:"orders",
-
-record_id:id
-
-});
-
-
-}
-
-
-
-
-
+// DOM
+const table = document.getElementById("accountsTable");
+const search = document.getElementById("search");
+const modal = document.getElementById("modal");
+const details = document.getElementById("details");
+const close = document.getElementById("close");
+const selectAll = document.getElementById("selectAllAccounts");
+const receiveMoney = document.getElementById("receiveMoney");
+const receiveReturns = document.getElementById("receiveReturns");
 
 // =====================
 // تحميل الطلبات
 // =====================
 
+async function loadOrders() {
 
-async function loadOrders(){
-
-
-const {data,error}=await supabase
-
+const { data, error } = await supabase
 .from("orders")
-
 .select(`
-
 id,
-
 customer_id,
-
 customer_name,
-
 phone,
-
 governorate,
-
 address,
-
 total_price,
-
+delivery_price,
 status,
-
 finance_done,
-
 has_return,
-
 refund_amount,
-
-completed_at,
-
-cancelled_reason,
-
 created_at,
-
-
 order_items(
-
 id,
-
 quantity,
-
 price,
-
-
+variant_id,
 product_variants(
-
 color,
-
 size,
-
-
-products(
-
-name,
-
-main_image
-
+image,
+products(name)
 )
-
 )
-
-)
-
 `)
+.in("status", ["completed", "cancelled"])
+.order("created_at", { ascending: false });
 
-
-.in(
-
-"status",
-
-[
-"completed",
-"cancelled"
-]
-
-)
-
-
-.order(
-
-"created_at",
-
-{
-ascending:false
-}
-
-);
-
-
-
-
-
-if(error){
-
+if (error) {
 console.log(error);
-
 return;
-
 }
 
+// =====================
+// الطلبات غير المستلمة مالياً
+// =====================
 
+orders = data.filter(o => !o.finance_done);
 
-orders=data;
+// =====================
+// تحديث كل الواجهة
+// =====================
 
-
-
+renderOrders(orders);
 updateCards();
 
-
-
-renderOrders(
-
-filterOrders()
-
-);
-
-
-
 }
 
-
-
-
-
-
-
-
-
 // =====================
-// فلترة
+// الفلتر
 // =====================
 
+function filterOrders() {
+if (!currentFilter) return orders;
 
-function filterOrders(){
-
-
-if(!currentFilter)
-
-return orders;
-
-
-
-return orders.filter(o=>
-
-o.status===currentFilter
-
-);
-
-
+if (currentFilter === "returns") {
+return orders.filter(o => o.has_return);
 }
 
-
-
-
-
-
-
+return orders.filter(o => o.status === currentFilter);
+}
 
 // =====================
 // عرض الطلبات
 // =====================
 
+function renderOrders(list) {
 
-function renderOrders(list){
+let html = "";
 
+list.forEach(o => {
 
+// المنتجات
+let products = (o.order_items || []).map(item => {
 
-let html="";
+return `
+<div class="product-box">
 
+<div class="product-info">
 
+<b>🛍 ${item.product_variants?.products?.name || "-"}</b>
 
-list.forEach(o=>{
+<div>🎨 ${item.product_variants?.color || "-"}</div>
+<div>📏 ${item.product_variants?.size || "-"}</div>
+<div>🔢 ${item.quantity}</div>
 
+</div>
 
-html+=`
+<img src="${item.product_variants?.image || 'default.png'}" class="variant-img">
 
-
-<tr>
-
-
-
-<td>
-
-
-<input
-
-type="checkbox"
-
-class="account-check"
-
-data-id="${o.id}">
-
-
-<br>
-
-#${o.id}
-
-
-</td>
-
-
-
-
-
-<td>
-
-${o.customer_name || "-"}
-
-</td>
-
-
-
-
-<td>
-
-${o.phone || "-"}
-
-</td>
-
-
-
-
-
-<td>
-
-${o.governorate || "-"}
-
-</td>
-
-
-
-
-<td>
-
-${o.total_price || 0} د.ع
-
-</td>
-
-
-
-
-
-<td>
-
-
-${o.has_return ?
-
-
-`
-<i class="fa-solid fa-rotate-left"></i>
-يوجد
-
-`
-
-:
-
-"لا"
-
-}
-
-
-
-</td>
-
-
-
-
-
-
-<td>
-
-
-<span class="badge ${o.status}">
-
-${statusName(o.status)}
-
-</span>
-
-
-</td>
-
-
-
-
-
-
-<td>
-
-
-
-<button
-
-class="finance-btn"
-
-onclick="finishFinance('${o.id}')">
-
-
-${o.finance_done ?
-
-"تم"
-
-:
-
-"تسديد"
-
-}
-
-
-</button>
-
-
-
-</td>
-
-
-
-
-
-<td>
-
-
-<button
-
-class="view-btn"
-
-onclick="openAccount('${o.id}')">
-
-
-<i class="fa-solid fa-eye"></i>
-
-
-</button>
-
-
-</td>
-
-
-
-</tr>
-
-
-
+</div>
 `;
 
+}).join("");
 
+// حسابات الطلب
+let delivery = Number(o.delivery_price || 0);
+let total = Number(o.total_price || 0);
+let net = total - delivery;
+
+// رواجع جزئية
+let returnedQty = (o.order_items || []).reduce((a, b) => a + Number(b.quantity || 0), 0);
+let hasPartialReturn = o.has_return && returnedQty > 0;
+
+// HTML
+html += `
+<tr>
+
+<td>
+<input type="checkbox" class="account-check" data-id="${o.id}">
+<br>
+#${o.id}
+</td>
+
+<td>${o.customer_name || "-"}</td>
+<td>${o.phone || "-"}</td>
+<td>${o.governorate || "-"}</td>
+
+<td>
+${total} د.ع
+<br>
+<small>صافي: ${net} د.ع</small>
+</td>
+
+<td>
+${o.has_return ? "يوجد" : "لا"}
+
+${hasPartialReturn ? `<small>(جزئي)</small>` : ""}
+</td>
+
+<td>
+<span class="badge ${o.status}">
+${statusName(o.status)}
+</span>
+</td>
+
+<td>
+<button class="finance-btn" onclick="finishFinance('${o.id}')">
+${o.finance_done ? "تم" : "استلام"}
+</button>
+</td>
+
+<td>
+<button class="view-btn" onclick="openAccount('${o.id}')">
+<i class="fa-solid fa-eye"></i>
+</button>
+</td>
+
+</tr>
+`;
 
 });
 
+table.innerHTML = html;
 
-
-table.innerHTML=html;
-
+attachEvents();
 
 }
 
-
-
-
-
-
-
-
-
-
-
 // =====================
-// تحديث الكروت
+// أحداث بعد الرندر
 // =====================
 
+function attachEvents() {
 
+// تحديد الكل
+selectAll.onchange = () => {
+document.querySelectorAll(".account-check")
+.forEach(c => c.checked = selectAll.checked);
+};
+
+// نسخ كود
+document.querySelectorAll(".copy-code").forEach(el => {
+el.onclick = () => {
+navigator.clipboard.writeText(el.dataset.code);
+alert("تم النسخ");
+};
+});
+
+}
+
+// =====================
+// الكروت
+// =====================
 
 function updateCards(){
 
-
-let completed = orders.filter(o=>
-
-o.status==="completed"
-
+let completed = orders.filter(o =>
+o.status === "completed"
 );
 
-
-
-let cancelled = orders.filter(o=>
-
-o.status==="cancelled"
-
+let cancelled = orders.filter(o =>
+o.status === "cancelled"
 );
 
-
-
-
-document.getElementById("allCount").innerText=
-
-orders.length;
-
-
-
-document.getElementById("completedCount").innerText=
-
-completed.length;
-
-
-
-
-document.getElementById("cancelledCount").innerText=
-
-cancelled.length;
-
-
-
-
-
-
-let total = completed.reduce((a,b)=>
-
-a + Number(b.total_price||0)
-
+// 🔵 المجموع الكلي (مع التوصيل)
+let grossTotal = completed.reduce((a,b)=>
+a + Number(b.total_price || 0) + Number(b.delivery_price || 0)
 ,0);
 
+// 🟢 الرواجع الجزئية
+let partialReturns = orders.filter(o => o.has_return);
+
+let refundTotal = partialReturns.reduce((sum, o) => {
+return sum + Number(o.refund_amount || 0);
+}, 0);
+
+// 🔴 الصافي
+let netTotal =
+grossTotal - refundTotal;
 
 
+document.getElementById("allCount").innerText =
+orders.length;
 
+document.getElementById("completedCount").innerText =
+completed.length;
 
-document.getElementById("totalFinance").innerText=
+document.getElementById("cancelledCount").innerText =
+cancelled.length;
 
-total+" د.ع";
+// 💰 الكلي
+document.getElementById("totalFinance").innerText =
+grossTotal + " د.ع";
 
-
-
-
-
-document.getElementById("pendingReturns").innerText=
-
-orders.filter(o=>
-
-o.has_return
-
-).length;
-
-
-
-
+// 💰 الصافي (مهم)
+let netEl = document.getElementById("netFinance");
+if(netEl){
+netEl.innerText = netTotal + " د.ع";
 }
 
+// 🔁 الرواجع
+document.getElementById("pendingReturns").innerText =
+orders.filter(o => o.has_return).length;
 
-
-
-
-
-
-
-
+}
 // =====================
-// فلترة الكروت
+// الفلاتر
 // =====================
 
+document.querySelectorAll(".status-card").forEach(btn => {
 
-document
+btn.onclick = () => {
 
-.querySelectorAll(".status-card")
+document.querySelectorAll(".status-card")
+.forEach(b => b.classList.remove("active"));
 
-.forEach(btn=>{
+btn.classList.add("active");
 
+currentFilter = btn.dataset.status || "";
 
-btn.onclick=()=>{
-
-
-currentFilter=
-
-btn.dataset.status || "";
-
-
-renderOrders(
-
-filterOrders()
-
-);
-
+renderOrders(filterOrders());
 
 };
 
-
 });
-
-
-
-
-
-
-
-
 
 // =====================
 // البحث
 // =====================
 
+search.oninput = () => {
 
-search.oninput=()=>{
+let value = search.value.toLowerCase();
 
+let result = filterOrders().filter(o =>
 
-let value=
-
-search.value.toLowerCase();
-
-
-
-let result=
-
-filterOrders()
-
-.filter(o=>{
-
-
-return (
-
-(o.customer_name||"")
-
-.toLowerCase()
-
-.includes(value)
-
-
-||
-
-(o.phone||"")
-
-.includes(value)
-
-
-
-||
-
-String(o.id)
-
-.includes(value)
-
+String(o.id).includes(value) ||
+(o.customer_name || "").toLowerCase().includes(value) ||
+(o.phone || "").includes(value)
 
 );
-
-
-});
-
-
 
 renderOrders(result);
 
-
 };
 
-
-
-
-
-
-
-
-
 // =====================
-// تحديد الكل
+// استلام الأموال
 // =====================
 
-
-selectAll.onchange=()=>{
-
-
-document
-
-.querySelectorAll(".account-check")
-
-.forEach(c=>{
-
-
-c.checked=
-
-selectAll.checked;
-
-
-
-});
-
-
-};
-
-
-
-
-
-
-
-
-
-// =====================
-// تسديد الأموال
-// =====================
-
-
-window.finishFinance = async function(id){
-
-
-const order=
-
-orders.find(o=>o.id===id);
-
-
-
-if(order.status!=="completed"){
-
-alert("فقط الطلب المكتمل يتم تسديده");
-
-return;
-
-}
-
-
-
+window.finishFinance = async function(id) {
 
 await supabase
-
 .from("orders")
+.update({ finance_done: true })
+.eq("id", id);
 
-.update({
-
-finance_done:true
-
-})
-
-.eq(
-
-"id",
-
-id
-
-);
-
-
-
-await addActivity(
-
-"استلام مبلغ الطلب",
-
-id
-
-);
-
-
-
-alert("تم استلام الحساب ✅");
-
-
-
-loadOrders();
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-// =====================
-// زر استلام الأموال جماعي
-// =====================
-
-
-receiveMoney.onclick=async()=>{
-
-
-let selected=getSelected();
-
-
-
-if(!selected.length){
-
-alert("حدد الطلبات");
-
-return;
-
-}
-
-
-
-
-let wrong=
-
-selected.some(o=>
-
-o.status!=="completed"
-
-);
-
-
-
-if(wrong){
-
-alert("حدد طلبات مكتملة فقط");
-
-return;
-
-}
-
-
-
-
-
-for(let o of selected){
-
-
-await supabase
-
-.from("orders")
-
-.update({
-
-finance_done:true
-
-})
-
-.eq(
-
-"id",
-
-o.id
-
-);
-
-
-
-await addActivity(
-
-"استلام مبلغ الطلب",
-
-o.id
-
-);
-
-
-}
-
-
-
-
-alert("تم استلام الأموال");
-
-
-loadOrders();
-
+await loadOrders();
 
 };
-
-
-
-
-
-
-
-
-
-
-// =====================
-// استلام الرواجع
-// =====================
-
-
-receiveReturns.onclick=async()=>{
-
-
-let selected=getSelected();
-
-
-
-if(!selected.length){
-
-alert("حدد الطلبات");
-
-return;
-
-}
-
-
-
-
-
-for(let o of selected){
-
-
-
-if(o.has_return){
-
-
-
-await supabase
-
-.from("returns")
-
-.insert({
-
-order_id:o.id,
-
-reason:"تم استلام الرجع"
-
-});
-
-
-
-
-
-await supabase
-
-.from("orders")
-
-.update({
-
-has_return:false
-
-})
-
-.eq(
-
-"id",
-
-o.id
-
-);
-
-
-
-await addActivity(
-
-"استلام رجوع الطلب",
-
-o.id
-
-);
-
-
-
-}
-
-
-}
-
-
-
-alert("تم استلام الرواجع");
-
-
-loadOrders();
-
-
-};
-
-
-
-
-
-
-
-
-function getSelected(){
-
-
-let ids=[];
-
-
-
-document
-
-.querySelectorAll(".account-check:checked")
-
-.forEach(c=>{
-
-
-ids.push(c.dataset.id);
-
-
-});
-
-
-
-return orders.filter(o=>
-
-ids.includes(o.id)
-
-);
-
-
-
-}
-
-
-
-
-
-
-
-
-
 
 // =====================
 // تفاصيل
 // =====================
 
+window.openAccount = function(id) {
 
-window.openAccount=function(id){
+let o = orders.find(x => x.id == id);
 
+let productsHTML = (o.order_items || []).map(item => `
+<div class="product-box">
 
-
-let o = orders.find(x=>x.id===id);
-
-
-
-let productsHTML="";
-
-
-o.order_items?.forEach(item=>{
-
-
-productsHTML+=`
-
-<div class="product-mini">
-
-
-<img 
-
-src="${item.product_variants?.products?.main_image || ''}"
-
->
-
-
-<div>
-
-
-<b>
-${item.product_variants?.products?.name || "-"}
-</b>
-
-
+<b>${item.product_variants?.products?.name}</b>
 <br>
-
-الكمية:
-${item.quantity}
-
-
+الكمية: ${item.quantity}
 <br>
-
-السعر:
-${item.price} د.ع
-
+السعر: ${item.price}
 
 </div>
+`).join("");
 
+details.innerHTML = `
+<h2>تفاصيل الحساب</h2>
 
-</div>
-
-
-`;
-
-
-});
-
-
-
-
-
-
-details.innerHTML=`
-
-<h2>
-تفاصيل الطلب
-</h2>
-
-
-<p>
-👤 ${o.customer_name}
-</p>
-
-
-<p>
-📱 ${o.phone}
-</p>
-
-
-<p>
-📍 ${o.governorate}
-</p>
-
-
-<p>
-💰 ${o.total_price} د.ع
-</p>
-
+<p>👤 ${o.customer_name}</p>
+<p>📱 ${o.phone}</p>
+<p>📍 ${o.governorate}</p>
 
 <hr>
 
+${productsHTML}
 
-<h3>
-المنتجات
-</h3>
-
-
-${productsHTML || "لا توجد منتجات"}
-
-
-
-<p>
-
-الحالة:
-
-${statusName(o.status)}
-
-</p>
-
-
-
-<p>
-
-الحساب:
-
-${o.finance_done?
-
-"مستلم"
-
-:
-
-"غير مستلم"
-
-}
-
-</p>
-
-
+<p>الحالة: ${statusName(o.status)}</p>
+<p>المبلغ: ${o.total_price} د.ع</p>
 `;
 
-
-
-modal.style.display="flex";
-
-
-}
-
-
-function statusName(s){
-
-
-let x={
-
-completed:"مكتمل",
-
-cancelled:"ملغي"
-
+modal.style.display = "flex";
 
 };
 
-
-
-return x[s] || s;
-
-
-}
-
-
-
-
-
-close.onclick=()=>{
-
-
-modal.style.display="none";
-
-
+close.onclick = () => {
+modal.style.display = "none";
 };
 
+// =====================
+// اسم الحالة
+// =====================
 
+function statusName(s) {
+return {
+completed: "مكتمل",
+cancelled: "ملغي"
+}[s] || s;
+}
 
-
-
+// =====================
+// تشغيل
+// =====================
 
 loadOrders();

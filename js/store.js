@@ -12,9 +12,10 @@ let cart = [];
 
 let deliveryPrice = 0;
 
+const ALL_IMAGE = "./assets/images/hero.jpg";
 
-
-
+let zoomProduct = null;
+let zoomIndex = 0;
 
 // عناصر الصفحة
 
@@ -56,16 +57,13 @@ return;
 
 categories=data;
 
+const ALL_IMAGE = "./assets/images/hero.jpg"; // أو أي صورة موجودة عندك فعلاً
 
-
-categorySelect.innerHTML=
-`
-<option value="">
-اختاري الصنف
+categorySelect.innerHTML = `
+<option value="all">
+كل الأصناف
 </option>
 `;
-
-
 
 data.forEach(cat=>{
 
@@ -83,20 +81,17 @@ ${cat.name}
 
 
 
-// اختيار اول صنف
+// اختيار "كل الأصناف" افتراضياً عند فتح الصفحة
+if (data.length) {
 
-if(data.length){
+  categorySelect.value = "all";
 
-
-categorySelect.value=data[0].id;
-
-
-showCategory(data[0]);
-
-
-loadProducts(data[0].id);
-
-
+showCategory({
+  image: ALL_IMAGE,
+  name: "كل المنتجات",
+  description: "ازياء نيفرا للاناقة عنوان"
+});
+  loadProducts(null); // بدون فلترة = كل المنتجات
 }
 
 
@@ -109,31 +104,31 @@ loadProducts(data[0].id);
 
 
 
-categorySelect.onchange=()=>{
+categorySelect.onchange = () => {
 
+let value = categorySelect.value;
 
-let cat =
-categories.find(
-x=>x.id == categorySelect.value
-);
+// 🟢 حالة كل الأصناف
+if (value === "all") {
 
+showCategory({
+  image: ALL_IMAGE,
+   name: "كل المنتجات",
+  description: "ازياء نيفرا للاناقة عنوان"
+});
 
+loadProducts(null); // بدون فلترة
+return;
+}
 
-if(cat){
+let cat = categories.find(x => x.id == value);
 
-
+if (cat) {
 showCategory(cat);
-
-
 loadProducts(cat.id);
-
-
 }
-
-
 
 };
-
 
 
 
@@ -181,20 +176,21 @@ async function loadProducts(categoryId){
 
 
 
-const {data,error}=await supabase
+let query = supabase
+  .from("products")
+  .select(`
+    *,
+    product_images(
+      image_url,
+      sort_order
+    )
+  `);
 
-.from("products")
+if (categoryId) {
+  query = query.eq("category_id", categoryId);
+}
 
-.select(`
-*,
-product_images(
-image_url,
-sort_order
-)
-`)
-
-.eq("category_id",categoryId);
-
+const { data, error } = await query;
 
 
 
@@ -256,14 +252,8 @@ products.forEach(product=>{
 
 productsContainer.innerHTML +=`<div class="product-card">
 <div class="product-slider">
-<img 
-class="product-main-img"
-src="${
-product.main_image ||
-product.product_images?.[0]?.image_url ||
-'./assets/images/no-image.jpg'
-}"
->
+<img class="product-main-img zoomable-img"
+src="${product.main_image || product.product_images?.[0]?.image_url || './assets/images/no-image.jpg'}">
 
 
 <button 
@@ -343,7 +333,17 @@ style="display:none">
 });
 
 
+document.querySelectorAll(".zoomable-img").forEach(img => {
+  img.addEventListener("click", (e) => {
 
+    let card = img.closest(".product-card");
+    let id = card?.querySelector(".openProduct")?.dataset.id;
+
+    if(!id) return;
+
+    openZoom(id, img.src);
+  });
+});
 
 
 document.querySelectorAll(".openProduct")
@@ -507,13 +507,6 @@ imageIndexes[id]
 
 });
 }
-
-
-
-
-
-
-
 
 
 // فتح مودل المنتج
@@ -1623,3 +1616,176 @@ window.addEventListener("appinstalled", () => {
 
   installBtn.style.display = "none"; // 🔥 يخفي الزر نهائياً
 });
+
+const zoomModal = document.getElementById("imageZoomModal");
+const zoomImg = document.getElementById("zoomedImage");
+const closeZoom = document.getElementById("closeZoom");
+closeZoom.onclick = () => {
+  zoomModal.style.display = "none";
+};
+// فتح الصورة
+function openZoom(productId, imageSrc){
+
+  zoomProduct = products.find(p => p.id == productId);
+
+  if(!zoomProduct) return;
+
+  // نحدد أول صورة
+  zoomIndex = zoomProduct.product_images?.findIndex(
+    img => img.image_url === imageSrc
+  );
+
+  if(zoomIndex === -1 || zoomIndex === undefined){
+    zoomIndex = 0;
+  }
+
+  renderZoomImage();
+
+  zoomModal.style.display = "flex";
+}
+function renderZoomImage(){
+
+  let imgs = zoomProduct.product_images || [];
+
+  let src =
+    imgs[zoomIndex]?.image_url ||
+    zoomProduct.main_image ||
+    "./assets/images/no-image.jpg";
+
+  zoomImg.src = src;
+}
+let startX = 0;
+
+zoomModal.addEventListener("touchstart", (e) => {
+  startX = e.touches[0].clientX;
+});
+
+zoomModal.addEventListener("touchend", (e) => {
+  let endX = e.changedTouches[0].clientX;
+
+  let diff = startX - endX;
+
+  // سحب يسار (التالي)
+  if(diff > 50){
+    nextZoom();
+  }
+
+  // سحب يمين (السابق)
+  if(diff < -50){
+    prevZoom();
+  }
+});
+function nextZoom(){
+  let imgs = zoomProduct.product_images || [];
+  if(!imgs.length) return;
+
+  zoomIndex++;
+  if(zoomIndex >= imgs.length) zoomIndex = 0;
+
+  renderZoomImage();
+}
+
+function prevZoom(){
+  let imgs = zoomProduct.product_images || [];
+  if(!imgs.length) return;
+
+  zoomIndex--;
+  if(zoomIndex < 0) zoomIndex = imgs.length - 1;
+
+  renderZoomImage();
+}
+
+// ================= TOAST =================
+function showToast(message, color = "#111"){
+  const toast = document.getElementById("toast");
+  if(!toast) return;
+
+  toast.innerText = message;
+  toast.style.background = color;
+  toast.style.display = "block";
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer = setTimeout(() => {
+    toast.style.display = "none";
+  }, 2500);
+}
+
+// ================= SPLASH =================
+window.addEventListener("load", () => {
+  const splash = document.getElementById("splashScreen");
+
+  let progress = 0;
+  const fill = document.querySelector(".loader-fill");
+
+  const interval = setInterval(() => {
+    progress += 10;
+    if(fill) fill.style.width = progress + "%";
+
+    if(progress >= 100){
+      clearInterval(interval);
+
+      setTimeout(() => {
+        splash.style.opacity = "0";
+        splash.style.transition = "0.4s";
+
+        setTimeout(() => {
+          splash.style.display = "none";
+        }, 400);
+
+      }, 300);
+    }
+  }, 120);
+});
+
+
+// ================= OFFLINE SYSTEM =================
+const offlineScreen = document.getElementById("offlineScreen");
+const offlineText = document.getElementById("offlineText");
+
+function updateConnectionUI(){
+  if(!offlineScreen) return;
+
+  if(navigator.onLine){
+    offlineScreen.style.display = "none";
+  } else {
+    offlineScreen.style.display = "flex";
+    if(offlineText){
+      offlineText.innerText = "⚠️ تم انقطاع الاتصال بالإنترنت";
+    }
+  }
+}
+
+// أول تشغيل
+window.addEventListener("load", updateConnectionUI);
+
+// انقطاع النت
+window.addEventListener("offline", () => {
+  updateConnectionUI();
+  showToast("📴 تم انقطاع الاتصال", "#ff4d4d");
+});
+
+// رجوع النت
+window.addEventListener("online", () => {
+  if(offlineScreen){
+    offlineScreen.style.display = "flex";
+  }
+
+  if(offlineText){
+    offlineText.innerText = "✅ تمت استعادة الاتصال";
+  }
+
+  showToast("🌐 تمت استعادة الاتصال", "#25D366");
+
+  setTimeout(() => {
+    if(offlineScreen){
+      offlineScreen.style.display = "none";
+    }
+  }, 1500);
+});
+
+
+// دعم PWA قوي (فحص مستمر خفيف جداً)
+setInterval(() => {
+  updateConnectionUI();
+}, 5000);

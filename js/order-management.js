@@ -229,11 +229,32 @@ orders
 
 // عرض حسب الحالة الحالية
 
+if(currentFilter === "partial_return"){
+
+
 renderOrders(
-    orders.filter(o =>
-        o.status === currentFilter
-    )
+
+orders.filter(o=>
+o.has_return === true
+)
+
 );
+
+
+}
+else{
+
+
+renderOrders(
+
+orders.filter(o=>
+o.status === currentFilter
+)
+
+);
+
+
+}
 
 
 updateStatusCards();
@@ -256,7 +277,8 @@ return;
 if(
 currentFilter === "new" ||
 currentFilter === "completed" ||
-currentFilter === "cancelled"
+currentFilter === "cancelled" ||
+currentFilter === "partial_return"
 ){
 
 btn.style.display="none";
@@ -314,10 +336,10 @@ let selectedStatus = currentFilter;
 
 
 if(
-selectedStatus === "delivery" ||
-selectedStatus === "completed" ||
-selectedStatus === "cancelled" ||
-selectedStatus === "postponed"
+currentFilter === "new" ||
+currentFilter === "completed" ||
+currentFilter === "cancelled" ||
+currentFilter === "partial_return"
 ){
 
 btn.style.display="none";
@@ -351,8 +373,15 @@ list.forEach(o=>{
 let item=o.order_items?.[0];
 
 
-let products = o.order_items?.map(item=>{
+let orderItems = 
+currentFilter === "partial_return"
+?
+o.order_items.filter(i=>i.quantity === 0)
+:
+o.order_items;
 
+
+let products = orderItems?.map(item=>{
 return `
 
 <div class="product-box">
@@ -380,8 +409,13 @@ ${item.product_variants?.size || "-"}
 
 <div>
 🔢 الكمية:
-${item.quantity === 0 ? "مسترجعة" : item.quantity}
-</div>
+${
+currentFilter === "partial_return"
+?
+(item.returned_quantity || 0)
+:
+(item.quantity === 0 ? "مسترجعة" : item.quantity)
+}</div>
 
 
 </div>
@@ -473,9 +507,17 @@ ${products}
 
 <td>
 
-<span class="badge ${o.status}">
+<span class="badge ${
+currentFilter === "partial_return"
+? "partial_return"
+: o.status
+}">
 
-${statusName(o.status)}
+${
+currentFilter === "partial_return"
+? "راجع جزئي"
+: statusName(o.status)
+}
 
 </span>
 
@@ -1242,7 +1284,7 @@ await supabase
 
 variant_id:item.variant_id,
 
-type:"return",
+type:"return_waiting",
 
 quantity:item.quantity,
 
@@ -1983,122 +2025,33 @@ return;
 
 if(nextStatus==="cancelled"){
 
+
 for(let item of order.order_items){
 
-// فحص الكمية المتبقية فقط
-
-if(item.quantity <= 0)
-continue;
-
-
-
-const {data:returned}=await supabase
-
-.from("returns")
-
-.select("quantity")
-
-.eq(
-"order_item_id",
-item.id
-);
-
-
-
-let returnedQty=0;
-
-
-returned?.forEach(r=>{
-
-returnedQty += Number(r.quantity || 0);
-
-});
-
-
-
-let availableQty =
-item.quantity - returnedQty;
-
-
-
-if(availableQty <= 0)
-continue;
-
-// جلب المخزون الحالي
-
-const {data:variant}=await supabase
-
-.from("product_variants")
-
-.select("stock_quantity")
-
-.eq(
-"id",
-item.variant_id
-)
-
-.single();
-
-
-
-
-
-// زيادة المخزون
 
 await supabase
 
-.from("product_variants")
-
-.update({
-
-stock_quantity:
-
-(variant.stock_quantity || 0)
-+
-item.quantity
-
-
-})
-
-.eq(
-
-"id",
-
-item.variant_id
-
-);
-
-
-
-
-
-// حركة مخزن
-
-await supabase
-
-.from("stock_movements")
+.from("inventory_returns")
 
 .insert({
 
-variant_id:item.variant_id,
+order_id:id,
 
-type:"RETURN",
+order_item_id:item.id,
+
+variant_id:item.variant_id,
 
 quantity:item.quantity,
 
-note:"رفض طلب"
+status:"waiting"
 
 });
 
 
-
 }
 
 
-
 }
-
-
 
 
 
@@ -2327,6 +2280,11 @@ id:"postponedCount"
 {
 status:"cancelled",
 id:"cancelledCount"
+},
+
+{
+status:"partial_return",
+id:"partialReturnCount"
 }
 
 ];
@@ -2335,11 +2293,31 @@ id:"cancelledCount"
 states.forEach(item=>{
 
 
-let count = orders.filter(o=>{
+let count;
+
+
+if(item.status === "partial_return"){
+
+
+count = orders.filter(o=>{
+
+return o.has_return === true;
+
+}).length;
+
+
+}
+else{
+
+
+count = orders.filter(o=>{
 
 return o.status === item.status;
 
 }).length;
+
+
+}
 
 
 
@@ -2404,15 +2382,32 @@ currentFilter = btn.dataset.status;
 search.value = "";
 
 
+if(currentFilter === "partial_return"){
+
+
 renderOrders(
 
 orders.filter(o=>
-
-o.status === currentFilter
-
+o.has_return === true
 )
 
 );
+
+
+}
+else{
+
+
+renderOrders(
+
+orders.filter(o=>
+o.status === currentFilter
+)
+
+);
+
+
+}
 
 updateBulkButton();
 updateBulkDelete();
@@ -2442,7 +2437,14 @@ let filtered = orders.filter(o=>{
 
 return (
 
-o.status === currentFilter &&
+(
+currentFilter === "partial_return"
+?
+o.has_return === true
+:
+o.status === currentFilter
+)
+&&
 
 (
 
@@ -2816,24 +2818,21 @@ let returnQty = 1;
 
 await supabase
 
-.from("product_variants")
+.from("inventory_returns")
 
-.update({
+.insert({
 
-stock_quantity:
+order_id:item.order_id,
 
-(item.product_variants.stock_quantity || 0)
-+
-returnQty
+order_item_id:item.id,
 
-})
+variant_id:item.variant_id,
 
-.eq(
-"id",
-item.variant_id
-);
+quantity:returnQty,
 
+status:"waiting"
 
+});
 
 
 // تسجيل حركة مخزن
@@ -2846,7 +2845,7 @@ await supabase
 
 variant_id:item.variant_id,
 
-type:"return",
+type:"return_waiting",
 
 quantity:returnQty,
 

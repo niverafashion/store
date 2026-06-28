@@ -3568,3 +3568,7 @@ text-decoration:none;
 font-size:18px;
 
 }
+.badge.partial_return{
+background:#ff9800;
+color:#fff;
+}

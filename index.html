@@ -22,9 +22,31 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <body>
 
+<!-- OFFLINE SCREEN -->
+<div id="offlineScreen">
+  <div class="offline-box">
+    <h2 id="offlineTitle">⚠️ لا يوجد اتصال بالإنترنت</h2>
+    <p id="offlineText">يرجى التحقق من الشبكة</p>
 
+    <div class="offline-bar">
+      <div class="offline-bar-fill"></div>
+    </div>
+  </div>
+</div>
 
+<!-- SPLASH SCREEN -->
+<div id="splashScreen">
+  <img src="./assets/images/hero.jpg" alt="loading">
 
+  <div class="loader-bar">
+    <div class="loader-fill"></div>
+  </div>
+
+  <p>جاري التحميل...</p>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
 
 <header class="top-header">
 
@@ -692,7 +714,11 @@ target="_blank">
 
 </button>
 
-
+<!-- Image Zoom Modal -->
+<div id="imageZoomModal" class="img-zoom-modal">
+  <span id="closeZoom">&times;</span>
+  <img id="zoomedImage" src="">
+</div>
 </body>
 
 <script>

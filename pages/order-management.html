@@ -415,7 +415,125 @@ id="selectAll">
 
 </div>
 
+<div id="redeliveryModal" class="modal">
 
+<div class="modal-content">
+
+
+<h2>
+🚚 إعادة توصيل الطلب
+</h2>
+
+
+<input id="rdName"
+placeholder="اسم الزبون">
+
+
+<input id="rdPhone"
+placeholder="رقم الهاتف">
+
+
+
+<select id="rdGovernorate">
+
+<option value="">
+اختر المحافظة
+</option>
+
+</select>
+
+
+
+<label class="check-row">
+
+<input 
+type="checkbox"
+id="autoDelivery"
+checked>
+
+تحديد أجور التوصيل تلقائي
+
+</label>
+
+
+
+<input 
+id="rdDelivery"
+type="number"
+placeholder="أجور التوصيل"
+disabled>
+
+
+
+<input id="rdAddress"
+placeholder="العنوان">
+
+
+<input id="rdNearest"
+placeholder="أقرب نقطة">
+
+
+
+<label class="check-row">
+
+<input 
+type="checkbox"
+id="useReturnAmount">
+
+
+استقطاع مبلغ راجع جزئي
+
+</label>
+
+
+
+<input 
+id="returnAmount"
+type="number"
+value="5000"
+style="display:none">
+
+
+
+<label class="check-row">
+
+<input 
+type="checkbox"
+id="useDiscount">
+
+
+إضافة خصم
+
+</label>
+
+
+
+<input 
+id="rdDiscount"
+type="number"
+placeholder="قيمة الخصم"
+style="display:none">
+
+
+
+<button id="saveRedelivery">
+
+حفظ إعادة التوصيل
+
+</button>
+
+
+
+<button id="closeRedelivery">
+
+إلغاء
+
+</button>
+
+
+</div>
+
+</div>
 <!-- كاميرا الباركود -->
 <div id="scanModal" class="scan-modal">
 

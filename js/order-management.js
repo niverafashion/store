@@ -30,11 +30,6 @@ const saveStatus =
 document.getElementById("saveStatus");
 
 
-const close =
-document.getElementById("close");
-
-
-
 let orders=[];
 
 let currentOrder=null;
@@ -122,6 +117,10 @@ id,
 customer_id,
 
 customer_name,
+
+parent_order_id,
+
+order_type,
 
 finance_done,
 
@@ -584,7 +583,28 @@ onclick="editOrder('${o.id}')">
 ""
 }
 
+${
+(
+o.status==="cancelled"
+||
+o.isPartialReturn===true
+)
+?
+`
 
+<button 
+class="action-btn redelivery-btn"
+onclick="openRedelivery('${o.id}')"
+title="إعادة توصيل">
+
+<i class="fa-solid fa-truck-fast"></i>
+
+</button>
+
+`
+:
+""
+}
 
 ${
 (o.status !== "prepared" &&
@@ -3024,3 +3044,347 @@ modal.style.display="none";
 
 }
 loadOrders();
+
+
+
+
+let redeliveryOrder=null;
+const rdName =
+document.getElementById("rdName");
+const rdPhone =
+document.getElementById("rdPhone");
+const rdGovernorate =
+document.getElementById("rdGovernorate");
+const rdAddress =
+document.getElementById("rdAddress");
+const rdNearest =
+document.getElementById("rdNearest");
+const rdDelivery =
+document.getElementById("rdDelivery");
+const rdDiscount =
+document.getElementById("rdDiscount");
+const autoDelivery =
+document.getElementById("autoDelivery");
+const useReturnAmount =
+document.getElementById("useReturnAmount");
+const returnAmount =
+document.getElementById("returnAmount");
+const useDiscount =
+document.getElementById("useDiscount");
+
+// =======================
+// فتح مودل إعادة التوصيل
+// =======================
+window.openRedelivery = async function(id){
+
+
+redeliveryOrder =
+orders.find(o=>o.id==id);
+
+
+
+if(!redeliveryOrder)
+return;
+
+
+
+// تحميل المحافظات قبل التعبئة
+
+await loadGovernorates();
+
+
+
+
+
+rdName.value =
+redeliveryOrder.customer_name || "";
+
+
+rdPhone.value =
+redeliveryOrder.phone || "";
+
+
+
+
+// اختيار محافظة الطلب
+
+rdGovernorate.value =
+redeliveryOrder.governorate || "";
+
+
+
+rdAddress.value =
+redeliveryOrder.address || "";
+
+
+rdNearest.value =
+redeliveryOrder.nearest_point || "";
+
+
+rdDelivery.value="";
+
+rdDiscount.value="";
+
+
+
+
+// تحديث أجور التوصيل اذا تلقائي
+
+if(autoDelivery.checked){
+
+
+let option =
+rdGovernorate.selectedOptions[0];
+
+
+if(option){
+
+rdDelivery.value =
+option.dataset.price || 0;
+
+}
+
+
+}
+
+
+
+
+
+document
+
+.getElementById("redeliveryModal")
+
+.style.display="flex";
+
+
+}
+async function loadGovernorates(){
+
+
+const {data,error}=await supabase
+
+.from("governorates")
+
+.select("*")
+
+.order("name");
+
+
+if(error){
+
+console.log(error);
+
+return;
+
+}
+
+
+
+rdGovernorate.innerHTML = `
+
+<option value="">
+اختر المحافظة
+</option>
+
+`;
+
+
+
+data.forEach(g=>{
+
+
+rdGovernorate.innerHTML += `
+
+<option
+
+value="${g.name}"
+
+data-price="${g.delivery_price}">
+
+${g.name}
+
+</option>
+
+
+`;
+
+
+});
+
+
+}
+
+// =======================
+// حفظ إعادة التوصيل
+// =======================
+
+
+document
+.getElementById("saveRedelivery")
+.onclick = async()=>{
+// فحص الحقول
+if(
+!rdName.value.trim() ||
+!rdPhone.value.trim() ||
+!rdGovernorate.value ||
+!rdAddress.value.trim() ||
+!rdNearest.value.trim()
+){
+alert("املأ جميع الحقول");
+return;
+}
+
+let delivery =
+Number(rdDelivery.value || 0);
+if(delivery<=0){
+alert("حدد أجور التوصيل");
+return;
+}
+
+// جلب القطع
+const {data:returnItems,error}=await supabase
+.from("inventory_returns")
+.select("*")
+.eq(
+"order_id",
+redeliveryOrder.id
+)
+.eq(
+"status",
+"waiting"
+);
+
+if(error){
+alert(error.message);
+return;
+}
+if(!returnItems?.length){
+alert(
+"لا توجد قطع جاهزة لإعادة التوصيل"
+);
+return;
+}
+
+// حساب المنتجات
+let productsTotal=0;
+returnItems.forEach(i=>{
+productsTotal +=
+Number(i.quantity||0)
+*
+Number(i.price||0);
+});
+
+let discount =
+useDiscount.checked
+?
+Number(rdDiscount.value||0)
+:
+0;
+
+let refund =
+useReturnAmount.checked
+?
+Number(returnAmount.value||0)
+:
+0;
+
+let finalTotal =
+
+productsTotal
+
+-
+
+discount
+
++
+
+delivery
+
+-
+refund;
+
+// إنشاء الطلب الجديد
+const {data:newOrder,error:orderError}=
+await supabase
+.from("orders")
+.insert({
+parent_order_id:redeliveryOrder.id,
+order_type:"re_delivery",
+customer_name:rdName.value,
+phone:rdPhone.value,
+governorate:rdGovernorate.value,
+address:rdAddress.value,
+nearest_point:rdNearest.value,
+delivery_price:delivery,
+discount_amount:discount,
+total_price:finalTotal,
+status:"delivery",
+finance_done:false,
+has_return:false
+})
+.select()
+.single();
+
+if(orderError){
+alert(orderError.message);
+return;
+}
+
+// نقل المنتجات
+for(let item of returnItems){
+await supabase
+.from("order_items")
+.insert({
+order_id:newOrder.id,
+variant_id:item.variant_id,
+quantity:item.quantity,
+price:item.price
+});
+
+await supabase
+.from("inventory_returns")
+.update({
+status:"used_for_redelivery"
+})
+.eq(
+"id",
+item.id
+);
+}
+
+// اغلاق الطلب القديم
+await supabase
+.from("orders")
+.update({
+has_return:false,
+status:"delivery"
+})
+.eq(
+"id",
+redeliveryOrder.id
+);
+
+await addActivity(
+"إعادة توصيل طلب",
+"orders",
+newOrder.id
+);
+alert(
+"تم إنشاء إعادة التوصيل ✅"
+);
+
+document
+.getElementById("redeliveryModal")
+.style.display="none";
+await loadOrders();
+}
+
+// اغلاق المودل
+document
+.getElementById("closeRedelivery")
+.onclick=()=>{
+document
+.getElementById("redeliveryModal")
+.style.display="none";
+}

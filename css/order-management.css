@@ -3572,3 +3572,93 @@ font-size:18px;
 background:#ff9800;
 color:#fff;
 }
+.status-card.partial{
+
+    grid-column: 1 / -1;
+
+    height:70px;
+
+    min-height:70px;
+
+    display:flex;
+
+    flex-direction:row;   /* مهم حتى يصير افقي */
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:20px;
+
+    padding:10px 20px;
+
+}
+
+
+/* الايقونة */
+
+.status-card.partial i{
+
+    font-size:24px;
+
+    order:1;
+
+}
+
+
+/* الكتابة */
+
+.status-card.partial h3{
+
+    margin:0;
+
+    font-size:18px;
+
+    order:2;
+
+}
+
+
+/* العدد */
+
+.status-card.partial span{
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    order:3;
+
+}
+.status-card.partial{
+
+    grid-column: 1 / -1;
+
+    height:70px;
+
+    min-height:70px;
+
+    display:flex;
+
+    flex-direction:row;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:20px;
+
+    padding:10px 20px;
+
+
+    /* الألوان */
+
+    background:#fff3e0;
+
+    border:2px solid #005789;
+
+    color:#e65100;
+
+    border-radius:15px;
+
+}

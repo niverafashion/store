@@ -162,6 +162,8 @@ variant_id,
 
 quantity,
 
+returned_quantity,
+
 price,
 
 product_variants(
@@ -221,6 +223,21 @@ order.finance_done === undefined
 });
 
 
+// تحديد الطلبات اللي فعلاً بيها استرجاع
+orders.forEach(order=>{
+
+order.isPartialReturn =
+order.order_items?.some(item=>{
+
+return (
+Number(item.returned_quantity || 0) > 0
+);
+
+});
+
+});
+
+
 console.log(
 "طلبات الادارة:",
 orders
@@ -235,7 +252,7 @@ if(currentFilter === "partial_return"){
 renderOrders(
 
 orders.filter(o=>
-o.has_return === true
+o.isPartialReturn === true
 )
 
 );
@@ -274,52 +291,68 @@ if(!btn)
 return;
 
 
+// تحديث جماعي يظهر فقط:
+// مجهز
+// قيد التوصيل
+// مؤجل
+
 if(
-currentFilter === "new" ||
-currentFilter === "completed" ||
-currentFilter === "cancelled" ||
-currentFilter === "partial_return"
+currentFilter === "prepared" ||
+currentFilter === "delivery" ||
+currentFilter === "postponed"
 ){
-
-btn.style.display="none";
-
-}
-else{
 
 btn.style.display="block";
 
 }
+
+else{
+
+btn.style.display="none";
+
+}
+
+
+
+// تحديد الكل
+
 const selectAll =
 document.getElementById("selectAll");
 
 
 if(selectAll){
 
-
 let parent =
 selectAll.parentElement;
 
 
+// يظهر فقط للحالات اللي تسمح بالتحديد
 
 if(
-currentFilter === "completed" ||
-currentFilter === "cancelled"
+currentFilter === "new" ||
+currentFilter === "prepared" ||
+currentFilter === "delivery" ||
+currentFilter === "postponed"
 ){
-
-parent.style.display="none";
-
-
-}
-else{
 
 parent.style.display="flex";
 
+}
+
+else{
+
+parent.style.display="none";
 
 }
 
 
 }
+
+
+
 }
+
+
 
 function updateBulkDelete(){
 
@@ -331,25 +364,26 @@ if(!btn)
 return;
 
 
-let selectedStatus = currentFilter;
 
-
+// حذف جماعي يظهر فقط:
+// جديد
+// مجهز
 
 if(
 currentFilter === "new" ||
-currentFilter === "completed" ||
-currentFilter === "cancelled" ||
-currentFilter === "partial_return"
+currentFilter === "prepared"
 ){
-
-btn.style.display="none";
-
-}
-else{
 
 btn.style.display="block";
 
 }
+
+else{
+
+btn.style.display="none";
+
+}
+
 
 
 }
@@ -1272,27 +1306,6 @@ item.quantity
 item.variant_id
 );
 
-
-
-// حركة مخزن
-
-await supabase
-
-.from("stock_movements")
-
-.insert({
-
-variant_id:item.variant_id,
-
-type:"return_waiting",
-
-quantity:item.quantity,
-
-note:`حذف طلب رقم ${id}`
-
-});
-
-
 }
 
 // حذف order_items
@@ -2043,7 +2056,11 @@ variant_id:item.variant_id,
 
 quantity:item.quantity,
 
-status:"waiting"
+type:"cancelled",
+
+status:"waiting",
+
+reason: reason || "رفض طلب"
 
 });
 
@@ -2301,7 +2318,7 @@ if(item.status === "partial_return"){
 
 count = orders.filter(o=>{
 
-return o.has_return === true;
+return o.isPartialReturn === true;
 
 }).length;
 
@@ -2388,7 +2405,7 @@ if(currentFilter === "partial_return"){
 renderOrders(
 
 orders.filter(o=>
-o.has_return === true
+o.isPartialReturn === true
 )
 
 );
@@ -2440,7 +2457,7 @@ return (
 (
 currentFilter === "partial_return"
 ?
-o.has_return === true
+o.isPartialReturn === true
 :
 o.status === currentFilter
 )
@@ -2830,26 +2847,11 @@ variant_id:item.variant_id,
 
 quantity:returnQty,
 
-status:"waiting"
+type:"partial_return",
 
-});
+status:"waiting",
 
-
-// تسجيل حركة مخزن
-
-await supabase
-
-.from("stock_movements")
-
-.insert({
-
-variant_id:item.variant_id,
-
-type:"return_waiting",
-
-quantity:returnQty,
-
-note:"استرجاع قطعة واحدة من طلب"
+reason:"استرجاع قطعة"
 
 });
 

@@ -1483,3 +1483,133 @@ background:#333;
 transform:scale(0.95);
 
 }
+/* ===========================
+   Loading Overlay
+=========================== */
+
+.loading-overlay{
+
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    z-index:99999;
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:.3s;
+}
+
+.loading-overlay.show{
+
+    opacity:1;
+    visibility:visible;
+}
+
+.loading-box{
+
+    background:#fff;
+
+    width:260px;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:0 20px 50px rgba(0,0,0,.2);
+
+}
+
+.loader{
+
+    width:55px;
+    height:55px;
+
+    border:5px solid #eee;
+
+    border-top:5px solid #F7B6C8;
+
+    border-radius:50%;
+
+    margin:auto;
+
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+.loading-box h3{
+
+    margin-top:20px;
+
+    font-size:18px;
+
+    color:#444;
+}
+
+
+/* ===========================
+   Success Toast
+=========================== */
+
+.success-toast{
+
+    position:fixed;
+
+    top:30px;
+
+    right:30px;
+
+    background:#2ecc71;
+
+    color:white;
+
+    padding:18px 28px;
+
+    border-radius:15px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:18px;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.2);
+
+    transform:translateX(350px);
+
+    transition:.4s;
+
+    z-index:100000;
+
+}
+
+.success-toast.show{
+
+    transform:translateX(0);
+
+}
+
+.success-toast i{
+
+    font-size:24px;
+
+}

@@ -417,7 +417,8 @@ id="selectAll">
 
 <div id="redeliveryModal" class="modal">
 
-<div class="modal-content">
+
+<div class="modal-content redelivery-box">
 
 
 <h2>
@@ -425,11 +426,17 @@ id="selectAll">
 </h2>
 
 
-<input id="rdName"
+
+<!-- معلومات الزبون -->
+
+
+<input 
+id="rdName"
 placeholder="اسم الزبون">
 
 
-<input id="rdPhone"
+<input 
+id="rdPhone"
 placeholder="رقم الهاتف">
 
 
@@ -444,79 +451,247 @@ placeholder="رقم الهاتف">
 
 
 
+
+<!-- التوصيل -->
+
+
 <label class="check-row">
+
 
 <input 
 type="checkbox"
 id="autoDelivery"
 checked>
 
-تحديد أجور التوصيل تلقائي
+
+تحديد أجور التوصيل تلقائي حسب المحافظة
+
 
 </label>
 
 
 
+
+<div id="manualDeliveryBox">
+
+
+<label>
+أجور التوصيل
+</label>
+
+
 <input 
+
 id="rdDelivery"
+
 type="number"
-placeholder="أجور التوصيل"
-disabled>
+
+placeholder="أجور التوصيل">
+
+
+</div>
 
 
 
-<input id="rdAddress"
+
+
+<input 
+id="rdAddress"
 placeholder="العنوان">
 
 
-<input id="rdNearest"
+<input 
+id="rdNearest"
 placeholder="أقرب نقطة">
 
 
 
+
+
+<!-- استقطاع راجع جزئي -->
+
+
 <label class="check-row">
 
+
 <input 
+
 type="checkbox"
+
 id="useReturnAmount">
 
 
 استقطاع مبلغ راجع جزئي
 
+
 </label>
 
 
 
-<input 
-id="returnAmount"
-type="number"
-value="5000"
-style="display:none">
 
+<div 
+id="returnAmountBox"
+style="display:none;">
+
+
+<input 
+
+id="returnAmount"
+
+type="number"
+
+value="5000"
+
+placeholder="مبلغ الاستقطاع">
+
+
+</div>
+
+
+
+
+
+
+
+<!-- الخصم -->
 
 
 <label class="check-row">
 
+
 <input 
+
 type="checkbox"
+
 id="useDiscount">
 
 
 إضافة خصم
 
+
 </label>
 
 
 
+
+
+<div 
+
+id="discountBox"
+
+style="display:none;">
+
+
 <input 
+
 id="rdDiscount"
+
 type="number"
-placeholder="قيمة الخصم"
-style="display:none">
+
+placeholder="قيمة الخصم">
+
+
+</div>
 
 
 
-<button id="saveRedelivery">
+
+
+
+
+<!-- الحساب -->
+
+
+<div class="rd-total-box">
+
+
+<div>
+
+قيمة المنتجات:
+
+<span id="rdSubtotal">
+0
+</span>
+
+د.ع
+
+</div>
+
+
+
+<div>
+
+التوصيل:
+
+<span id="rdDeliveryShow">
+0
+</span>
+
+د.ع
+
+</div>
+
+
+
+<div>
+
+الاستقطاع:
+
+<span id="rdRefundShow">
+0
+</span>
+
+د.ع
+
+</div>
+
+
+
+<div>
+
+الخصم:
+
+<span id="rdDiscountShow">
+0
+</span>
+
+د.ع
+
+</div>
+
+
+
+
+<hr>
+
+
+
+<h3>
+
+المجموع النهائي:
+
+<span id="rdFinalTotal">
+0
+</span>
+
+د.ع
+
+</h3>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<button 
+
+id="saveRedelivery">
 
 حفظ إعادة التوصيل
 
@@ -524,16 +699,23 @@ style="display:none">
 
 
 
-<button id="closeRedelivery">
+
+<button 
+
+id="closeRedelivery">
 
 إلغاء
 
 </button>
 
 
+
+
+
 </div>
 
 </div>
+
 <!-- كاميرا الباركود -->
 <div id="scanModal" class="scan-modal">
 

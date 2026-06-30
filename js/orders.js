@@ -985,56 +985,38 @@ document
 
 
 
-document
-
-.getElementById("total")
-
-.innerText=total;
-
-
-
-updateTotal();
-
+document.getElementById("total").innerText = total;
 checkReturnVisibility();
-
+updateTotal();
 }
 
 
 function checkReturnVisibility(){
 
+    let box = document.getElementById("returnCheckBox");
 
-let box = document.getElementById("returnCheckBox");
+    // عدد الخيارات المختلفة (حجم + لون)
+    let variantsCount = new Set(
 
+        cart.map(x =>
+            x.size + "-" + x.color
+        )
 
-// عدد الخيارات المختلفة (حجم + لون)
-let variantsCount = new Set(
+    ).size;
 
-cart.map(x => 
-x.size + "-" + x.color
-)
+    if(variantsCount > 1){
 
-).size;
+        box.style.display = "block";
 
+    }else{
 
+        box.style.display = "none";
 
-if(variantsCount > 1){
+        document.getElementById("hasReturn").checked = false;
 
+        generateMessage();
 
-box.style.display="block";
-
-
-}else{
-
-
-box.style.display="none";
-
-
-document.getElementById("hasReturn").checked=false;
-
-
-}
-
-
+    }
 
 }
 
@@ -1272,7 +1254,6 @@ items +=
 `🛍 ${x.product}
 اللون: ${x.color} | المقاس: ${x.size}
 الكمية: ${x.quantity} | السعر: ${x.price.toLocaleString()} دينار
-
 `;
 
 
@@ -1306,10 +1287,6 @@ finalTotal = 0;
 
 
 
-
-
-
-
 let message =
 
 `✨ NIVRA FASHION ✨
@@ -1324,17 +1301,28 @@ let message =
 
 📦 تفاصيل الطلب:
 ━━━━━━━━━━━━━
-${items}
-━━━━━━━━━━━━━
+${items} ━━━━━━━━━━━━━
 
 💰 المبلغ الكلي:
 ━━━━━━━━━━━━━
-كلفة المنتجات:${total.toLocaleString()} دينار
-🚚 التوصيل:${deliveryPrice.toLocaleString()} دينار
-${discount > 0 ? `🏷 الخصم:${discount.toLocaleString()} دينار` : ""}
-المجموع النهائي:${finalTotal.toLocaleString()} دينار
-${document.getElementById("notes").value.trim() ? `📝 الملاحظة:${document.getElementById("notes").value}` : ""}
-━━━━━━━━━━━━━
+كلفة المنتجات: ${total.toLocaleString()} دينار
+🚚 كلفة التوصيل: ${deliveryPrice.toLocaleString()} دينار
+${discount > 0 ? `🏷 الخصم: ${discount.toLocaleString()} دينار` : ""}${discount > 0 ? "\n" : ""}${
+document.getElementById("hasReturn").checked && cart.length >= 2
+?
+(
+cart[0].price === cart[1].price
+?
+`المجموع النهائي: ${(cart[0].price + deliveryPrice - discount).toLocaleString()} دينار`
+:
+`المجموع النهائي حسب القطعة المختارة:
+✅ القطعة الأولى: ${(cart[0].price + deliveryPrice - discount).toLocaleString()} دينار
+✅ القطعة الثانية: ${(cart[1].price + deliveryPrice - discount).toLocaleString()} دينار`
+)
+:
+`المجموع النهائي: ${finalTotal.toLocaleString()} دينار`
+}
+${document.getElementById("notes").value.trim() ? `📝 الملاحظة: ${document.getElementById("notes").value}` : ""}━━━━━━━━━━━━━
 `;
 
 // الاسترجاع
@@ -1612,7 +1600,7 @@ async function saveOrder(clear=true){
 if(!validateOrder())
 return;
 
-
+showLoading();
 
 let phone =
 document.getElementById("phone").value.trim();
@@ -1684,9 +1672,11 @@ document.getElementById("governorate").value
 
 if(error){
 
-alert(error.message);
+    hideLoading();
 
-return;
+    alert(error.message);
+
+    return;
 
 }
 
@@ -1856,9 +1846,11 @@ payment_method:
 
 if(error){
 
-alert(error.message);
+    hideLoading();
 
-return;
+    alert(error.message);
+
+    return;
 
 }
 
@@ -2021,8 +2013,9 @@ order.id
 
 
 
-alert("تم حفظ الطلب 🔥");
+hideLoading();
 
+showSuccess("تم حفظ الطلب بنجاح ✅");
 
 
 if(clear){
@@ -2054,26 +2047,19 @@ if(!validateOrder())
 return;
 
 
-generateMessage();
-
-
 let phone =
 document
 .getElementById("phone")
 .value.trim();
-
 
 let text =
 document
 .getElementById("whatsappMessage")
 .value;
 
-
-
 window.location.href =
 
 `https://wa.me/964${phone.substring(1)}?text=${encodeURIComponent(text)}`;
-
 
 // تنظيف بعد الخروج
 setTimeout(()=>{
@@ -2100,9 +2086,6 @@ document
 if(!validateOrder())
 return;
 
-
-// خزن الرسالة قبل التنظيف
-generateMessage();
 
 let phone =
 document
@@ -2471,6 +2454,48 @@ await loadGovernorates();
 
 }
 
+const loadingOverlay =
+document.getElementById("loadingOverlay");
 
+const loadingText =
+document.getElementById("loadingText");
+
+const successToast =
+document.getElementById("successToast");
+
+
+function showLoading(text="جاري إضافة الطلب..."){
+
+    loadingText.innerText=text;
+
+    loadingOverlay.classList.add("show");
+
+    document.body.style.overflow="hidden";
+
+}
+
+
+function hideLoading(){
+
+    loadingOverlay.classList.remove("show");
+
+    document.body.style.overflow="";
+
+}
+
+
+function showSuccess(text="تم إضافة الطلب بنجاح"){
+
+    successToast.querySelector("span").innerText=text;
+
+    successToast.classList.add("show");
+
+    setTimeout(()=>{
+
+        successToast.classList.remove("show");
+
+    },2500);
+
+}
 
 init();

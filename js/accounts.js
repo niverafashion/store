@@ -136,7 +136,7 @@ html += `
 <tr>
 
 <td>
-<input type="checkbox" class="account-check" data-id="${o.id}">
+<input type="checkbox" class="order-check" data-id="${o.id}">
 <br>
 #${o.id}
 </td>

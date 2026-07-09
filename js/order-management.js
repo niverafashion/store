@@ -289,51 +289,82 @@ return true;
 
 
 
+// القطع المستخدمة بإعادة التوصيل
 
-
-
-
-
-// تحديد الرواجع الحقيقية فقط
-
-let usedRedeliveryItems = await supabase
+const { data:inventoryReturns } = await supabase
 
 .from("inventory_returns")
 
-.select("order_item_id")
-
-.eq("status","used_for_redelivery");
+.select("*");
 
 
-let usedIds =
-usedRedeliveryItems.data?.map(x=>x.order_item_id) || [];
+
+const returnsByOrder = {};
+
+
+
+inventoryReturns?.forEach(r=>{
+
+    if(!returnsByOrder[r.order_id]){
+
+        returnsByOrder[r.order_id]=[];
+
+    }
+
+    returnsByOrder[r.order_id].push(r);
+
+});
 
 
 
 orders.forEach(order=>{
 
-
-order.isPartialReturn =
-
-order.order_items?.some(item=>{
+    const rows = returnsByOrder[order.id] || [];
 
 
-return (
 
-Number(item.returned_quantity || 0) > 0
+    order.inventoryReturns = rows;
 
-&&
 
-!usedIds.includes(item.id)
 
-);
+    order.isPartialReturn = rows.some(r=>
 
+        r.type==="partial_return"
+
+        &&
+
+        r.status==="waiting"
+
+    );
+
+
+
+    order.hideCancelledAfterRedelivery =
+
+        order.status==="cancelled"
+
+        &&
+
+        !rows.some(r=>
+
+            r.type==="cancelled"
+
+            &&
+
+            r.status==="waiting"
+
+        );
 
 });
+orders = orders.filter(order => {
 
+    if(order.hideCancelledAfterRedelivery){
+        return false;
+    }
+
+    return true;
 
 });
-
 console.log(
 "طلبات الادارة:",
 orders
@@ -2108,17 +2139,10 @@ nextStatus="completed";
 
 }
 
-
-
-
 else if(choice==="2"){
-
-
-
 let ok = confirm(
 
 "⚠️ سيتم رفض الطلب وإرجاع جميع القطع للمخزن\n\nهل أنت متأكد؟"
-
 );
 
 if(!ok){
@@ -2159,37 +2183,51 @@ return;
 // =====================
 
 
-if(nextStatus==="cancelled"){
+if(nextStatus === "cancelled"){
 
+    for(let item of order.order_items){
 
-for(let item of order.order_items){
+        if(Number(item.quantity) <= 0) continue;
 
+        const { error:returnError } = await supabase
 
-await supabase
+        .from("inventory_returns")
 
-.from("inventory_returns")
+        .insert({
 
-.insert({
+            order_id: order.id,
 
-order_id:id,
+            order_item_id: item.id,
 
-order_item_id:item.id,
+            variant_id: item.variant_id,
 
-variant_id:item.variant_id,
+            quantity: Number(item.quantity),
 
-quantity:item.quantity,
+            price: Number(item.price),
 
-type:"cancelled",
+            type: "cancelled",
 
-status:"waiting",
+            status: "waiting",
 
-reason: reason || "رفض طلب"
+            reason:
 
-});
+                order.order_type === "re_delivery"
 
+                ? "رفض إعادة توصيل"
 
-}
+                : (reason || "رفض طلب")
 
+        });
+
+        if(returnError){
+
+            alert(returnError.message);
+
+            return;
+
+        }
+
+    }
 
 }
 
@@ -2970,6 +3008,8 @@ variant_id:item.variant_id,
 
 quantity:returnQty,
 
+price:item.price,   // ✅ مهم
+
 type:"partial_return",
 
 status:"waiting",
@@ -3396,67 +3436,36 @@ calculateRedelivery();
 // =====================
 
 
-document
+document.getElementById("autoDelivery").onchange = () => {
 
-.getElementById("autoDelivery")
+    let box = document.getElementById("manualDeliveryBox");
 
-.onchange=()=>{
+    if(document.getElementById("autoDelivery").checked){
 
+        box.style.display = "none";
 
-let input =
-document.getElementById("rdDelivery");
+        let price =
+        rdGovernorate.options[
+            rdGovernorate.selectedIndex
+        ]?.dataset.price || 0;
 
+        rdDeliveryPrice = Number(price);
 
+        document.getElementById("rdDelivery").value =
+        rdDeliveryPrice;
 
-if(
-document.getElementById("autoDelivery").checked
-){
+    }else{
 
+        box.style.display = "block";
 
+        rdDeliveryPrice =
+        Number(
+            document.getElementById("rdDelivery").value || 0
+        );
 
-input.disabled=true;
+    }
 
-
-
-let price =
-
-rdGovernorate
-
-.options[rdGovernorate.selectedIndex]
-
-?.dataset.price || 0;
-
-
-
-rdDeliveryPrice =
-Number(price);
-
-
-
-input.value =
-rdDeliveryPrice;
-
-
-
-}
-
-else{
-
-
-input.disabled=false;
-
-
-rdDeliveryPrice =
-Number(input.value || 0);
-
-
-}
-
-
-
-calculateRedelivery();
-
-
+    calculateRedelivery();
 
 }
 
@@ -3711,24 +3720,9 @@ document.getElementById("rdDiscount").value || 0
 
 
 let final =
-
-
-subtotal
-
-+
-
-rdDeliveryPrice
-
--
-
-refund
-
--
-
+subtotal +
+rdDeliveryPrice -
 discount;
-
-
-
 
 
 if(final <0)
@@ -3737,21 +3731,14 @@ final=0;
 
 
 
-
-
-
 document.getElementById("rdSubtotal")
 .innerText =
 subtotal.toLocaleString();
 
 
-
-
 document.getElementById("rdDeliveryShow")
 .innerText =
 rdDeliveryPrice.toLocaleString();
-
-
 
 document.getElementById("rdRefundShow")
 .innerText =
@@ -4001,86 +3988,75 @@ let {data:newOrder,error:orderError}=await supabase
 
 .insert({
 
-customer_id:customer.id,
+customer_id: customer.id,
 
+parent_order_id: redeliveryOrder.id,
 
-parent_order_id:redeliveryOrder.id,
+order_type: "re_delivery",
 
-
-order_type:"re_delivery",
-
-delivery_code:
-redeliveryOrder.delivery_code,
+delivery_code: redeliveryOrder.delivery_code,
 
 customer_name:
-
 document.getElementById("rdName").value,
-
 
 phone,
 
-
 governorate:
-
 document.getElementById("rdGovernorate").value,
 
-
-
 address:
-
 document.getElementById("rdAddress").value,
 
-
-
 nearest_point:
-
 document.getElementById("rdNearest").value,
 
+source:
+document.getElementById("rdSource").value || null,
 
+notes:
+document.getElementById("rdNotes").value || null,
 
 subtotal_price:
-
 Number(
-document.getElementById("rdSubtotal").innerText.replace(/,/g,"")
+document.getElementById("rdSubtotal")
+.innerText.replace(/,/g,"")
 ),
 
-
-
-delivery_price:
-
-rdDeliveryPrice,
-
-
+delivery_price: rdDeliveryPrice,
 
 discount_amount:
-
 Number(
 document.getElementById("rdDiscount").value || 0
 ),
 
-
-
 refund_amount:
-
 Number(
 document.getElementById("returnAmount").value || 0
 ),
 
-
-
 total_price:
-
 Number(
-document.getElementById("rdFinalTotal").innerText.replace(/,/g,"")
+document.getElementById("rdFinalTotal")
+.innerText.replace(/,/g,"")
 ),
 
+delivery_type:
+document.getElementById("autoDelivery").checked
+?
+"auto"
+:
+"manual",
 
+has_partial_refund:
+document.getElementById("useReturnAmount").checked,
+
+customer_type:"old",
+
+payment_method:"cash",
 
 status:"delivery",
 
-
 finance_done:false
-
 
 })
 
@@ -4102,13 +4078,6 @@ return;
 }
 
 
-
-
-
-
-
-
-
 // =====================
 // نسخ المنتجات من الرجع
 // =====================
@@ -4116,66 +4085,63 @@ return;
 
 for(let item of returnItems){
 
+    const { data:newItem, error:itemError } = await supabase
 
+    .from("order_items")
 
-await supabase
+    .insert({
 
-.from("order_items")
+        order_id: newOrder.id,
 
-.insert({
+        variant_id: item.variant_id,
 
-order_id:newOrder.id,
+        quantity: item.quantity,
 
+        price:
 
-variant_id:item.variant_id,
+            item.price ||
 
+            redeliveryOrder.order_items.find(
 
-quantity:item.quantity,
+                x => x.variant_id === item.variant_id
 
+            )?.price || 0
 
-price:0
+    })
 
+    .select()
 
-});
-
-
-
-
-
-
-// تصفير الرجع
-
-
-await supabase
-
-.from("inventory_returns")
-
-.update({
-
-quantity:0,
-
-status:"used_for_redelivery"
-
-
-})
-
-.eq(
-
-"id",
-
-item.id
-
-);
+    .single();
 
 
 
+    if(itemError){
+
+        alert(itemError.message);
+
+        return;
+
+    }
+
+
+
+    // تعليم الرجع بأنه استُخدم
+
+    await supabase
+
+    .from("inventory_returns")
+
+    .update({
+
+        quantity:0,
+
+        status:"used_for_redelivery"
+
+    })
+
+    .eq("id", item.id);
 
 }
-
-
-
-
-
 
 
 await supabase
@@ -4206,11 +4172,13 @@ newOrder.id
 
 );
 
-
-
-
-
-
+await supabase
+.from("orders")
+.update({
+    status: "redelivery",
+    finance_done: false
+})
+.eq("id", redeliveryOrder.id);
 
 alert(
 "تم إنشاء إعادة التوصيل بنجاح 🚚"
@@ -4257,3 +4225,148 @@ document
 
 
 }
+function generateRedeliveryMessage(){
+
+    if(!redeliveryOrder) return;
+
+    let items = "";
+    let subtotal = 0;
+
+    redeliveryOrder.order_items?.forEach(item=>{
+
+        let qty = Number(item.quantity || 0);
+        let price = Number(item.price || 0);
+
+        subtotal += qty * price;
+
+        items +=
+`🛍 ${item.products?.name || item.product_name || ""}
+اللون: ${item.product_variants?.color || item.color || ""}
+| المقاس: ${item.product_variants?.size || item.size || ""}
+الكمية: ${qty} | السعر: ${price.toLocaleString()} دينار
+`;
+
+    });
+
+    let refund =
+        document.getElementById("useReturnAmount").checked
+        ? Number(document.getElementById("returnAmount").value || 0)
+        : 0;
+
+    let discount =
+        document.getElementById("useDiscount").checked
+        ? Number(document.getElementById("rdDiscount").value || 0)
+        : 0;
+
+    let final =
+        subtotal +
+        rdDeliveryPrice -
+        discount;
+
+    if(final < 0) final = 0;
+
+    let message =
+`✨ NIVRA FASHION ✨
+
+مرحباً ${document.getElementById("rdName").value} 🤍
+
+تم إنشاء إعادة توصيل لطلبكم بنجاح ✅
+
+👤 المعلومات الشخصية:
+━━━━━━━━━━━━━
+الاسم: ${document.getElementById("rdName").value}
+الهاتف: ${document.getElementById("rdPhone").value}
+المحافظة: ${document.getElementById("rdGovernorate").value} - ${document.getElementById("rdAddress").value}
+أقرب نقطة: ${document.getElementById("rdNearest").value}
+━━━━━━━━━━━━━
+
+📦 تفاصيل الطلب:
+━━━━━━━━━━━━━
+${items}
+━━━━━━━━━━━━━
+
+💰 المبلغ الكلي:
+━━━━━━━━━━━━━
+كلفة المنتجات: ${subtotal.toLocaleString()} دينار
+🚚 كلفة التوصيل: ${rdDeliveryPrice.toLocaleString()} دينار
+`;
+
+    if(discount > 0){
+
+        message +=
+`🏷 الخصم: ${discount.toLocaleString()} دينار
+`;
+
+    }
+
+    message +=
+`المجموع النهائي: ${final.toLocaleString()} دينار
+`;
+
+    if(document.getElementById("useReturnAmount").checked){
+
+        message +=
+`
+⚠️ يوجد استقطاع مبلغ راجع جزئي بقيمة ${refund.toLocaleString()} دينار.
+`;
+
+    }
+
+    if(redeliveryOrder.notes){
+
+        message +=
+`
+📝 الملاحظات:
+${redeliveryOrder.notes}
+`;
+
+    }
+
+    message +=
+`
+━━━━━━━━━━━━━
+
+🛒 زوروا موقعنا للتسوق الإلكتروني:
+https://niverafashion.github.io/store/index.html
+
+شكراً لثقتكم بـ NIVRA 🤍`;
+
+    document.getElementById("rdWhatsappMessage").value = message;
+
+}
+document.getElementById("rdWhatsapp").onclick = () => {
+
+    generateRedeliveryMessage();
+
+    const phone = document.getElementById("rdPhone").value.trim();
+
+    const text = document.getElementById("rdWhatsappMessage").value;
+
+    window.location.href =
+        `https://wa.me/964${phone.substring(1)}?text=${encodeURIComponent(text)}`;
+
+};
+document.getElementById("saveRedeliveryWhatsapp").onclick = async () => {
+
+    generateRedeliveryMessage();
+
+    const phone = document.getElementById("rdPhone").value.trim();
+
+    if(phone.length !== 11){
+        alert("رقم الهاتف غير صالح");
+        return;
+    }
+
+    const text =
+    document.getElementById("rdWhatsappMessage").value;
+
+    // حفظ الطلب
+    await document.getElementById("saveRedelivery").onclick();
+
+    // فتح الواتساب
+    window.open(
+        `https://wa.me/964${phone.substring(1)}?text=${encodeURIComponent(text)}`,
+        "_blank"
+    );
+
+};

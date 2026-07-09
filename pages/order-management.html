@@ -417,300 +417,194 @@ id="selectAll">
 
 <div id="redeliveryModal" class="modal">
 
-
 <div class="modal-content redelivery-box">
 
+<h2>🚚 إعادة توصيل الطلب</h2>
 
-<h2>
-🚚 إعادة توصيل الطلب
-</h2>
+<!-- بيانات الزبون -->
 
+<input id="rdName" placeholder="اسم الزبون">
 
-
-<!-- معلومات الزبون -->
-
-
-<input 
-id="rdName"
-placeholder="اسم الزبون">
-
-
-<input 
-id="rdPhone"
-placeholder="رقم الهاتف">
-
-
+<input id="rdPhone" placeholder="رقم الهاتف">
 
 <select id="rdGovernorate">
-
-<option value="">
-اختر المحافظة
-</option>
-
+    <option value="">اختر المحافظة</option>
 </select>
 
+<input id="rdAddress" placeholder="العنوان">
 
+<input id="rdNearest" placeholder="أقرب نقطة">
 
+<!-- مصدر الطلب -->
 
-<!-- التوصيل -->
+<label>مصدر الطلب</label>
 
+<select id="rdSource">
+    <option value="whatsapp">واتساب</option>
+    <option value="instagram">انستغرام</option>
+    <option value="tiktok">تيك توك</option>
+    <option value="website">الموقع</option>
+    <option value="store">المعرض</option>
+</select>
 
-<label class="check-row">
+<!-- ملاحظات -->
 
-
-<input 
-type="checkbox"
-id="autoDelivery"
-checked>
-
-
-تحديد أجور التوصيل تلقائي حسب المحافظة
-
-
-</label>
-
-
-
-
-<div id="manualDeliveryBox">
-
-
-<label>
-أجور التوصيل
-</label>
-
-
-<input 
-
-id="rdDelivery"
-
-type="number"
-
-placeholder="أجور التوصيل">
-
-
-</div>
-
-
-
-
-
-<input 
-id="rdAddress"
-placeholder="العنوان">
-
-
-<input 
-id="rdNearest"
-placeholder="أقرب نقطة">
-
-
-
-
-
-<!-- استقطاع راجع جزئي -->
-
-
-<label class="check-row">
-
-
-<input 
-
-type="checkbox"
-
-id="useReturnAmount">
-
-
-استقطاع مبلغ راجع جزئي
-
-
-</label>
-
-
-
-
-<div 
-id="returnAmountBox"
-style="display:none;">
-
-
-<input 
-
-id="returnAmount"
-
-type="number"
-
-value="5000"
-
-placeholder="مبلغ الاستقطاع">
-
-
-</div>
-
-
-
-
-
-
-
-<!-- الخصم -->
-
-
-<label class="check-row">
-
-
-<input 
-
-type="checkbox"
-
-id="useDiscount">
-
-
-إضافة خصم
-
-
-</label>
-
-
-
-
-
-<div 
-
-id="discountBox"
-
-style="display:none;">
-
-
-<input 
-
-id="rdDiscount"
-
-type="number"
-
-placeholder="قيمة الخصم">
-
-
-</div>
-
-
-
-
-
-
-
-<!-- الحساب -->
-
-
-<div class="rd-total-box">
-
-
-<div>
-
-قيمة المنتجات:
-
-<span id="rdSubtotal">
-0
-</span>
-
-د.ع
-
-</div>
-
-
-
-<div>
-
-التوصيل:
-
-<span id="rdDeliveryShow">
-0
-</span>
-
-د.ع
-
-</div>
-
-
-
-<div>
-
-الاستقطاع:
-
-<span id="rdRefundShow">
-0
-</span>
-
-د.ع
-
-</div>
-
-
-
-<div>
-
-الخصم:
-
-<span id="rdDiscountShow">
-0
-</span>
-
-د.ع
-
-</div>
-
-
-
+<textarea
+id="rdNotes"
+rows="3"
+placeholder="ملاحظات الطلب">
+</textarea>
 
 <hr>
 
+<!-- التوصيل -->
 
+<label class="check-row">
+    <input
+    type="checkbox"
+    id="autoDelivery"
+    checked>
 
-<h3>
+    تحديد أجور التوصيل تلقائي حسب المحافظة
+</label>
 
-المجموع النهائي:
+<div id="manualDeliveryBox" style="display:none;">
+<label>أجور التوصيل</label>
 
-<span id="rdFinalTotal">
-0
-</span>
-
-د.ع
-
-</h3>
-
-
+<input
+id="rdDelivery"
+type="number"
+placeholder="أجور التوصيل">
 
 </div>
 
+<hr>
 
+<!-- الاستقطاع -->
 
+<label class="check-row">
 
+<input
+type="checkbox"
+id="useReturnAmount">
 
+استقطاع مبلغ راجع جزئي
 
+</label>
 
+<div
+id="returnAmountBox"
+style="display:none;">
 
-<button 
+<input
+id="returnAmount"
+type="number"
+value="5000"
+placeholder="مبلغ الاستقطاع">
 
-id="saveRedelivery">
+</div>
 
-حفظ إعادة التوصيل
+<!-- الخصم -->
 
+<label class="check-row">
+
+<input
+type="checkbox"
+id="useDiscount">
+
+إضافة خصم
+
+</label>
+
+<div
+id="discountBox"
+style="display:none;">
+
+<input
+id="rdDiscount"
+type="number"
+placeholder="قيمة الخصم">
+
+</div>
+
+<hr>
+
+<!-- الحساب -->
+
+<div class="rd-total-box">
+
+<div>
+قيمة المنتجات:
+<span id="rdSubtotal">0</span>
+د.ع
+</div>
+
+<div>
+التوصيل:
+<span id="rdDeliveryShow">0</span>
+د.ع
+</div>
+
+<div>
+الاستقطاع:
+<span id="rdRefundShow">0</span>
+د.ع
+</div>
+
+<div>
+الخصم:
+<span id="rdDiscountShow">0</span>
+د.ع
+</div>
+
+<hr>
+
+<h3>
+المجموع النهائي:
+<span id="rdFinalTotal">0</span>
+د.ع
+</h3>
+
+</div>
+
+<hr>
+
+<!-- رسالة الواتساب -->
+
+<h3>
+<i class="fa-brands fa-whatsapp"></i>
+رسالة الواتساب
+</h3>
+
+<textarea
+id="rdWhatsappMessage"
+rows="7"
+placeholder="رسالة الواتساب">
+</textarea>
+
+<div class="order-actions">
+
+<button id="saveRedelivery">
+<i class="fa-solid fa-floppy-disk"></i>
+حفظ
 </button>
 
+<button id="rdWhatsapp">
+<i class="fa-brands fa-whatsapp"></i>
+إرسال واتساب
+</button>
 
+<button id="saveRedeliveryWhatsapp">
+<i class="fa-solid fa-check-double"></i>
+حفظ وإرسال واتساب
+</button>
 
-
-<button 
-
-id="closeRedelivery">
-
+<button id="closeRedelivery">
+<i class="fa-solid fa-xmark"></i>
 إلغاء
-
 </button>
 
-
-
-
+</div>
 
 </div>
 

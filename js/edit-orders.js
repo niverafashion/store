@@ -214,7 +214,15 @@ ${g.name}
 
 async function loadOrder(){
 
+orders.forEach(order => {
 
+    // إذا هذا الطلب الأصلي عنده إعادة توصيل
+    order.hasRedelivery = data.some(r =>
+        r.order_type === "re_delivery" &&
+        r.parent_order_id === order.id
+    );
+
+});
 
 const {data,error}=await supabase
 

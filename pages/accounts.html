@@ -28,46 +28,58 @@
 
 <main>
 
-<!-- كروت الحسابات -->
-<section class="order-status-cards">
+<!-- ===== حالات الطلبات ===== -->
+<section class="cards-group">
 
-<!-- مكتملة -->
+<h3 class="group-title">حالات الطلبات</h3>
+
+<div class="order-status-cards">
+
 <button class="status-card done" data-status="completed">
 <i class="fa-solid fa-circle-check"></i>
 <h3>مكتملة</h3>
 <span id="completedCount">0</span>
 </button>
 
-<!-- ملغية -->
 <button class="status-card rejected" data-status="cancelled">
 <i class="fa-solid fa-circle-xmark"></i>
 <h3>ملغية</h3>
 <span id="cancelledCount">0</span>
 </button>
 
-<!-- المبلغ الكلي -->
+<button class="status-card delayed" data-status="returns">
+<i class="fa-solid fa-rotate-left"></i>
+<h3>رواجع جزئية</h3>
+<span id="pendingReturns">0</span>
+</button>
+
+</div>
+
+</section>
+
+
+<!-- ===== الحسابات المالية ===== -->
+<section class="cards-group">
+
+<h3 class="group-title"></h3>
+
+<div class="finance-cards">
+
 <button class="status-card ready">
 <i class="fa-solid fa-money-bill-wave"></i>
 <h3>المبلغ المكتمل</h3>
 <span id="totalFinance">0</span>
 </button>
 
-<!-- رواجع غير مستلمة -->
-<button class="status-card delayed" data-status="returns">
-<i class="fa-solid fa-rotate-left"></i>
-<h3>رواجع غير مستلمة</h3>
-<span id="pendingReturns">0</span>
-</button>
-
-<!-- الصافي بدون توصيل -->
 <button class="status-card net">
 <i class="fa-solid fa-coins"></i>
 <h3>الصافي</h3>
 <span id="netFinance">0</span>
 </button>
 
-</section>
+</div>
 
+</section>
 <!-- الطلبات -->
 <section class="card">
 

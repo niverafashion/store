@@ -105,313 +105,460 @@ record_id:recordId
 
 async function loadOrders(){
 
+    // =====================
+    // تحميل الطلبات
+    // =====================
 
-const {data,error}=await supabase
+    const { data, error } = await supabase
 
-.from("orders")
+    .from("orders")
 
-.select(`
+    .select(`
 
-id,
+        id,
 
-customer_id,
+        customer_id,
 
-customer_name,
+        customer_name,
 
-parent_order_id,
+        parent_order_id,
 
-order_type,
+        order_type,
 
-finance_done,
+        finance_done,
 
-phone,
+        phone,
 
-governorate,
+        governorate,
 
-address,
+        address,
 
-nearest_point,
+        nearest_point,
 
-delivery_price,
+        delivery_price,
 
-total_price,
+        total_price,
 
-status,
+        status,
 
-has_return,
+        has_return,
 
-has_partial_refund,
+        has_partial_refund,
 
-refund_amount,
+        refund_amount,
 
-completed_at,
+        completed_at,
 
-cancelled_reason,
+        cancelled_reason,
 
-delivery_code,
+        delivery_code,
 
-created_at,
+        created_at,
 
+        order_items(
 
-order_items(
+            id,
 
-id,
+            order_id,
 
-order_id,
+            variant_id,
 
-variant_id,
+            quantity,
 
-quantity,
+            returned_quantity,
 
-returned_quantity,
+            price,
 
-price,
+            product_variants(
 
-product_variants(
+                id,
 
-color,
+                color,
 
-size,
+                size,
 
-stock_quantity,
+                stock_quantity,
 
-image,
+                image,
 
-products(
+                products(
 
-name
+                    id,
 
-)
+                    name
 
-)
+                )
 
-)
+            )
 
-`)
+        )
 
-.order(
-"created_at",
-{
-ascending:false
-}
-);
+    `)
 
+    .order("created_at",{
 
+        ascending:false
 
-if(error){
+    });
 
-console.log(error);
 
-return;
+    if(error){
 
-}
+        console.log(error);
 
-
-
-
-
-// الطلبات اللي بيها إعادة توصيل
-
-let redeliveryParents = data
-
-.filter(o=>
-
-o.order_type === "re_delivery"
-
-&&
-
-o.parent_order_id
-
-)
-
-.map(o=>
-
-o.parent_order_id
-
-);
-
-
-
-
-
-
-// الطلبات الظاهرة بالإدارة
-
-orders = data.filter(order=>{
-
-
-// نخفي الطلبات المغلقة مالياً
-
-if(order.finance_done === true){
-
-return false;
-
-}
-
-
-
-
-// نخفي الطلب الأصلي إذا صار له إعادة توصيل
-
-if(
-
-redeliveryParents.includes(order.id)
-
-&&
-
-order.order_type !== "re_delivery"
-
-){
-
-let hasRemainingItems = order.order_items?.some(item=>{
-
-return Number(item.quantity || 0) > 0;
-
-});
-
-
-if(!hasRemainingItems){
-
-return false;
-
-}
-
-
-}
-
-
-
-
-return true;
-
-
-});
-
-
-
-// القطع المستخدمة بإعادة التوصيل
-
-const { data:inventoryReturns } = await supabase
-
-.from("inventory_returns")
-
-.select("*");
-
-
-
-const returnsByOrder = {};
-
-
-
-inventoryReturns?.forEach(r=>{
-
-    if(!returnsByOrder[r.order_id]){
-
-        returnsByOrder[r.order_id]=[];
+        return;
 
     }
 
-    returnsByOrder[r.order_id].push(r);
-
-});
 
 
+    // =====================
+    // الطلبات التي تمت إعادة توصيلها
+    // =====================
 
-orders.forEach(order=>{
+    const redeliveryParents = data
 
-    const rows = returnsByOrder[order.id] || [];
+    .filter(o=>
 
-
-
-    order.inventoryReturns = rows;
-
-
-
-    order.isPartialReturn = rows.some(r=>
-
-        r.type==="partial_return"
+        o.order_type==="re_delivery"
 
         &&
 
-        r.status==="waiting"
+        o.parent_order_id
+
+    )
+
+    .map(o=>o.parent_order_id);
+
+
+
+    // =====================
+    // تحميل جميع الرواجع
+    // =====================
+
+    const {
+
+        data:inventoryReturns,
+
+        error:returnError
+
+    } = await supabase
+
+    .from("inventory_returns")
+
+    .select("*");
+
+
+    if(returnError){
+
+        console.log(returnError);
+
+        return;
+
+    }
+
+
+
+    // =====================
+    // تجميع الرواجع حسب الطلب
+    // =====================
+
+    const returnsByOrder = {};
+
+    inventoryReturns?.forEach(r=>{
+
+        if(!returnsByOrder[r.order_id]){
+
+            returnsByOrder[r.order_id]=[];
+
+        }
+
+        returnsByOrder[r.order_id].push(r);
+
+    });
+
+    // =====================
+    // تجهيز بيانات كل طلب
+    // =====================
+
+    data.forEach(order=>{
+
+        order.inventoryReturns =
+        returnsByOrder[order.id] || [];
+
+
+        // الرواجع غير المستلمة محاسبياً
+
+        order.waitingReturns =
+
+        order.inventoryReturns.filter(r=>
+
+            r.accounts_received === false
+
+        );
+
+
+        order.hasWaitingReturns =
+
+        order.waitingReturns.length > 0;
+
+
+
+        // راجع جزئي
+
+        order.isPartialReturn =
+
+        order.waitingReturns.some(r=>
+
+            r.type === "partial_return"
+
+        );
+
+
+
+        // طلب مرفوض
+
+        order.hasCancelledReturn =
+
+        order.waitingReturns.some(r=>
+
+            r.type === "cancelled"
+
+        );
+
+
+
+        // إعادة توصيل
+
+        order.hasRedeliveryReturn =
+
+        order.waitingReturns.some(r=>
+
+            r.status === "used_for_redelivery"
+
+        );
+
+
+
+        // إذا الحساب مستلم ويوجد راجع
+        // نخليه ظاهر بالرواجع فقط
+
+        order.showReturnsOnly =
+
+        order.finance_done === true
+
+        &&
+
+        order.hasWaitingReturns;
+
+
+
+    });
+
+
+
+    // =====================
+    // فلترة الطلبات
+    // =====================
+
+    orders = data.filter(order=>{
+
+
+        // إذا الحساب مستلم
+        // وماكو أي راجع مفتوح
+
+        if(
+
+            order.finance_done === true
+
+            &&
+
+            !order.hasWaitingReturns
+
+        ){
+
+            return false;
+
+        }
+
+
+
+        // إخفاء الطلب الأصلي
+        // إذا صار إعادة توصيل
+        // وما بقت بيه قطع
+
+        if(
+
+            redeliveryParents.includes(order.id)
+
+            &&
+
+            order.order_type !== "re_delivery"
+
+        ){
+
+            const hasRemainingItems =
+
+            order.order_items?.some(item=>{
+
+                return Number(item.quantity || 0) > 0;
+
+            });
+
+
+
+            if(!hasRemainingItems){
+
+                return false;
+
+            }
+
+        }
+
+
+
+        return true;
+
+    });
+    // =====================
+    // تجهيز حالات إضافية
+    // =====================
+
+    orders.forEach(order=>{
+
+        // يظهر في كارت الراجع الجزئي
+        // فقط إذا يوجد راجع جزئي غير مستلم
+
+        order.isPartialReturn =
+
+        order.waitingReturns.some(r=>
+
+            r.type === "partial_return"
+
+        );
+
+
+        // يظهر في المرفوض
+        // فقط إذا يوجد راجع مرفوض غير مستلم
+
+        order.isCancelledReturn =
+
+        order.waitingReturns.some(r=>
+
+            r.type === "cancelled"
+
+        );
+
+
+
+        // إذا الحساب مستلم
+        // ويوجد راجع
+        // نخليه ظاهر بالرواجع فقط
+
+        order.showReturnsOnly =
+
+        order.finance_done === true
+
+        &&
+
+        order.hasWaitingReturns;
+
+    });
+
+
+
+    console.log(
+
+        "طلبات الادارة:",
+
+        orders
 
     );
 
 
 
-    order.hideCancelledAfterRedelivery =
+    // =====================
+    // العرض حسب الفلتر الحالي
+    // =====================
 
-        order.status==="cancelled"
+    let result = [];
 
-        &&
 
-        !rows.some(r=>
 
-            r.type==="cancelled"
+    if(currentFilter === "partial_return"){
 
-            &&
+        result =
 
-            r.status==="waiting"
+        orders.filter(o=>
+
+            o.isPartialReturn === true
 
         );
 
-});
-orders = orders.filter(order => {
-
-    if(order.hideCancelledAfterRedelivery){
-        return false;
     }
 
-    return true;
+    else if(currentFilter === "cancelled"){
 
-});
-console.log(
-"طلبات الادارة:",
-orders
-);
+        result =
+
+        orders.filter(o=>{
+
+            return (
+
+                o.status === "cancelled"
+
+                ||
+
+                o.isCancelledReturn === true
+
+            );
+
+        });
+
+    }
+
+    else{
+
+        result =
+
+        orders.filter(o=>{
+
+            // إذا الحساب مستلم
+            // ويوجد راجع
+            // لا يظهر بالمكتمل
+
+            if(
+
+                currentFilter === "completed"
+
+                &&
+
+                o.showReturnsOnly
+
+            ){
+
+                return false;
+
+            }
+
+            return o.status === currentFilter;
+
+        });
+
+    }
 
 
 
-// عرض حسب الحالة
-
-if(currentFilter === "partial_return"){
+    renderOrders(result);
 
 
-renderOrders(
 
-orders.filter(o=>
+    updateStatusCards();
 
-o.isPartialReturn === true
+    updateBulkButton();
 
-)
-
-);
-
-
+    updateBulkDelete();
 }
-
-else{
-
-
-renderOrders(
-
-orders.filter(o=>
-
-o.status === currentFilter
-
-)
-
-);
-
-
-}
-
-
-updateStatusCards();
-updateBulkButton();
-updateBulkDelete();
-}
-
 
 
 function updateBulkButton(){
@@ -478,11 +625,7 @@ parent.style.display="none";
 
 }
 
-
 }
-
-
-
 }
 
 
@@ -2192,32 +2335,30 @@ if(nextStatus === "cancelled"){
         const { error:returnError } = await supabase
 
         .from("inventory_returns")
+.insert({
 
-        .insert({
+    order_id: order.id,
 
-            order_id: order.id,
+    order_item_id: item.id,
 
-            order_item_id: item.id,
+    variant_id: item.variant_id,
 
-            variant_id: item.variant_id,
+    quantity: Number(item.quantity),
 
-            quantity: Number(item.quantity),
+    price: Number(item.price),
 
-            price: Number(item.price),
+    type: "cancelled",
 
-            type: "cancelled",
+    status: "waiting",
 
-            status: "waiting",
+    accounts_received: false,
 
-            reason:
+    reason:
+        order.order_type === "re_delivery"
+        ? "رفض إعادة توصيل"
+        : (reason || "رفض طلب")
 
-                order.order_type === "re_delivery"
-
-                ? "رفض إعادة توصيل"
-
-                : (reason || "رفض طلب")
-
-        });
+});
 
         if(returnError){
 
@@ -2424,101 +2565,109 @@ return names[status] || status;
 
 function updateStatusCards(){
 
+    const states = [
 
-console.log("تحديث الكروت");
+        { status:"new", id:"newCount" },
 
+        { status:"prepared", id:"preparedCount" },
 
-let states=[
+        { status:"delivery", id:"deliveryCount" },
 
-{
-status:"new",
-id:"newCount"
-},
+        { status:"completed", id:"completedCount" },
 
-{
-status:"prepared",
-id:"preparedCount"
-},
+        { status:"postponed", id:"postponedCount" },
 
-{
-status:"delivery",
-id:"deliveryCount"
-},
+        { status:"cancelled", id:"cancelledCount" },
 
-{
-status:"completed",
-id:"completedCount"
-},
+        { status:"partial_return", id:"partialReturnCount" }
 
-{
-status:"postponed",
-id:"postponedCount"
-},
-
-{
-status:"cancelled",
-id:"cancelledCount"
-},
-
-{
-status:"partial_return",
-id:"partialReturnCount"
-}
-
-];
+    ];
 
 
-states.forEach(item=>{
+    states.forEach(item=>{
+
+        let count = 0;
 
 
-let count;
+        switch(item.status){
+
+            case "partial_return":
+
+                count = orders.filter(o=>
+
+                    o.waitingReturns?.some(r=>
+
+                        r.type==="partial_return"
+
+                        &&
+
+                        r.accounts_received===false
+
+                    )
+
+                ).length;
+
+            break;
 
 
-if(item.status === "partial_return"){
+            case "cancelled":
+
+                count = orders.filter(o=>
+
+                    o.status==="cancelled"
+
+                    ||
+
+                    o.waitingReturns?.some(r=>
+
+                        r.type==="cancelled"
+
+                        &&
+
+                        r.accounts_received===false
+
+                    )
+
+                ).length;
+
+            break;
 
 
-count = orders.filter(o=>{
+            case "completed":
 
-return o.isPartialReturn === true;
+                count = orders.filter(o=>
 
-}).length;
+                    o.status==="completed"
 
+                    &&
 
-}
-else{
+                    !o.showReturnsOnly
 
+                ).length;
 
-count = orders.filter(o=>{
-
-return o.status === item.status;
-
-}).length;
+            break;
 
 
-}
+            default:
+
+                count = orders.filter(o=>
+
+                    o.status===item.status
+
+                ).length;
+
+        }
 
 
+        const el = document.getElementById(item.id);
 
-console.log(
-item.status,
-count
-);
+        if(el){
 
+            el.innerText = count;
 
+        }
 
-let el=document.getElementById(item.id);
-
-
-
-if(el){
-
-el.innerText=count;
-
-}
-
-
-});
-
+    });
 
 }
 
@@ -3013,6 +3162,8 @@ price:item.price,   // ✅ مهم
 type:"partial_return",
 
 status:"waiting",
+
+accounts_received:false,
 
 reason:"استرجاع قطعة"
 

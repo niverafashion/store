@@ -27,51 +27,78 @@ const { data, error } = await supabase
 .from("orders")
 .select(`
 id,
+delivery_code,
 customer_id,
 customer_name,
 phone,
 governorate,
 address,
-total_price,
 delivery_price,
+subtotal_price,
+discount_amount,
+total_price,
 status,
 finance_done,
 has_return,
+has_partial_refund,
 refund_amount,
+completed_at,
+cancelled_reason,
 created_at,
 order_items(
 id,
-quantity,
-price,
 variant_id,
+quantity,
+returned_quantity,
+price,
 product_variants(
+id,
 color,
 size,
+stock_quantity,
 image,
-products(name)
+products(
+id,
+name
+)
 )
 )
 `)
-.in("status", ["completed", "cancelled"])
-.order("created_at", { ascending: false });
+.in("status", ["completed","cancelled"])
+.order("created_at",{ ascending:false });
 
-if (error) {
-console.log(error);
+if(error){
+console.error(error);
 return;
 }
+const { data: inventoryReturns } = await supabase
+.from("inventory_returns")
+.select("*")
+.eq("accounts_received", false);
 
-// =====================
-// الطلبات غير المستلمة مالياً
-// =====================
+const returnsByOrder = {};
 
-orders = data.filter(o => !o.finance_done);
+inventoryReturns?.forEach(r => {
 
-// =====================
-// تحديث كل الواجهة
-// =====================
+    if(!returnsByOrder[r.order_id]){
+        returnsByOrder[r.order_id] = [];
+    }
 
-renderOrders(orders);
+    returnsByOrder[r.order_id].push(r);
+
+});
+orders = data || [];
+orders.forEach(order => {
+
+    order.inventoryReturns =
+        returnsByOrder[order.id] || [];
+
+});
+// تحديث الكروت
 updateCards();
+
+// عرض حسب الفلتر الحالي
+renderOrders(filterOrders());
 
 }
 
@@ -83,7 +110,13 @@ function filterOrders() {
 if (!currentFilter) return orders;
 
 if (currentFilter === "returns") {
-return orders.filter(o => o.has_return);
+
+return orders.filter(o =>
+
+o.inventoryReturns.length > 0
+
+);
+
 }
 
 return orders.filter(o => o.status === currentFilter);
@@ -93,89 +126,183 @@ return orders.filter(o => o.status === currentFilter);
 // عرض الطلبات
 // =====================
 
-function renderOrders(list) {
+function renderOrders(list){
 
 let html = "";
 
-list.forEach(o => {
+list.forEach(o=>{
 
-// المنتجات
-let products = (o.order_items || []).map(item => {
+const delivery = Number(o.delivery_price || 0);
+const total = Number(o.total_price || 0);
+const net = total - delivery;
+
+const hasPartialReturn =
+o.inventoryReturns.some(r=>
+r.type === "partial_return"
+);
+
+let orderItems = o.order_items || [];
+
+let products = orderItems.map(item=>{
 
 return `
+
 <div class="product-box">
 
 <div class="product-info">
 
-<b>🛍 ${item.product_variants?.products?.name || "-"}</b>
+<b>
+🛍 ${item.product_variants?.products?.name || "-"}
+</b>
 
-<div>🎨 ${item.product_variants?.color || "-"}</div>
-<div>📏 ${item.product_variants?.size || "-"}</div>
-<div>🔢 ${item.quantity}</div>
+<div>
+🎨 اللون:
+${item.product_variants?.color || "-"}
+</div>
+
+<div>
+📏 المقاس:
+${item.product_variants?.size || "-"}
+</div>
+
+<div>
+🔢 الكمية:
+${item.quantity}
+</div>
 
 </div>
 
-<img src="${item.product_variants?.image || 'default.png'}" class="variant-img">
+<img
+src="${item.product_variants?.image || "default.png"}"
+class="variant-img">
 
 </div>
+
 `;
 
 }).join("");
 
-// حسابات الطلب
-let delivery = Number(o.delivery_price || 0);
-let total = Number(o.total_price || 0);
-let net = total - delivery;
-
-// رواجع جزئية
-let returnedQty = (o.order_items || []).reduce((a, b) => a + Number(b.quantity || 0), 0);
-let hasPartialReturn = o.has_return && returnedQty > 0;
-
-// HTML
 html += `
+
 <tr>
 
-<td>
-<input type="checkbox" class="order-check" data-id="${o.id}">
-<br>
-#${o.id}
+<td class="order-number">
+
+<div class="order-select-box">
+
+<input
+type="checkbox"
+class="account-check"
+data-id="${o.id}">
+
+<span
+class="order-id copy-code"
+data-code="${o.delivery_code || o.id}"
+title="اضغط للنسخ">
+
+${o.delivery_code || "#" + o.id}
+
+</span>
+
+${
+o.inventoryReturns.length
+?
+`
+<span class="return-order-icon">
+<i class="fa-solid fa-arrow-right-arrow-left"></i>
+</span>
+`
+:
+""
+}
+
+</div>
+
 </td>
 
 <td>${o.customer_name || "-"}</td>
+
 <td>${o.phone || "-"}</td>
+
 <td>${o.governorate || "-"}</td>
 
+<td class="products-cell">
+
+${products}
+
+</td>
+
 <td>
-${total} د.ع
+
+${total.toLocaleString()} د.ع
+
 <br>
-<small>صافي: ${net} د.ع</small>
+
+<small>
+
+الصافي :
+${net.toLocaleString()} د.ع
+
+</small>
+
 </td>
 
 <td>
-${o.has_return ? "يوجد" : "لا"}
 
-${hasPartialReturn ? `<small>(جزئي)</small>` : ""}
-</td>
+${
+o.inventoryReturns.length
+?
+`
+<span class="badge return">
 
-<td>
-<span class="badge ${o.status}">
-${statusName(o.status)}
+${hasPartialReturn ? "راجع جزئي" : "راجع كامل"}
+
 </span>
+`
+:
+"-"
+}
+
 </td>
 
 <td>
-<button class="finance-btn" onclick="finishFinance('${o.id}')">
-${o.finance_done ? "تم" : "استلام"}
+
+<span class="badge ${o.status}">
+
+${statusName(o.status)}
+
+</span>
+
+</td>
+
+<td>
+
+<button
+class="finance-btn"
+onclick="finishFinance('${o.id}')"
+title="استلام الحساب">
+
+<i class="fa-solid fa-money-bill-transfer"></i>
+
 </button>
+
 </td>
 
 <td>
-<button class="view-btn" onclick="openAccount('${o.id}')">
+
+<button
+class="view-btn"
+onclick="openAccount('${o.id}')"
+title="عرض التفاصيل">
+
 <i class="fa-solid fa-eye"></i>
+
 </button>
+
 </td>
 
 </tr>
+
 `;
 
 });
@@ -228,8 +355,11 @@ a + Number(b.total_price || 0) + Number(b.delivery_price || 0)
 ,0);
 
 // 🟢 الرواجع الجزئية
-let partialReturns = orders.filter(o => o.has_return);
+let partialReturns = orders.filter(o =>
 
+o.inventoryReturns.length > 0
+
+);
 let refundTotal = partialReturns.reduce((sum, o) => {
 return sum + Number(o.refund_amount || 0);
 }, 0);
@@ -238,9 +368,6 @@ return sum + Number(o.refund_amount || 0);
 let netTotal =
 grossTotal - refundTotal;
 
-
-document.getElementById("allCount").innerText =
-orders.length;
 
 document.getElementById("completedCount").innerText =
 completed.length;
@@ -260,8 +387,11 @@ netEl.innerText = netTotal + " د.ع";
 
 // 🔁 الرواجع
 document.getElementById("pendingReturns").innerText =
-orders.filter(o => o.has_return).length;
+orders.filter(o =>
 
+o.inventoryReturns.length > 0
+
+).length;
 }
 // =====================
 // الفلاتر
@@ -303,21 +433,88 @@ String(o.id).includes(value) ||
 renderOrders(result);
 
 };
+async function restoreStock(order) {
 
+  for (const item of (order.order_items || [])) {
+
+    let qty = 0;
+
+    if (order.status === "cancelled") {
+
+      qty = Number(item.quantity || 0);
+
+} else if (order.inventoryReturns.length) {
+
+    const row = order.inventoryReturns.find(r =>
+
+        r.variant_id === item.variant_id
+
+    );
+
+    qty = Number(row?.quantity || 0);
+
+}
+
+    if (qty <= 0) continue;
+
+    // جلب الكمية الحالية
+    const { data: variant } = await supabase
+      .from("product_variants")
+      .select("stock_quantity")
+      .eq("id", item.variant_id)
+      .single();
+
+    const current = Number(variant.stock_quantity || 0);
+
+    // تحديث المخزون
+    await supabase
+      .from("product_variants")
+      .update({
+        stock_quantity: current + qty
+      })
+      .eq("id", item.variant_id);
+
+    // حركة مخزون
+    await supabase
+      .from("stock_movements")
+      .insert({
+        variant_id: item.variant_id,
+        type: "return",
+        quantity: qty,
+        note: `رجوع من الطلب ${order.delivery_code}`
+      });
+
+  }
+
+}
 // =====================
 // استلام الأموال
 // =====================
 
 window.finishFinance = async function(id) {
 
+  const order = orders.find(o => o.id === id);
+
+  if (!order) return;
+// استلام الجزء المكتمل فقط
 await supabase
 .from("orders")
-.update({ finance_done: true })
+.update({
+    finance_done: true
+})
+.eq("id", id);
+
+// تعليم الرواجع أنها لم تستلم بعد
+await supabase
+.from("orders")
+.update({
+    finance_done: true
+})
 .eq("id", id);
 
 await loadOrders();
 
-};
+}
 
 // =====================
 // تفاصيل
@@ -373,8 +570,5 @@ cancelled: "ملغي"
 }[s] || s;
 }
 
-// =====================
-// تشغيل
-// =====================
 
 loadOrders();

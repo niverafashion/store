@@ -157,15 +157,7 @@ cat.name;
 document.getElementById("categoryDescription")
 .innerText =
 cat.description || "";
-
-
-
 }
-
-
-
-
-
 
 
 
@@ -1654,27 +1646,24 @@ function renderZoomImage(){
 
   zoomImg.src = src;
 }
-let startX = 0;
+// ================================
+// أزرار تقليب الصور
+// ================================
 
-zoomModal.addEventListener("touchstart", (e) => {
-  startX = e.touches[0].clientX;
-});
+const zoomNextBtn = document.getElementById("zoomNext");
+const zoomPrevBtn = document.getElementById("zoomPrev");
 
-zoomModal.addEventListener("touchend", (e) => {
-  let endX = e.changedTouches[0].clientX;
+if (zoomNextBtn) {
+    zoomNextBtn.onclick = () => {
+        nextZoom();
+    };
+}
 
-  let diff = startX - endX;
-
-  // سحب يسار (التالي)
-  if(diff > 50){
-    nextZoom();
-  }
-
-  // سحب يمين (السابق)
-  if(diff < -50){
-    prevZoom();
-  }
-});
+if (zoomPrevBtn) {
+    zoomPrevBtn.onclick = () => {
+        prevZoom();
+    };
+}
 function nextZoom(){
   let imgs = zoomProduct.product_images || [];
   if(!imgs.length) return;

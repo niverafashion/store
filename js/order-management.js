@@ -363,7 +363,7 @@ async function loadOrders(){
 
     orders = data.filter(order=>{
 
-
+console.log("orders after filter", orders);
         // إذا الحساب مستلم
         // وماكو أي راجع مفتوح
 
@@ -551,7 +551,7 @@ async function loadOrders(){
 
     renderOrders(result);
 
-
+console.log("result", result);
 
     updateStatusCards();
 

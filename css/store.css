@@ -2037,13 +2037,14 @@ transition:.3s;
     position:relative;
 }
 
+/* الكود الأصلي — لا نغير شكل أو مكان الأسهم */
 
 .product-slider .prev-img,
 .product-slider .next-img{
 
 position:absolute !important;
 
-top:50% !important;
+top:60% !important;
 
 font-size:60px !important;
 
@@ -2063,7 +2064,7 @@ box-shadow:none !important;
 
 padding:0 !important;
 
-margin:-30 !important;
+margin:-30px !important;
 
 width:auto !important;
 
@@ -2080,6 +2081,8 @@ text-shadow:0 3px 10px black !important;
 }
 
 
+/* نفس المواقع بالضبط */
+
 .product-slider .prev-img{
 
 right:10px !important;
@@ -2090,6 +2093,19 @@ right:10px !important;
 .product-slider .next-img{
 
 left:10px !important;
+
+}
+
+
+/* =========================
+   توسيع منطقة اللمس فقط
+   ========================= */
+
+.product-slider .prev-img,
+.product-slider .next-img{
+
+    /* نخلي مساحة الضغط أكبر */
+    padding:90px 25px !important;
 
 }
 /* تثبيت ارتفاع الكروت */
@@ -2512,4 +2528,346 @@ font-size:11px !important;
   display: none;
   z-index: 100000;
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+/* ================================
+   IMAGE ZOOM - PROFESSIONAL CONTROLS
+================================ */
+
+.img-zoom-modal{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.88);
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:99999;
+
+    padding:20px;
+
+    overflow:hidden;
+}
+
+
+/* الصورة */
+
+/* =================================================
+   IMAGE ZOOM MODAL
+================================================= */
+
+.img-zoom-modal {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(8, 8, 12, 0.94);
+
+    z-index: 100000;
+
+    overflow: hidden;
+
+    /* يمنع تحريك محتوى الصفحة */
+    touch-action: none;
+
+    overscroll-behavior: none;
+
+    -webkit-overflow-scrolling: none;
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+
+/* =================================================
+   الصورة
+================================================= */
+
+.img-zoom-modal img {
+
+    display: block;
+
+    max-width: 88%;
+    max-height: 82%;
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+
+    border-radius: 16px;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    -webkit-user-drag: none;
+
+    pointer-events: none;
+
+    box-shadow:
+        0 20px 70px rgba(0,0,0,.55),
+        0 0 0 1px rgba(255,255,255,.08);
+}
+
+
+/* =================================================
+   زر الإغلاق X
+================================================= */
+
+#closeZoom {
+
+    position: absolute;
+
+    top: 24px;
+    left: 24px;
+
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255,255,255,.18);
+
+    border-radius: 50%;
+
+    background: rgba(20,20,25,.55);
+
+    color: #fff;
+
+    font-size: 31px;
+
+    font-family: Arial, sans-serif;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    z-index: 100002;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.35);
+
+    transition:
+        background .25s ease,
+        transform .25s ease,
+        border-color .25s ease;
+}
+
+
+#closeZoom:hover {
+
+    background: rgba(247,182,200,.95);
+
+    border-color: rgba(255,255,255,.35);
+
+    color: #fff;
+
+    transform: scale(1.08);
+}
+
+
+/* =================================================
+   أسهم التقليب
+================================================= */
+
+.zoom-prev,
+.zoom-next {
+
+    position: absolute;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 62px;
+    height: 62px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    margin: 0;
+
+    border: 1px solid rgba(255,255,255,.18);
+
+    border-radius: 50%;
+
+    background: rgba(20,20,25,.55);
+
+    color: #fff;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 50px;
+
+    font-weight: 300;
+
+    line-height: .8;
+
+    cursor: pointer;
+
+    z-index: 100001;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.35);
+
+    transition:
+        background .25s ease,
+        transform .25s ease,
+        border-color .25s ease;
+}
+
+
+/* مواقع الأسهم — نفس أماكنك */
+
+.zoom-prev {
+    right: 24px;
+}
+
+.zoom-next {
+    left: 24px;
+}
+
+
+/* =================================================
+   Hover الأسهم
+================================================= */
+
+.zoom-prev:hover,
+.zoom-next:hover {
+
+    background: rgba(247,182,200,.95);
+
+    border-color: rgba(255,255,255,.4);
+
+    transform:
+        translateY(-50%)
+        scale(1.08);
+}
+
+
+/* =================================================
+   منع تحديد / سحب الصفحة داخل المودل
+================================================= */
+
+.img-zoom-modal,
+.img-zoom-modal * {
+
+    overscroll-behavior: none;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =================================================
+   موبايل
+================================================= */
+
+@media (max-width: 700px) {
+
+    .img-zoom-modal {
+
+        background: rgba(5,5,8,.96);
+
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+
+    }
+
+
+    .img-zoom-modal img {
+
+        max-width: 92%;
+
+        max-height: 76%;
+
+        border-radius: 14px;
+
+    }
+
+
+    #closeZoom {
+
+        top: 16px;
+        left: 16px;
+
+        width: 46px;
+        height: 46px;
+
+        font-size: 27px;
+
+    }
+
+
+    .zoom-prev,
+    .zoom-next {
+
+        width: 52px;
+        height: 52px;
+
+        font-size: 42px;
+
+    }
+
+
+    .zoom-prev {
+
+        right: 12px;
+
+    }
+
+
+    .zoom-next {
+
+        left: 12px;
+
+    }
+
+}
+
+
+/* =================================================
+   شاشات صغيرة جداً
+================================================= */
+
+@media (max-width: 380px) {
+
+    .zoom-prev,
+    .zoom-next {
+
+        width: 46px;
+        height: 46px;
+
+        font-size: 37px;
+
+    }
+
+    .zoom-prev {
+        right: 8px;
+    }
+
+    .zoom-next {
+        left: 8px;
+    }
+
 }

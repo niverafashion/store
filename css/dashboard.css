@@ -1258,4 +1258,127 @@ font-size:20px;
 
 
 }
+/* ===============================
+   NIVRA MESSAGES QUICK BUTTON
+================================ */
 
+.quick .messages-quick-button {
+    width: 100%;
+    min-height: 135px;
+    margin-top: 22px;
+    padding: 30px 35px;
+
+    display: flex;
+    align-items: center;
+    gap: 25px;
+
+    background: #fff;
+    color: #111;
+    text-decoration: none;
+
+    border: 1px solid #f2dce3;
+    border-radius: 28px;
+
+    box-shadow: 0 6px 22px rgba(0,0,0,.05);
+
+    transition: .25s ease;
+}
+
+.quick .messages-quick-button:hover {
+    background: #fff7fa;
+    border-color: #d987a0;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(217,135,160,.18);
+}
+
+/* ICON */
+
+.messages-quick-icon {
+    width: 76px;
+    height: 76px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #fce8ef;
+    color: #d987a0;
+
+    border-radius: 22px;
+    font-size: 34px;
+}
+
+/* TEXT */
+
+.messages-quick-text {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    text-align: right;
+}
+
+.messages-quick-text strong {
+    font-size: 23px;
+    font-weight: 700;
+    color: #222;
+}
+
+.messages-quick-text small {
+    font-size: 16px;
+    color: #888;
+}
+
+/* UNREAD BADGE */
+
+.quick-messages-badge {
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    margin-right: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #d987a0;
+    color: #fff;
+
+    border-radius: 50px;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .quick .messages-quick-button {
+        width: 100%;
+        min-height: 115px;
+        padding: 22px 20px;
+        gap: 17px;
+        border-radius: 23px;
+    }
+
+    .messages-quick-icon {
+        width: 65px;
+        height: 65px;
+        font-size: 29px;
+        border-radius: 19px;
+    }
+
+    .messages-quick-text strong {
+        font-size: 20px;
+    }
+
+    .messages-quick-text small {
+        font-size: 14px;
+    }
+
+    .quick-messages-badge {
+        min-width: 32px;
+        height: 32px;
+        font-size: 15px;
+    }
+}

@@ -120,7 +120,79 @@ return;
 
 checkUser();
 
+// =========================
+// هوية الموظف الحالي
+// =========================
 
+let currentProfile = null;
+
+async function loadCurrentProfile() {
+
+    const { data, error } = await supabase
+        .rpc("get_my_chat_profile");
+
+    if (error) {
+        console.log("Profile Error:", error);
+        return;
+    }
+
+    currentProfile = Array.isArray(data) ? data[0] : data;
+
+}
+// =========================
+// عدد الرسائل غير المقروءة
+// =========================
+
+async function loadUnreadMessages() {
+
+    if (!currentProfile?.id) return;
+
+    const { count, error } = await supabase
+        .from("direct_messages")
+        .select("id", {
+            count: "exact",
+            head: true
+        })
+        .neq("sender_user_id", currentProfile.id)
+        .is("read_at", null);
+
+    if (error) {
+        console.log("Unread Messages Error:", error);
+        return;
+    }
+
+    const badge = document.getElementById(
+        "quickUnreadMessagesCount"
+    );
+
+    if (!badge) return;
+
+    const unread = count || 0;
+
+    badge.innerText = unread > 99 ? "99+" : unread;
+
+    badge.style.display = unread > 0 ? "flex" : "none";
+
+}
+
+// =========================
+// تشغيل وتحديث عداد الرسائل
+// =========================
+
+async function initUnreadMessages() {
+
+    await loadCurrentProfile();
+
+    await loadUnreadMessages();
+
+    // تحديث تلقائي كل 10 ثوانٍ
+    setInterval(() => {
+        loadUnreadMessages();
+    }, 10000);
+
+}
+
+initUnreadMessages();
 // =========================
 // جلب الاحصائيات
 // =========================

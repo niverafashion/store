@@ -2108,10 +2108,18 @@ textarea {
     }
 }
 
-    .message-footer {
-        margin-top: 2px;
-    }
+.message-footer {
+    margin-top: 0;
+    line-height: 1;
+    gap: 3px;
+}
+.message-bubble {
+    padding-bottom: 4px;
+}
 
+.message-content {
+    line-height: 1.5;
+}
     .message-time {
         font-size: 9px;
     }
@@ -2152,4 +2160,52 @@ textarea {
         width: 100%;
         box-sizing: border-box;
     }
+}
+
+
+
+
+.brand-header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 15px;
+}
+
+.brand-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: 4px;
+}
+
+.back-dashboard-btn {
+    position: absolute;
+    top: 18px;
+    right: 15px;
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+    border: 1px solid rgba(217, 135, 160, 0.2);
+
+    background: rgba(217, 135, 160, 0.08);
+    color: #d987a0;
+
+    text-decoration: none;
+    font-size: 14px;
+
+    transition: 0.2s ease;
+}
+
+.back-dashboard-btn:hover {
+    background: #d987a0;
+    color: white;
+    transform: translateY(-2px);
 }

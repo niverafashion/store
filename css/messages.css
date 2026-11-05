@@ -1866,3 +1866,150 @@ textarea {
         transition-duration: .01ms !important;
     }
 }
+
+
+/* =========================================
+   NIVRA - FINAL MESSAGE BUBBLE FIX
+========================================= */
+
+/* ترتيب الرسائل */
+.message-row {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    flex: 0 0 auto;
+}
+
+/* رسائلي على اليمين */
+.message-row.own-message {
+    justify-content: flex-end;
+}
+
+/* رسائل الموظف الآخر على اليسار */
+.message-row.other-message {
+    justify-content: flex-start;
+}
+
+/* صندوق الرسالة */
+.message-row .message-bubble {
+    display: inline-flex;
+    flex-direction: column;
+
+    width: fit-content;
+    max-width: 65%;
+    min-width: 0;
+
+    flex: 0 1 auto;
+
+    padding: 10px 15px;
+    border-radius: 16px;
+
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+/* محتوى النص */
+.message-row .message-content {
+    display: block;
+
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+
+    font-size: 12px;
+    line-height: 1.9;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+/* رسائلي */
+.message-row.own-message .message-bubble {
+    background: #fce5ed;
+    color: #292126;
+    border: 1px solid #f3cfdb;
+    border-bottom-right-radius: 5px;
+}
+
+/* رسائل الموظف الآخر */
+.message-row.other-message .message-bubble {
+    background: #ffffff;
+    color: #292126;
+    border: 1px solid #e9e5e7;
+    border-bottom-left-radius: 5px;
+}
+
+/* معلومات الرسالة */
+.message-row .message-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+
+    margin-top: 5px;
+    font-size: 10px;
+}
+
+/* الموبايل */
+@media (max-width: 700px) {
+
+    .message-row .message-bubble {
+        max-width: 78%;
+        padding: 9px 12px;
+    }
+
+    .message-row .message-content {
+        font-size: 12px;
+    }
+}
+
+
+/* =========================================
+   MOBILE INPUT ZOOM FIX
+========================================= */
+
+.message-input,
+#messageInput,
+input,
+textarea,
+select {
+    font-size: 16px !important;
+}
+
+#messageInput {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation;
+}
+
+@media (max-width: 700px) {
+
+    .messages-list {
+        padding: 12px 10px !important;
+    }
+
+    .message-bubble {
+        max-width: 86%;
+        padding: 10px 13px;
+    }
+
+    .message-content {
+        font-size: 15px;
+    }
+
+    .composer-area {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #messageInput {
+        font-size: 16px !important;
+        line-height: 1.6;
+    }
+}
+
+

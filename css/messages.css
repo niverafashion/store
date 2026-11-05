@@ -1913,24 +1913,18 @@ textarea {
     flex-direction: column;
 
     width: fit-content;
-    max-width: min(72%, 560px);
-    min-width: 65px;
+    max-width: min(58%, 460px);
+    min-width: 0;
 
-    padding: 8px 11px 6px;
+    padding: 5px 9px 4px;
+    border-radius: 11px;
 
-    border-radius: 12px;
-    box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.10);
-
-    font-size: 13px;
-    line-height: 1.75;
+    font-size: 12px;
+    line-height: 1.6;
 
     overflow-wrap: anywhere;
     word-break: normal;
     white-space: normal;
-
-    transition:
-        box-shadow .2s ease,
-        transform .2s ease;
 }
 
 /* رسائلي */
@@ -2100,18 +2094,19 @@ textarea {
         width: 100%;
     }
 
+    @media (max-width: 700px) {
     .message-bubble {
-        max-width: 82%;
-        min-width: 58px;
-
-        padding: 7px 10px 5px;
-        border-radius: 11px;
+        max-width: 72%;
+        min-width: 0;
+        padding: 5px 8px 4px;
+        border-radius: 10px;
     }
 
     .message-content {
-        font-size: 13px;
-        line-height: 1.8;
+        font-size: 12px;
+        line-height: 1.7;
     }
+}
 
     .message-footer {
         margin-top: 2px;
@@ -2120,7 +2115,9 @@ textarea {
     .message-time {
         font-size: 9px;
     }
-
+.message-actions-trigger {
+    z-index: 2;
+}
     /* إظهار زر الخيارات بدون الحاجة للماوس */
     .message-actions-trigger {
         opacity: .65;

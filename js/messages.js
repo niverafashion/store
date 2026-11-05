@@ -154,9 +154,10 @@ function getInitials(name = "") {
 function formatTime(value) {
     if (!value) return "";
 
-    return new Date(value).toLocaleTimeString("ar-IQ", {
-        hour: "2-digit",
-        minute: "2-digit"
+    return new Date(value).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
     });
 }
 

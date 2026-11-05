@@ -1868,148 +1868,291 @@ textarea {
 }
 
 
-/* =========================================
-   NIVRA - FINAL MESSAGE BUBBLE FIX
-========================================= */
 
-/* ترتيب الرسائل */
-.message-row {
-    width: 100%;
+/* =====================================================
+   NIVRA CHAT — WHATSAPP STYLE
+   FINAL MESSAGE DESIGN
+===================================================== */
+
+/* منطقة الرسائل */
+.messages-list {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    gap: 9px;
+    padding: 22px 5%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    background-color: #f7f5f3;
+}
+
+/* كل رسالة */
+.message-row {
+    display: flex;
+    width: 100%;
+    min-width: 0;
     flex: 0 0 auto;
+    align-items: flex-end;
+    margin: 0;
 }
 
-/* رسائلي على اليمين */
+/* رسائلي — اليمين */
 .message-row.own-message {
-    justify-content: flex-end;
-}
-
-/* رسائل الموظف الآخر على اليسار */
-.message-row.other-message {
     justify-content: flex-start;
 }
 
-/* صندوق الرسالة */
-.message-row .message-bubble {
-    display: inline-flex;
+/* رسائل الموظف الآخر — اليسار */
+.message-row.other-message {
+    justify-content: flex-end;
+}
+
+/* فقاعة الرسالة */
+.message-bubble {
+    position: relative;
+    display: flex;
     flex-direction: column;
 
     width: fit-content;
-    max-width: 65%;
-    min-width: 0;
+    max-width: min(72%, 560px);
+    min-width: 65px;
 
-    flex: 0 1 auto;
+    padding: 8px 11px 6px;
 
-    padding: 10px 15px;
-    border-radius: 16px;
+    border-radius: 12px;
+    box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.10);
+
+    font-size: 13px;
+    line-height: 1.75;
 
     overflow-wrap: anywhere;
+    word-break: normal;
     white-space: normal;
+
+    transition:
+        box-shadow .2s ease,
+        transform .2s ease;
 }
 
-/* محتوى النص */
-.message-row .message-content {
+/* رسائلي */
+.own-message .message-bubble {
+    background: #fce7ef;
+    color: #292126;
+
+    border: 1px solid #f3d4df;
+    border-bottom-right-radius: 3px;
+}
+
+/* رسائل الطرف الثاني */
+.other-message .message-bubble {
+    background: #ffffff;
+    color: #292126;
+
+    border: 1px solid #ece8e9;
+    border-bottom-left-radius: 3px;
+}
+
+/* نص الرسالة */
+.message-content {
     display: block;
 
     width: auto;
     max-width: 100%;
     min-width: 0;
 
-    font-size: 12px;
-    line-height: 1.9;
+    padding: 0;
+    margin: 0;
+
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.85;
 
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: normal;
+
+    text-align: right;
 }
 
-/* رسائلي */
-.message-row.own-message .message-bubble {
-    background: #fce5ed;
-    color: #292126;
-    border: 1px solid #f3cfdb;
-    border-bottom-right-radius: 5px;
-}
-
-/* رسائل الموظف الآخر */
-.message-row.other-message .message-bubble {
-    background: #ffffff;
-    color: #292126;
-    border: 1px solid #e9e5e7;
-    border-bottom-left-radius: 5px;
-}
-
-/* معلومات الرسالة */
-.message-row .message-footer {
+/* معلومات الرسالة: الوقت والتعديل والقراءة */
+.message-footer {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 6px;
+    gap: 4px;
 
-    margin-top: 5px;
-    font-size: 10px;
-}
-
-/* الموبايل */
-@media (max-width: 700px) {
-
-    .message-row .message-bubble {
-        max-width: 78%;
-        padding: 9px 12px;
-    }
-
-    .message-row .message-content {
-        font-size: 12px;
-    }
-}
-
-
-/* =========================================
-   MOBILE INPUT ZOOM FIX
-========================================= */
-
-.message-input,
-#messageInput,
-input,
-textarea,
-select {
-    font-size: 16px !important;
-}
-
-#messageInput {
     width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    -webkit-appearance: none;
-    appearance: none;
-    touch-action: manipulation;
+    min-height: 16px;
+
+    margin-top: 2px;
+
+    direction: ltr;
+    white-space: nowrap;
 }
+
+/* الوقت */
+.message-time {
+    color: #8b8589;
+    font-family: 'Cairo', sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+/* تم التعديل */
+.edited-label {
+    color: #a18d96;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+/* حالة القراءة */
+.message-read-status {
+    color: #d987a0;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: -3px;
+    padding-left: 2px;
+}
+
+/* زر خيارات الرسالة */
+.message-actions-trigger {
+    position: absolute;
+    top: 4px;
+    left: 5px;
+
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent;
+    color: #a49ba0;
+
+    font-size: 17px;
+    cursor: pointer;
+
+    opacity: 0;
+    transition: .2s ease;
+}
+
+/* إظهار الخيارات عند مرور المؤشر */
+.message-bubble:hover .message-actions-trigger {
+    opacity: 1;
+}
+
+.message-actions-trigger:hover {
+    background: rgba(0, 0, 0, .06);
+    color: #292126;
+}
+
+/* تحسين التمرير */
+.messages-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.messages-list::-webkit-scrollbar-thumb {
+    background: #e5cbd5;
+    border-radius: 10px;
+}
+
+.messages-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* الرسائل الفارغة */
+.empty-messages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: fit-content;
+    max-width: 90%;
+
+    margin: 25px auto;
+    padding: 10px 18px;
+
+    border-radius: 12px;
+    background: #fff;
+    color: #91868c;
+
+    font-size: 12px;
+    text-align: center;
+}
+
+/* =====================================================
+   MOBILE — RESPONSIVE CHAT
+===================================================== */
 
 @media (max-width: 700px) {
 
     .messages-list {
-        padding: 12px 10px !important;
+        padding: 15px 10px;
+        gap: 8px;
+    }
+
+    .message-row {
+        width: 100%;
     }
 
     .message-bubble {
-        max-width: 86%;
-        padding: 10px 13px;
+        max-width: 82%;
+        min-width: 58px;
+
+        padding: 7px 10px 5px;
+        border-radius: 11px;
     }
 
     .message-content {
-        font-size: 15px;
+        font-size: 13px;
+        line-height: 1.8;
     }
 
-    .composer-area {
-        padding-left: 10px;
-        padding-right: 10px;
+    .message-footer {
+        margin-top: 2px;
     }
 
-    #messageInput {
-        font-size: 16px !important;
-        line-height: 1.6;
+    .message-time {
+        font-size: 9px;
+    }
+
+    /* إظهار زر الخيارات بدون الحاجة للماوس */
+    .message-actions-trigger {
+        opacity: .65;
+        width: 23px;
+        height: 23px;
     }
 }
 
+/* =====================================================
+   IOS — PREVENT INPUT ZOOM
+===================================================== */
 
+/*
+   Safari on iPhone zooms when focused input text
+   is smaller than 16px.
+   Keep the actual editable fields at 16px.
+*/
+
+@media screen and (max-width: 700px) {
+
+    #messageInput,
+    #messageSearchInput,
+    #employeeSearch {
+        font-size: 16px !important;
+        line-height: 1.5;
+
+        -webkit-text-size-adjust: 100%;
+        touch-action: manipulation;
+    }
+
+    #messageInput {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

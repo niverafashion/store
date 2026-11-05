@@ -562,10 +562,17 @@ async function getOrCreateConversation(employeeId) {
 async function openConversation(employeeId) {
     const employee = getEmployeeById(employeeId);
 
-    if (!employee) return;
+    if (!employee) {
+        showToast("لم يتم العثور على الموظف.", "error");
+        return;
+    }
 
     try {
         activeEmployee = employee;
+
+        // إظهار المحادثة مباشرة عند الضغط على الموظف
+        document.querySelector(".messages-app")
+            ?.classList.add("chat-open");
 
         if (els.chatName) {
             els.chatName.textContent = employee.name || "موظف";
@@ -579,33 +586,37 @@ async function openConversation(employeeId) {
         setHidden(els.welcomeScreen, true);
         setHidden(els.chatScreen, false);
 
-        els.chatSidebar?.classList.remove("sidebar-open");
-
         renderEmployees();
 
+        // إنشاء المحادثة أو جلب الموجودة
         const conversation =
             await getOrCreateConversation(employeeId);
 
         activeConversationId = conversation.id;
 
-        // إذا كانت المحادثة مخفية عند المستخدم الحالي
-        // نعيد إظهارها عند فتحها من قائمة الموظفين.
+        // إعادة إظهار المحادثة إذا كانت مخفية سابقاً
         const hiddenIds = getHiddenConversations()
             .filter(id => id !== activeConversationId);
 
         saveHiddenConversations(hiddenIds);
 
+        // تحميل الرسائل
         await loadActiveMessages();
+
+        // تعليم الرسائل كمقروءة
         await markMessagesAsRead();
+
+        // تشغيل التحديث المباشر
         subscribeToActiveConversation();
 
         await loadConversations();
         renderEmployees();
 
     } catch (error) {
-        console.error(error);
+        console.error("Open conversation error:", error);
+
         showToast(
-            error.message || "حدث خطأ أثناء فتح المحادثة.",
+            error.message || "تعذر فتح المحادثة.",
             "error"
         );
     }
@@ -1165,7 +1176,8 @@ function hideCurrentConversation() {
 
             setHidden(els.chatScreen, true);
             setHidden(els.welcomeScreen, false);
-
+document.querySelector(".messages-app")
+    ?.classList.remove("chat-open");
             closeDropdown();
             cancelEditingMessage();
 
@@ -1253,15 +1265,6 @@ function resizeMessageInput() {
 // 23) فتح وإغلاق القائمة الجانبية
 // ------------------------------------------------------
 
-function openSidebar() {
-    els.chatSidebar?.classList.add("sidebar-open");
-    els.chatSidebar?.classList.remove("sidebar-closed");
-}
-
-function closeSidebar() {
-    els.chatSidebar?.classList.remove("sidebar-open");
-    els.chatSidebar?.classList.add("sidebar-closed");
-}
 function showWelcomeScreen() {
     unsubscribeRealtime();
 
@@ -1269,16 +1272,19 @@ function showWelcomeScreen() {
     activeEmployee = null;
     messages = [];
 
+    // الرجوع إلى قائمة الموظفين بالموبايل
+    document.querySelector(".messages-app")
+        ?.classList.remove("chat-open");
+
     setHidden(els.chatScreen, true);
     setHidden(els.welcomeScreen, false);
 
-    closeSidebar();
     closeDropdown();
+    closeContextMenu();
     cancelEditingMessage();
 
     renderEmployees();
 }
-
 // ------------------------------------------------------
 // 24) التعامل مع أزرار قائمة المحادثة
 // ------------------------------------------------------
@@ -1380,9 +1386,9 @@ function bindEvents() {
         cancelEditingMessage
     );
 
-    // أزرار القائمة الجانبية
-    els.openSidebarBtn?.addEventListener("click", openSidebar);
-    els.closeSidebarBtn?.addEventListener("click", closeSidebar);
+// أزرار القائمة الجانبية
+els.openSidebarBtn?.addEventListener("click", openSidebar);
+els.closeSidebarBtn?.addEventListener("click", closeSidebar);
 
     els.mobileBackBtn?.addEventListener(
         "click",
@@ -1560,7 +1566,6 @@ function bindEvents() {
             closeMessageSearch();
         }
 
-        closeSidebar();
     });
 }
 
@@ -1573,6 +1578,8 @@ async function initMessages() {
         bindEvents();
 
         setHidden(els.chatScreen, true);
+        document.querySelector(".messages-app")
+    ?.classList.remove("chat-open");
         setHidden(els.confirmModal, true);
         setHidden(els.employeeInfoModal, true);
         setHidden(els.conversationDropdown, true);

@@ -1,281 +1,174 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta name="theme-color" content="#ffffff">
-
     <title>NIVRA | Messages</title>
-
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
     <!-- Styles -->
     <link rel="stylesheet" href="../css/messages.css">
 </head>
-
 <body>
-
 <div class="messages-app">
-
     <!-- ==================================
-         SIDEBAR
+         EMPLOYEES PANEL
     =================================== -->
-
     <aside class="chat-sidebar" id="chatSidebar">
-
         <!-- Brand -->
-   <div class="brand-header">
-
-    <div class="brand-logo">NIVRA</div>
-
-    <div class="brand-caption">
-        PRIVATE WORKSPACE
-    </div>
-
-    <a href="../dashboard.html" class="back-dashboard-btn">
-        <i class="fa-solid fa-house"></i>
-        <span>القائمة الرئيسية</span>
-    </a>
-
-    <button class="mobile-sidebar-close" id="closeSidebarBtn" type="button" aria-label="إغلاق القائمة">
-        <i class="fa-solid fa-xmark"></i>
-    </button>
-
-</div>
-
-
+        <div class="brand-header">
+            <div class="brand-logo">NIVRA</div>
+            <div class="brand-caption">
+                PRIVATE WORKSPACE
+            </div>
+            <a href="../dashboard.html" class="back-dashboard-btn">
+                <i class="fa-solid fa-house"></i>
+                <span>القائمة الرئيسية</span>
+            </a>
+        </div>
         <!-- Current User -->
         <div class="sidebar-profile">
-
             <div class="profile-avatar avatar" id="myAvatar">
                 N
             </div>
-
             <div class="profile-details">
-
                 <span class="profile-label">
                     حسابك الحالي
                 </span>
-
                 <strong id="myName">
                     جاري التحميل...
                 </strong>
-
                 <span class="profile-status">
                     <span class="status-dot"></span>
                     حساب الموظف
                 </span>
-
             </div>
-
             <button class="profile-options" type="button" aria-label="خيارات الحساب">
                 <i class="fa-solid fa-ellipsis"></i>
             </button>
-
         </div>
-
-
-        <!-- Search -->
+        <!-- Employee Search -->
         <div class="sidebar-search">
-
             <i class="fa-solid fa-magnifying-glass"></i>
-
             <input
                 type="search"
                 id="employeeSearch"
                 placeholder="ابحث عن موظف..."
                 autocomplete="off"
             >
-
             <kbd>⌘ K</kbd>
-
         </div>
-
-
         <!-- Contacts Header -->
         <div class="contacts-heading">
-
             <div>
                 <span class="eyebrow">YOUR TEAM</span>
                 <h3>المحادثات</h3>
             </div>
-
             <span class="contacts-count" id="employeeCount">
                 0
             </span>
-
         </div>
-
-
         <!-- Conversation Filters -->
         <div class="conversation-filters">
-
             <button class="filter-chip active" type="button" data-filter="all">
                 الكل
             </button>
-
             <button class="filter-chip" type="button" data-filter="unread">
                 غير مقروءة
             </button>
-
         </div>
-
-
         <!-- Employees -->
         <div class="employees-list" id="employeesList">
-
             <div class="sidebar-loading">
                 <span class="loading-spinner"></span>
                 <p>جاري تحميل المحادثات...</p>
             </div>
-
         </div>
-
-
-        <!-- Sidebar Footer -->
+        <!-- Employees Panel Footer -->
         <div class="sidebar-footer">
-
             <div class="footer-brand-icon">
                 N
             </div>
-
             <div class="footer-brand-info">
                 <strong>NIVRA</strong>
                 <small>Internal Communication</small>
             </div>
-
             <span class="secure-badge">
                 <i class="fa-solid fa-shield-halved"></i>
             </span>
-
         </div>
-
     </aside>
-
-
     <!-- ==================================
          MAIN CONTENT
     =================================== -->
-
     <main class="chat-main">
-
         <!-- Top Navigation -->
         <header class="main-topbar">
-
             <div class="topbar-left">
-
-                <button
-                    class="mobile-menu-btn"
-                    id="openSidebarBtn"
-                    type="button"
-                    aria-label="فتح القائمة"
-                >
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-
                 <div>
                     <span class="eyebrow">NIVRA WORKSPACE</span>
                     <h1>مركز المراسلات</h1>
                 </div>
-
             </div>
-
-
             <div class="topbar-right">
-
                 <div class="connection-status">
                     <span class="status-dot"></span>
                     <span>اتصال النظام</span>
                 </div>
-
                 <div class="topbar-divider"></div>
-
                 <div class="topbar-brand">
                     <span>N</span>
                     NIVRA
                 </div>
-
             </div>
-
         </header>
-
-
         <!-- ==================================
              EMPTY / WELCOME SCREEN
         =================================== -->
-
         <section id="welcomeScreen" class="welcome-screen">
-
             <div class="welcome-decoration decoration-one"></div>
             <div class="welcome-decoration decoration-two"></div>
-
             <div class="welcome-content">
-
                 <div class="welcome-illustration">
-
                     <div class="illustration-circle">
-
                         <div class="illustration-message">
                             <i class="fa-regular fa-comments"></i>
                         </div>
-
                     </div>
-
                     <span class="illustration-star star-one">✦</span>
                     <span class="illustration-star star-two">✧</span>
                     <span class="illustration-star star-three">✦</span>
-
                 </div>
-
                 <span class="eyebrow">
                     PRIVATE TEAM COMMUNICATION
                 </span>
-
                 <h2>
                     أهلاً بك في مراسلات NIVRA
                 </h2>
-
                 <p>
                     مساحة خاصة للتواصل بين أعضاء الفريق،
                     ومتابعة المحادثات وتنظيم العمل بسهولة.
                 </p>
-
                 <div class="welcome-tip">
-
                     <span class="tip-icon">
                         <i class="fa-solid fa-arrow-right"></i>
                     </span>
-
                     اختار موظفاً من القائمة لبدء المحادثة
-
                 </div>
-
             </div>
-
         </section>
-
-
         <!-- ==================================
              CHAT SCREEN
         =================================== -->
-
         <section id="chatScreen" class="chat-screen hidden">
-
-
             <!-- Chat Header -->
             <header class="chat-header">
-
                 <div class="chat-contact">
-
                     <button
                         class="mobile-back-btn"
                         id="mobileBackBtn"
@@ -284,38 +177,25 @@
                     >
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>
-
                     <div class="chat-avatar-wrap">
-
                         <div class="avatar chat-avatar" id="chatAvatar">
                             N
                         </div>
-
                         <span class="chat-online-dot"></span>
-
                     </div>
-
                     <div class="chat-user-info">
-
                         <span class="eyebrow">
                             PRIVATE CONVERSATION
                         </span>
-
                         <strong id="chatName"></strong>
-
                         <small>
                             <span class="status-dot"></span>
                             محادثة داخلية
                         </small>
-
                     </div>
-
                 </div>
-
-
                 <!-- Header Actions -->
                 <div class="chat-header-actions">
-
                     <button
                         class="header-action-btn"
                         id="searchMessagesBtn"
@@ -324,8 +204,6 @@
                     >
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
-
-
                     <button
                         class="header-action-btn"
                         id="conversationInfoBtn"
@@ -334,10 +212,7 @@
                     >
                         <i class="fa-solid fa-circle-info"></i>
                     </button>
-
-
                     <div class="header-menu-container">
-
                         <button
                             class="header-action-btn"
                             id="conversationMenuBtn"
@@ -347,27 +222,21 @@
                         >
                             <i class="fa-solid fa-ellipsis-vertical"></i>
                         </button>
-
-
                         <!-- Conversation Dropdown -->
                         <div
                             class="dropdown-menu conversation-dropdown"
                             id="conversationDropdown"
                             hidden
                         >
-
                             <button type="button" data-action="conversation-info">
                                 <i class="fa-regular fa-user"></i>
                                 معلومات الموظف
                             </button>
-
                             <button type="button" data-action="search">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                                 البحث في المحادثة
                             </button>
-
                             <div class="dropdown-divider"></div>
-
                             <button
                                 type="button"
                                 class="danger-action"
@@ -376,31 +245,20 @@
                                 <i class="fa-regular fa-trash-can"></i>
                                 حذف المحادثة بالكامل
                             </button>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </header>
-
-
             <!-- Search Inside Conversation -->
             <div class="chat-search-panel" id="chatSearchPanel" hidden>
-
                 <div class="chat-search-input">
-
                     <i class="fa-solid fa-magnifying-glass"></i>
-
                     <input
                         type="search"
                         id="messageSearchInput"
                         placeholder="ابحث داخل الرسائل..."
                     >
-
                 </div>
-
                 <button
                     type="button"
                     id="closeMessageSearchBtn"
@@ -408,47 +266,31 @@
                 >
                     <i class="fa-solid fa-xmark"></i>
                 </button>
-
             </div>
-
-
             <!-- Conversation Caption -->
             <div class="conversation-caption">
-
                 <span></span>
-
                 <small>
                     بداية المحادثة الخاصة
                 </small>
-
                 <span></span>
-
             </div>
-
-
             <!-- Messages -->
             <div
                 class="messages-list"
                 id="messagesList"
                 aria-live="polite"
             >
-
                 <!-- Messages are inserted by messages.js -->
-
             </div>
-
-
             <!-- Editing Indicator -->
             <div class="editing-indicator" id="editingIndicator" hidden>
-
                 <div class="editing-indicator-text">
                     <i class="fa-regular fa-pen-to-square"></i>
-
                     <span>
                         أنت تعدّل رسالة
                     </span>
                 </div>
-
                 <button
                     type="button"
                     id="cancelEditBtn"
@@ -456,17 +298,11 @@
                 >
                     <i class="fa-solid fa-xmark"></i>
                 </button>
-
             </div>
-
-
             <!-- Message Composer -->
             <footer class="composer-area">
-
                 <form id="messageForm" class="message-form">
-
                     <div class="composer-input-wrap">
-
                         <textarea
                             id="messageInput"
                             placeholder="اكتب رسالتك هنا..."
@@ -474,67 +310,46 @@
                             maxlength="5000"
                             required
                         ></textarea>
-
                         <div class="composer-bottom">
-
                             <span class="composer-hint">
                                 <i class="fa-solid fa-lock"></i>
                                 مراسلات خاصة بفريق NIVRA
                             </span>
-
                             <span class="character-counter" id="characterCounter">
                                 0 / 5000
                             </span>
-
                         </div>
-
                     </div>
-
-
                     <button
                         type="submit"
                         id="sendButton"
                         class="send-button"
                     >
-
                         <span id="sendButtonText">
                             إرسال
                         </span>
-
                         <i class="fa-solid fa-paper-plane"></i>
-
                     </button>
-
                 </form>
-
                 <div class="composer-footer-note">
                     اضغط Enter للإرسال · Shift + Enter لسطر جديد
                 </div>
-
             </footer>
-
         </section>
-
     </main>
-
 </div>
-
-
 <!-- ==================================
      MESSAGE ACTION MENU
 =================================== -->
-
 <div
     class="message-context-menu"
     id="messageContextMenu"
     hidden
 >
-
     <button type="button" data-message-action="copy">
         <i class="fa-regular fa-copy"></i>
         نسخ الرسالة
     </button>
-
     <button
         type="button"
         data-message-action="edit"
@@ -543,9 +358,7 @@
         <i class="fa-regular fa-pen-to-square"></i>
         تعديل الرسالة
     </button>
-
     <div class="dropdown-divider own-message-action"></div>
-
     <button
         type="button"
         data-message-action="delete"
@@ -554,28 +367,22 @@
         <i class="fa-regular fa-trash-can"></i>
         حذف الرسالة
     </button>
-
 </div>
-
-
 <!-- ==================================
      CONFIRMATION MODAL
 =================================== -->
-
 <div
     class="modal-overlay"
     id="confirmModal"
     hidden
     aria-hidden="true"
 >
-
     <div
         class="confirm-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirmTitle"
     >
-
         <button
             type="button"
             class="modal-close-btn"
@@ -584,41 +391,25 @@
         >
             <i class="fa-solid fa-xmark"></i>
         </button>
-
-
         <div class="modal-icon danger-modal-icon" id="confirmIcon">
             <i class="fa-regular fa-trash-can"></i>
         </div>
-
-
         <span class="eyebrow modal-eyebrow">
             NIVRA SECURITY
         </span>
-
-
         <h2 id="confirmTitle">
             تأكيد الحذف
         </h2>
-
-
         <p id="confirmMessage">
             هل أنت متأكد من تنفيذ هذا الإجراء؟
         </p>
-
-
         <div class="modal-warning" id="confirmWarning">
-
             <i class="fa-solid fa-circle-exclamation"></i>
-
             <span>
                 لا يمكن التراجع عن هذا الإجراء بعد تنفيذه.
             </span>
-
         </div>
-
-
         <div class="modal-actions">
-
             <button
                 type="button"
                 id="cancelConfirmBtn"
@@ -626,7 +417,6 @@
             >
                 إلغاء
             </button>
-
             <button
                 type="button"
                 id="confirmActionBtn"
@@ -635,48 +425,35 @@
                 <i class="fa-regular fa-trash-can"></i>
                 <span>تأكيد الحذف</span>
             </button>
-
         </div>
-
     </div>
-
 </div>
-
-
 <!-- ==================================
      TOAST NOTIFICATIONS
 =================================== -->
-
 <div
     class="toast-container"
     id="toastContainer"
     aria-live="polite"
     aria-atomic="true"
 >
-
     <!-- Toast notifications inserted by JS -->
-
 </div>
-
-
 <!-- ==================================
      EMPLOYEE INFORMATION MODAL
 =================================== -->
-
 <div
     class="modal-overlay"
     id="employeeInfoModal"
     hidden
     aria-hidden="true"
 >
-
     <div
         class="info-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="employeeInfoTitle"
     >
-
         <button
             type="button"
             class="modal-close-btn"
@@ -685,45 +462,27 @@
         >
             <i class="fa-solid fa-xmark"></i>
         </button>
-
-
         <div class="info-avatar avatar" id="infoEmployeeAvatar">
             N
         </div>
-
-
         <span class="eyebrow">
             NIVRA TEAM MEMBER
         </span>
-
-
         <h2 id="employeeInfoTitle">
             معلومات الموظف
         </h2>
-
-
         <div class="info-field">
-
             <span>الاسم</span>
-
             <strong id="infoEmployeeName">
                 —
             </strong>
-
         </div>
-
-
         <div class="info-field">
-
             <span>نوع التواصل</span>
-
             <strong>
                 محادثة فردية خاصة
             </strong>
-
         </div>
-
-
         <button
             type="button"
             class="info-modal-close"
@@ -731,17 +490,11 @@
         >
             إغلاق
         </button>
-
     </div>
-
 </div>
-
-
 <!-- ==================================
      JAVASCRIPT
 =================================== -->
-
 <script type="module" src="../js/messages.js"></script>
-
 </body>
 </html>

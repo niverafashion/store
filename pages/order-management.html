@@ -414,7 +414,134 @@ id="selectAll">
 </div>
 
 </div>
+<!-- نافذة تحديث حالة الطلب -->
 
+<div id="statusModal" class="status-modal">
+
+    <div class="status-modal-box">
+
+        <button type="button" id="closeStatusModal" class="status-close">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="status-modal-header">
+            <div class="status-header-icon">
+                <i class="fa-solid fa-clipboard-check"></i>
+            </div>
+
+            <h2>تحديث حالة الطلب</h2>
+            <p>اختر الحالة المناسبة لإتمام الطلب</p>
+        </div>
+
+        <div class="status-options">
+
+            <label class="status-option completed-option">
+                <input type="radio" name="newOrderStatus" value="completed">
+
+                <span class="status-option-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </span>
+
+                <span class="status-option-text">
+                    <strong>اكتمال الطلب</strong>
+                    <small>تم تسليم الطلب للزبونة</small>
+                </span>
+
+                <i class="fa-solid fa-check status-selected-icon"></i>
+            </label>
+
+            <label class="status-option postponed-option">
+                <input type="radio" name="newOrderStatus" value="postponed">
+
+                <span class="status-option-icon">
+                    <i class="fa-solid fa-clock"></i>
+                </span>
+
+                <span class="status-option-text">
+                    <strong>تأجيل الطلب</strong>
+                    <small>تأجيل التسليم إلى وقت لاحق</small>
+                </span>
+
+                <i class="fa-solid fa-check status-selected-icon"></i>
+            </label>
+
+            <label class="status-option cancelled-option">
+                <input type="radio" name="newOrderStatus" value="cancelled">
+
+                <span class="status-option-icon">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </span>
+
+                <span class="status-option-text">
+                    <strong>رفض الطلب</strong>
+                    <small>الزبونة رفضت استلام الطلب</small>
+                </span>
+
+                <i class="fa-solid fa-check status-selected-icon"></i>
+            </label>
+
+        </div>
+
+        <div id="cancelReasonBox" class="cancel-reason-box" style="display:none;">
+
+            <label for="cancelReason">سبب رفض الطلب</label>
+
+            <textarea
+                id="cancelReason"
+                rows="3"
+                placeholder="اكتب سبب الرفض...">
+            </textarea>
+
+        </div>
+
+        <button type="button" id="confirmStatusUpdate" class="status-confirm-btn">
+            <i class="fa-solid fa-check-double"></i>
+            تأكيد تحديث الطلب
+        </button>
+
+    </div>
+
+</div>
+<!-- نافذة تأكيد حذف الطلبات -->
+<div id="deleteConfirmModal" class="status-modal">
+  <div class="status-modal-box delete-modal-box">
+
+    <button type="button" id="closeDeleteModal" class="status-close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="status-modal-header">
+      <div class="status-header-icon delete-header-icon">
+        <i class="fa-solid fa-trash-can"></i>
+      </div>
+
+      <h2 id="deleteModalTitle">تأكيد حذف الطلب</h2>
+      <p id="deleteModalDescription">
+        هل أنت متأكد من حذف هذا الطلب؟
+      </p>
+    </div>
+
+    <div class="delete-warning">
+      <i class="fa-solid fa-circle-info"></i>
+      <div>
+        <strong>تنبيه مهم</strong>
+        <p>سيتم إرجاع كميات الطلب إلى المخزون وتسجيل حركة الإرجاع، ثم حذف الطلب نهائياً.</p>
+      </div>
+    </div>
+
+    <div class="delete-modal-actions">
+      <button type="button" id="cancelDeleteBtn" class="delete-cancel-btn">
+        إلغاء
+      </button>
+
+      <button type="button" id="confirmDeleteBtn" class="delete-confirm-btn">
+        <i class="fa-solid fa-trash-can"></i>
+        تأكيد الحذف
+      </button>
+    </div>
+
+  </div>
+</div>
 <div id="redeliveryModal" class="modal">
 
 <div class="modal-content redelivery-box">

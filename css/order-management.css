@@ -4053,3 +4053,303 @@ font-size:19px;
 
 
 }
+/* =========================
+   STATUS UPDATE MODAL
+========================= */
+
+.status-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+}
+
+.status-modal.show {
+    display: flex;
+}
+
+.status-modal-box {
+    position: relative;
+    background: #fff;
+    width: 100%;
+    max-width: 440px;
+    padding: 28px 22px;
+    border-radius: 22px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    animation: statusModalIn .25s ease;
+}
+
+@keyframes statusModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.status-close {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 50%;
+    background: #f5f5f5;
+    color: #555;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.status-modal-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.status-header-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    background: #fceaf0;
+    color: #d987a0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 25px;
+}
+
+.status-modal-header h2 {
+    margin: 0 0 7px;
+    font-size: 21px;
+    color: #222;
+}
+
+.status-modal-header p {
+    margin: 0;
+    color: #888;
+    font-size: 13px;
+}
+
+.status-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.status-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    border: 1.5px solid #eee;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: .2s;
+    background: #fff;
+}
+
+.status-option input {
+    display: none;
+}
+
+.status-option-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+}
+
+.completed-option .status-option-icon {
+    background: #e9f8ef;
+    color: #26965b;
+}
+
+.postponed-option .status-option-icon {
+    background: #fff5df;
+    color: #d69a28;
+}
+
+.cancelled-option .status-option-icon {
+    background: #fff0f0;
+    color: #d64b58;
+}
+
+.status-option-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.status-option-text strong {
+    font-size: 14px;
+    color: #222;
+}
+
+.status-option-text small {
+    font-size: 11px;
+    color: #999;
+}
+
+.status-selected-icon {
+    opacity: 0;
+    color: #d987a0;
+}
+
+.status-option:has(input:checked) {
+    border-color: #d987a0;
+    background: #fff8fa;
+    box-shadow: 0 3px 12px rgba(217,135,160,.12);
+}
+
+.status-option:has(input:checked) .status-selected-icon {
+    opacity: 1;
+}
+
+.cancel-reason-box {
+    margin-top: 17px;
+}
+
+.cancel-reason-box label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.cancel-reason-box textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 12px;
+    resize: vertical;
+    font-family: inherit;
+    outline: none;
+}
+
+.cancel-reason-box textarea:focus {
+    border-color: #d987a0;
+}
+
+.status-confirm-btn {
+    width: 100%;
+    margin-top: 22px;
+    padding: 15px;
+    border: none;
+    border-radius: 13px;
+    background: #d987a0;
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.status-confirm-btn:hover {
+    background: #c66f8c;
+}
+
+.status-confirm-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+@media(max-width:480px) {
+    .status-modal-box {
+        padding: 25px 16px;
+        border-radius: 19px;
+    }
+}
+/* نافذة تأكيد الحذف */
+.delete-modal-box {
+    max-width: 460px;
+}
+
+.delete-header-icon {
+    background: #fff0f0;
+    color: #d94b55;
+}
+
+.delete-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px;
+    margin: 20px 0;
+    background: #fff7f5;
+    border: 1px solid #f3d8d5;
+    border-radius: 13px;
+    color: #a64b45;
+    text-align: right;
+}
+
+.delete-warning > i {
+    font-size: 20px;
+    margin-top: 2px;
+}
+
+.delete-warning strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.delete-warning p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.delete-modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.delete-modal-actions button {
+    flex: 1;
+    min-height: 46px;
+    border: 0;
+    border-radius: 11px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.delete-cancel-btn {
+    background: #f1f1f1;
+    color: #333;
+}
+
+.delete-confirm-btn {
+    background: #d94b55;
+    color: white;
+}
+
+.delete-confirm-btn:hover {
+    background: #bd3540;
+}
+
+.delete-cancel-btn:hover {
+    background: #e5e5e5;
+}
+
+.delete-confirm-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}

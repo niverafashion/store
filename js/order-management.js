@@ -2472,28 +2472,13 @@ function updateStatusCards(){
             break;
 
 
-            case "cancelled":
+case "cancelled":
 
-                count = orders.filter(o=>
+    count = orders.filter(o =>
+        o.isCancelledReturn === true
+    ).length;
 
-                    o.status==="cancelled"
-
-                    ||
-
-                    o.waitingReturns?.some(r=>
-
-                        r.type==="cancelled"
-
-                        &&
-
-                        r.accounts_received===false
-
-                    )
-
-                ).length;
-
-            break;
-
+break;
 
             case "completed":
 
@@ -2547,63 +2532,58 @@ document
 .querySelectorAll(".status-card")
 .forEach(btn=>{
 
+    btn.onclick = ()=>{
 
-btn.onclick = ()=>{
+        document
+        .querySelectorAll(".status-card")
+        .forEach(b=>{
+            b.classList.remove("active");
+        });
 
+        btn.classList.add("active");
 
-document
-.querySelectorAll(".status-card")
-.forEach(b=>{
+        currentFilter = btn.dataset.status;
 
-b.classList.remove("active");
+        search.value = "";
 
-});
+        let filtered = [];
 
+        if(currentFilter === "partial_return"){
 
+            filtered = orders.filter(o =>
+                o.isPartialReturn === true
+            );
 
-btn.classList.add("active");
+        }
+        else if(currentFilter === "cancelled"){
 
+            filtered = orders.filter(o =>
+                o.isCancelledReturn === true
+            );
 
+        }
+        else{
 
-currentFilter = btn.dataset.status;
+            filtered = orders.filter(o =>
+                o.status === currentFilter
+            );
 
+            if(currentFilter === "completed"){
 
-search.value = "";
+                filtered = filtered.filter(o =>
+                    !o.showReturnsOnly
+                );
 
+            }
 
-if(currentFilter === "partial_return"){
+        }
 
+        renderOrders(filtered);
 
-renderOrders(
+        updateBulkButton();
+        updateBulkDelete();
 
-orders.filter(o=>
-o.isPartialReturn === true
-)
-
-);
-
-
-}
-else{
-
-
-renderOrders(
-
-orders.filter(o=>
-o.status === currentFilter
-)
-
-);
-
-
-}
-
-updateBulkButton();
-updateBulkDelete();
-
-
-};
-
+    };
 
 });
 
@@ -2614,70 +2594,51 @@ updateBulkDelete();
 
 search.oninput = ()=>{
 
+    let value = search.value
+    .trim()
+    .toLowerCase();
 
-let value = search.value
-.trim()
-.toLowerCase();
+    let filtered = orders.filter(o=>{
 
+        let matchesStatus = false;
 
+        if(currentFilter === "partial_return"){
 
-let filtered = orders.filter(o=>{
+            matchesStatus = o.isPartialReturn === true;
 
+        }
+        else if(currentFilter === "cancelled"){
 
-return (
+            matchesStatus = o.isCancelledReturn === true;
 
-(
-currentFilter === "partial_return"
-?
-o.isPartialReturn === true
-:
-o.status === currentFilter
-)
-&&
+        }
+        else{
 
-(
+            matchesStatus = o.status === currentFilter;
 
-String(o.id).includes(value)
+            if(currentFilter === "completed" && o.showReturnsOnly){
+                matchesStatus = false;
+            }
 
-||
+        }
 
-(o.delivery_code || "")
-.toLowerCase()
-.includes(value)
+        let matchesSearch =
 
-||
+            String(o.id).includes(value) ||
 
-(o.customer_name || "")
-.toLowerCase()
-.includes(value)
+            (o.delivery_code || "").toLowerCase().includes(value) ||
 
-||
+            (o.customer_name || "").toLowerCase().includes(value) ||
 
-(o.phone || "")
-.includes(value)
+            (o.phone || "").includes(value) ||
 
-||
+            (o.governorate || "").toLowerCase().includes(value);
 
-(o.governorate || "")
-.toLowerCase()
-.includes(value)
+        return matchesStatus && matchesSearch;
 
-)
+    });
 
-);
-
-
-});
-
-
-
-console.log("الحالة الحالية:", currentFilter);
-console.log("نتائج البحث:", filtered);
-
-
-
-renderOrders(filtered);
-
+    renderOrders(filtered);
 
 };
 

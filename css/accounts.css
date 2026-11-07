@@ -1,4091 +1,1499 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Cormorant+Garamond:wght@600;700&display=swap');
-
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-}
-
-
-
-body{
-
-font-family:'Cairo',sans-serif;
-
-background:#faf7f8;
-
-color:#333;
-
-overflow-x:hidden;
-
-}
-
-
-
-/* =====================
- TOP BAR
-===================== */
-
-
-.topbar{
-
-height:95px;
-
-background:white;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-position:sticky;
-
-top:0;
-
-z-index:100;
-
-box-shadow:0 8px 30px #0002;
-
-}
-
-
-
-.topbar h1{
-
-font-family:'Cormorant Garamond',serif;
-
-font-size:65px;
-
-letter-spacing:6px;
-
-color:#111;
-
-}
-
-
-.topbar span{
-
-display:block;
-
-text-align:center;
-
-font-size:15px;
-
-color:#d987a0;
-
-}
-
-
-
-.back-btn{
-
-position:absolute;
-
-left:25px;
-
-width:55px;
-
-height:55px;
-
-border-radius:50%;
-
-background:#f7b6c8;
-
-color:white;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:22px;
-
-text-decoration:none;
-
-transition:.3s;
-
-}
-
-
-
-.back-btn:hover{
-
-transform:translateX(5px);
-
-}
-
-
-
-
-
-/* =====================
- MAIN
-===================== */
-
-
-main{
-
-max-width:1400px;
-
-margin:auto;
-
-padding:35px 6%;
-
-}
-
-
-
-
-
-
-
-/* =====================
- PREMIUM STATUS CARDS
-===================== */
-
-
-.order-status-cards{
-
-display:grid;
-
-grid-template-columns:repeat(3,1fr);
-
-gap:22px;
-
-margin-bottom:35px;
-
-}
-
-
-
-.status-card{
-
-
-border:none;
-
-padding:18px;
-
-height:150px;
-
-border-radius:28px;
-
-cursor:pointer;
-
-position:relative;
-
-overflow:hidden;
-
-display:flex;
-
-flex-direction:column;
-
-justify-content:center;
-
-align-items:center;
-
-gap:8px;
-
-font-family:'Cairo';
-
-transition:.35s;
-
-box-shadow:0 12px 35px #0002;
-
-color:#333;
-
-
-}
-
-
-
-
-.status-card:hover{
-
-
-transform:translateY(-6px) scale(1.02);
-
-
-}
-
-
-
-
-
-/* الاسم */
-
-
-.status-card h3{
-
-
-font-size:16px;
-
-font-weight:700;
-
-margin:0;
-
-color:#333;
-
-
-}
-
-
-
-
-
-/* الرقم */
-
-
-.status-card span{
-
-
-width:45px;
-
-height:45px;
-
-border-radius:50%;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:16px;
-
-font-weight:600;
-
-background:white;
-
-box-shadow:0 5px 15px #0002;
-
-
-}
-
-
-
-
-
-/* الايقونة */
-
-
-.status-card i{
-
-
-font-size:25px;
-
-margin-bottom:5px;
-
-
-}
-
-
-.status-card.new span{
-
-background:#ffb84d;
-color:white;
-
-}
-
-
-.status-card.ready span{
-
-background:#67b7ff;
-color:white;
-
-}
-
-
-.status-card.delivery span{
-
-background:#8b7cff;
-color:white;
-
-}
-
-
-.status-card.done span{
-
-background:#65c97a;
-color:white;
-
-}
-
-
-.status-card.delayed span{
-
-background:#d987a0;
-color:white;
-
-}
-
-
-.status-card.rejected span{
-
-background:#ff6b81;
-color:white;
-
-}
-
-
-/* الالوان */
-
-
-.status-card.new{
-
-
-background:#fff0d6;
-
-
-}
-
-
-.status-card.new i{
-
-color:#ffb84d;
-
-}
-
-
-
-.status-card.ready{
-
-
-background:#e8f5ff;
-
-
-}
-
-
-.status-card.ready i{
-
-color:#67b7ff;
-
-}
-
-
-
-.status-card.delivery{
-
-
-background:#eeebff;
-
-
-}
-
-
-.status-card.delivery i{
-
-color:#8b7cff;
-
-}
-
-
-
-.status-card.done{
-
-
-background:#e9ffef;
-
-
-}
-
-
-.status-card.done i{
-
-color:#65c97a;
-
-}
-
-
-
-.status-card.delayed{
-
-
-background:#fff0f5;
-
-
-}
-
-
-.status-card.delayed i{
-
-color:#d987a0;
-
-}
-
-
-
-.status-card.rejected{
-
-
-background:#fff0f2;
-
-
-}
-
-
-.status-card.rejected i{
-
-color:#ff6b81;
-
-}
-
-
-
-
-
-/* علامة التحديد */
-
-.status-card.active::after{
-
-content:"✓";
-
-position:absolute;
-
-top:12px;
-
-right:12px;
-
-width:30px;
-
-height:30px;
-
-background:#93d987;
-
-color:rgb(255, 255, 255);
-
-border-radius:50%;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:18px;
-
-font-weight:800;
-
-box-shadow:0 5px 15px #d987a055;
-
-}
-
-
-
-.status-card.active::after{
-
-
-content:"✓";
-
-position:absolute;
-
-top:12px;
-
-right:12px;
-
-width:26px;
-
-height:26px;
-
-background:#059000;
-
-color:rgb(255, 255, 255);
-
-border-radius:50%;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:13px;
-
-
-}
-
-
-
-
-
-
-@media(max-width:600px){
-
-
-.order-status-cards{
-
-
-grid-template-columns:repeat(2,1fr);
-
-gap:12px;
-
-
-}
-
-
-
-.status-card{
-
-
-height:130px;
-
-border-radius:22px;
-
-
-}
-
-
-
-.status-card i{
-
-
-font-size:22px;
-
-
-}
-
-
-}
-
-
-
-
-/* =====================
- SEARCH
-===================== */
-
-
-.search-box{
-
-
-display:grid;
-
-grid-template-columns:2fr 1fr;
-
-gap:15px;
-
-margin-bottom:25px;
-
-}
-
-
-
-input,
-select{
-
-
-width:100%;
-
-height:50px;
-
-padding:0 18px;
-
-border-radius:20px;
-
-border:2px solid #f7b6c8;
-
-background:white;
-
-font-family:'Cairo';
-
-font-size:15px;
-
-outline:none;
-
-}
-
-
-
-input:focus,
-select:focus{
-
-
-box-shadow:0 0 0 4px #f7b6c855;
-
-
-}
-
-
-
-
-
-/* =====================
- TABLE
-===================== */
-
-
-table{
-
-
-width:100%;
-
-border-collapse:collapse;
-
-}
-
-
-
-thead{
-
-
-background:#fff0f5;
-
-}
-
-
-
-th{
-
-
-padding:15px;
-
-color:#d987a0;
-
-font-weight:800;
-
-}
-
-
-
-td{
-
-
-padding:15px;
-
-text-align:right;
-
-border-bottom:1px solid #eee;
-
-}
-
-
-
-tbody tr:hover{
-
-
-background:#fff8fa;
-
-
-}
-
-
-
-/* زر التعديل */
-.edit-btn{
-
-background:#5895ff !important;
-
-}
-
-
-/* زر الحذف */
-.delete-btn{
-
-background:#fa0026 !important;
-
-}
-
-
-/* زر تحديث الحالة */
-.update-btn{
-
-background:#00ff37 !important;
-
-}
-
-.edit-btn:hover{
-
-background:#3b9de8 !important;
-
-}
-
-
-.delete-btn:hover{
-
-background:#ff0026 !important;
-
-}
-
-
-.update-btn:hover{
-
-background:#43a85a !important;
-
-}
-
-
-
-
-
-/* =====================
- STATUS BADGE
-===================== */
-
-
-.badge{
-
-
-padding:7px 15px;
-
-border-radius:20px;
-
-color:white;
-
-font-size:13px;
-
-}
-
-
-
-.badge.new{
-
-background:#ffb84d;
-
-}
-
-
-
-.badge.prepared{
-
-background:#67b7ff;
-
-}
-
-
-
-.badge.delivery{
-
-background:#8b7cff;
-
-}
-
-
-
-.badge.completed{
-
-background:#65c97a;
-
-}
-
-
-
-.badge.postponed{
-
-background:#d987a0;
-
-}
-
-
-
-.badge.cancelled{
-
-background:#ff6b81;
-
-}
-
-
-
-
-
-
-/* =====================
- MODAL
-===================== */
-
-
-#modal{
-
-
-position:fixed;
-
-inset:0;
-
-background:#0005;
-
-display:none;
-
-align-items:center;
-
-justify-content:center;
-
-z-index:999;
-
-
-}
-
-
-
-.modal-box{
-
-
-width:450px;
-
-position:relative;
-
-
-}
-
-
-
-#close{
-
-
-position:absolute;
-
-left:20px;
-
-top:20px;
-
-border:none;
-
-background:#ff6b81;
-
-color:white;
-
-width:40px;
-
-height:40px;
-
-border-radius:50%;
-
-cursor:pointer;
-
-
-}
-
-
-
-
-#editOrder,
-#saveStatus{
-
-
-width:100%;
-
-padding:14px;
-
-margin-top:15px;
-
-border:none;
-
-border-radius:25px;
-
-background:#111;
-
-color:white;
-
-font-family:'Cairo';
-
-cursor:pointer;
-
-
-}
-
-
-
-
-#editOrder:hover,
-#saveStatus:hover{
-
-
-background:#d987a0;
-
-
-}
-
-
-
-
-
-/* =====================
- MOBILE
-===================== */
-
-
-@media(max-width:900px){
-
-.topbar{
-
-height:75px;
-
-}
-
-
-
-.topbar h1{
-
-font-size:42px;
-
-}
-
-
-
-.topbar span{
-
-font-size:13px;
-
-}
-
-
-
-.back-btn{
-
-width:42px;
-
-height:42px;
-
-top:17px;
-
-}
-
-main{
-
-padding:20px 15px;
-
-}
-
-.order-status-cards{
-
-
-grid-template-columns:repeat(3,1fr);
-
-gap:10px;
-
-
-}
-
-
-
-
-.status-card{
-
-
-padding:6px;
-
-border-radius:30px;
-
-
-}
-
-
-
-
-
-.search-box{
-
-
-grid-template-columns:1fr;
-
-}
-
-
-
-
-
-.card{
-
-
-padding:10px;
-
-border-radius:25px;
-
-
-}
-
-
-
-
-
-.topbar h1{
-
-
-font-size:45px;
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-
-/* =====================
- جدول الهاتف - تصميم احترافي
-===================== */
-
-
-@media(max-width:600px){
-
-
-table,
-thead,
-tbody,
-th,
-td,
-tr{
-
-display:block;
-
-}
-
-
-
-thead{
-
-display:none;
-
-}
-
-
-
-
-
-tbody tr{
-
-
-background:#ffffff;
-
-margin-bottom:18px;
-
-border-radius:25px;
-
-padding:15px 16px;
-
-box-shadow:0 8px 25px #0002;
-
-border:1px solid #f7b6c8;
-
-position:relative;
-
-}
-
-
-
-
-/* رقم الوصل + checkbox */
-
-.order-number{
-
-background:#fff0f5;
-
-border-radius:18px;
-
-padding:10px 14px;
-
-margin-bottom:10px;
-
-font-weight:800;
-
-display:flex;
-
-align-items:center;
-
-gap:10px;
-
-direction:rtl;
-
-}
-
-
-.order-number .order-check{
-
-order:2;
-
-margin-right:auto;
-
-}
-
-
-.order-number::before{
-
-content:"وصل رقم";
-
-font-size:12px;
-
-color:#d987a0;
-
-}
-
-
-
-
-td:nth-child(1)::before{
-
-
-content:"وصل رقم";
-
-font-size:12px;
-
-color:#d987a0;
-
-}
-
-
-
-
-
-
-td{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:flex-start;
-
-padding:6px 2px;
-
-border:none;
-
-font-size:14px;
-
-font-weight:600;
-
-line-height:1.7;
-
-}
-
-
-/* خانة المنتجات */
-
-.products-cell{
-
-display:block !important;
-
-width:100%;
-
-background:#fafafa;
-
-padding:12px;
-
-border-radius:15px;
-
-margin-top:5px;
-
-}
-
-
-/* كل منتج داخل الطلب */
-
-.products-cell b{
-
-display:block;
-
-color:#d987a0;
-
-font-size:16px;
-
-margin-bottom:5px;
-
-}
-
-
-.products-cell hr{
-
-border:none;
-
-border-top:1px dashed #ddd;
-
-margin:10px 0;
-
-}
-
-
-
-td::before{
-
-
-font-weight:800;
-
-
-font-size:12px;
-
-}
-
-
-
-
-
-td:nth-child(2)::before{
-
-content:"الزبون";
-
-}
-
-
-
-td:nth-child(3)::before{
-
-content:"الهاتف";
-
-}
-
-
-
-td:nth-child(4)::before{
-
-content:"المحافظة";
-
-}
-
-
-
-td:nth-child(5)::before{
-
-content:"المنتجات";
-
-}
-
-
-
-
-
-
-td:nth-child(6)::before{
-
-content:"المبلغ";
-
-}
-
-
-
-
-
-td:nth-child(7)::before{
-
-content:"الحالة";
-
-}
-
-
-
-
-
-/* البادج */
-
-td:nth-child(8) .badge{
-
-
-padding:5px 14px;
-
-font-size:12px;
-
-font-weight:700;
-
-}
-
-
-
-
-
-/* الإجراءات */
-
-
-td:nth-child(9){
-
-
-display:flex;
-
-justify-content:center;
-
-gap:10px;
-
-padding-top:12px;
-
-margin-top:10px;
-
-border-top:1px dashed #770022;
-
-}
-
-
-
-
-
-td:nth-child(10)::before{
-
-content:"";
-
-}
-
-
-
-
-
-.action-btn{
-
-
-width:34px;
-
-height:34px;
-
-padding:0;
-
-border-radius:50%;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:13px;
-
-box-shadow:0 5px 15px #0002;
-
-}
-
-
-
-
-
-.action-btn i{
-
-
-font-size:13px;
-
-}
-
-
-
-
-
-.modal-box{
-
-width:92%;
-
-}
-
-
-
-}
-
-html{
-
--webkit-text-size-adjust:100%;
-
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Cormorant+Garamond:wght@600;700&display=swap');
+
+/* =========================================
+   NIVRA ACCOUNTS - PREMIUM DESIGN
+========================================= */
+
+:root {
+    --pink: #f7b6c8;
+    --pink-dark: #d987a0;
+    --pink-light: #fff0f5;
+    --black: #111;
+    --text: #333;
+    --muted: #888;
+    --bg: #faf7f8;
+    --white: #fff;
+    --green: #65c97a;
+    --red: #ff6b81;
+    --orange: #f0a23a;
+    --blue: #67b7ff;
+    --purple: #8b7cff;
+    --shadow: 0 10px 30px rgba(0,0,0,.07);
+    --radius: 22px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
 }
-
-
 
 button,
 input,
-select{
-
-font-size:16px !important;
-
-}
-.action-btn{
-
-width:35px;
-
-height:35px;
-
-border-radius:50%;
-
-padding:0;
-
-display:inline-flex;
-
-align-items:center;
-
-justify-content:center;
-
-margin:3px;
-
-font-size:14px;
-
+select,
+textarea {
+    font-family: inherit;
+    font-size: 15px;
 }
 
-
-
-.action-btn:hover{
-
-transform:scale(1.1);
-
-}
-.scroll-top{
-position:fixed;
-bottom:25px;
-left:25px;
-width:40px;
-height:40px;
-border:none;
-border-radius:90%;
-background:#00bfffe1;
-color:white;
-font-size:2px;
-cursor:pointer;
-box-shadow:0 8px 25px #0003;
-z-index:999;
-transition:.3s;
-}
-/* ============================= */
-/* BULK ACTIONS - تحديد الطلبات */
-/* ============================= */
-
-
-.bulk-actions{
-
-
-display:flex;
-
-align-items:center;
-
-justify-content:flex-start;
-
-gap:18px;
-
-padding:18px 22px;
-
-margin:20px 0;
-
-background:#ffffff;
-
-border-radius:22px;
-
-box-shadow:0 10px 30px rgba(0,0,0,.06);
-
-border:1px solid #f2f2f2;
-
-flex-wrap:wrap;
-
-
+button {
+    cursor: pointer;
 }
 
+/* =========================================
+   TOP BAR
+========================================= */
 
-
-
-/* تحديد الكل */
-
-
-.bulk-actions label{
-
-
-display:flex;
-
-align-items:center;
-
-gap:10px;
-
-font-size:15px;
-
-font-weight:800;
-
-color:#222;
-
-cursor:pointer;
-
-background:#fafafa;
-
-padding:12px 18px;
-
-border-radius:14px;
-
-transition:.3s;
-
-
+.topbar {
+    height: 95px;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 8px 30px #0002;
 }
 
-
-
-.bulk-actions label:hover{
-
-
-background:#fff0d6;
-
-
+.topbar-brand {
+    text-align: center;
 }
 
-
-
-
-
-/* checkbox */
-
-
-.bulk-actions input[type="checkbox"],
-
-.order-check{
-
-
-width:20px;
-
-height:20px;
-
-cursor:pointer;
-
-accent-color:#111;
-
+.topbar h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 65px;
+    letter-spacing: 6px;
+    color: #111;
+    line-height: .9;
 }
 
-
-
-.order-check{
-
-
-transform:scale(1.1);
-
+.topbar span {
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    color: var(--pink-dark);
+    margin-top: 7px;
 }
 
-
-
-
-
-/* select الحالة */
-
-
-#bulkStatus{
-
-
-height:48px;
-
-min-width:180px;
-
-padding:0 18px;
-
-border-radius:15px;
-
-border:1px solid #e5e5e5;
-
-background:#fafafa;
-
-font-size:15px;
-
-font-weight:700;
-
-color:#333;
-
-cursor:pointer;
-
-transition:.3s;
-
-
+.back-btn {
+    position: absolute;
+    left: 25px;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: var(--pink);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    text-decoration: none;
+    transition: .3s;
 }
 
-
-
-#bulkStatus:hover{
-
-
-border-color:#111;
-
-
+.back-btn:hover {
+    transform: translateX(5px);
+    background: var(--pink-dark);
 }
 
+/* =========================================
+   MAIN
+========================================= */
 
-
-#bulkStatus:focus{
-
-
-outline:none;
-
-border-color:#111;
-
-background:white;
-
-
+main {
+    max-width: 1400px;
+    margin: auto;
+    padding: 35px 6%;
 }
 
-
-
-
-/* زر التطبيق */
-
-
-#applyBulk{
-
-
-height:48px;
-
-padding:0 35px;
-
-border:none;
-
-border-radius:15px;
-
-background:#111;
-
-color:white;
-
-font-size:15px;
-
-font-weight:900;
-
-cursor:pointer;
-
-box-shadow:0 8px 20px #0003;
-
-transition:.3s;
-
-
+.cards-group {
+    margin-bottom: 30px;
 }
 
-
-
-#applyBulk:hover{
-
-
-transform:translateY(-3px);
-
-background:#333;
-
-
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 900;
+    color: #333;
+    margin-bottom: 17px;
 }
 
-
-
-
-
-
-/* ============================= */
-/* جدول الطلبات checkbox */
-/* ============================= */
-
-
-.order-check{
-
-
-appearance:none;
-
-border:2px solid #ddd;
-
-border-radius:7px;
-
-background:white;
-
-position:relative;
-
-transition:.25s;
-
-
+.section-title i {
+    color: var(--pink-dark);
 }
 
+/* =========================================
+   ORDER STATUS CARDS
+========================================= */
 
-
-.order-check:hover{
-
-
-border-color:#111;
-
-
+.order-status-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
 }
 
-
-
-.order-check:checked{
-
-
-background:#111;
-
-border-color:#111;
-
-
+.status-card {
+    border: none;
+    padding: 18px;
+    min-height: 145px;
+    border-radius: 26px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Cairo', sans-serif;
+    transition: .3s;
+    box-shadow: 0 12px 35px #0002;
+    color: #333;
 }
 
-
-
-.order-check:checked::after{
-
-
-content:"✓";
-
-position:absolute;
-
-color:white;
-
-font-size:14px;
-
-font-weight:900;
-
-left:50%;
-
-top:50%;
-
-transform:translate(-50%,-55%);
-
-
+.status-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 35px #0002;
 }
 
-
-
-
-/* الصف المحدد */
-
-
-tr:has(.order-check:checked){
-
-
-background:#fff8e8 !important;
-
-transition:.3s;
-
-
+.status-card h3 {
+    font-size: 16px;
+    font-weight: 800;
 }
 
-
-
-
-/* =====================
- PREMIUM CONTROL BAR
-===================== */
-
-
-.control-bar{
-
-display:flex;
-
-align-items:center;
-
-gap:12px;
-
-background:white;
-
-padding:10px 14px;
-
-border-radius:20px;
-
-box-shadow:0 8px 25px #0001;
-
-margin:18px 0;
-
-border:1px solid #f3e8ec;
-
+.status-card > span {
+    min-width: 45px;
+    height: 42px;
+    padding: 0 12px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+    background: white;
+    box-shadow: 0 5px 15px #0002;
 }
 
-
-
-/* =====================
- SEARCH
-===================== */
-
-
-.search-mini{
-
-flex:1;
-
-height:42px;
-
-display:flex;
-
-align-items:center;
-
-gap:12px;
-
-background:#faf7f8;
-
-border:1px solid #f1e1e6;
-
-border-radius:14px;
-
-padding:0 15px;
-
-transition:.3s;
-
-
+.status-card > i {
+    font-size: 25px;
+    margin-bottom: 3px;
 }
 
+/* مكتمل */
 
-
-.search-mini:focus-within{
-
-background:white;
-
-border-color:#f7b6c8;
-
-box-shadow:0 0 0 4px #f7b6c833;
-
-
+.status-card.done {
+    background: #e9ffef;
 }
 
-
-
-.search-mini i{
-
-color:#d987a0;
-
-font-size:16px;
-
+.status-card.done > i {
+    color: var(--green);
 }
 
-
-
-.search-mini input{
-
-border:none;
-
-outline:none;
-
-background:transparent;
-
-width:100%;
-
-height:100%;
-
-font-family:Cairo;
-
-font-size:14px;
-
+.status-card.done > span {
+    background: var(--green);
+    color: white;
 }
 
+/* مرفوض */
 
-
-
-
-/* =====================
- SELECT ALL
-===================== */
-
-
-.select-all{
-
-height:42px;
-
-display:flex;
-
-align-items:center;
-
-gap:8px;
-
-padding:0 16px;
-
-background:#fff6f8;
-
-border-radius:14px;
-
-font-size:14px;
-
-font-weight:800;
-
-cursor:pointer;
-
-white-space:nowrap;
-
-transition:.3s;
-
-border:1px solid transparent;
-
-
+.status-card.rejected {
+    background: #fff0f2;
 }
 
-
-
-.select-all:hover{
-
-border-color:#f7b6c8;
-
-background:#fff0f5;
-
+.status-card.rejected > i {
+    color: var(--red);
 }
 
-
-
-.select-all input{
-
-width:18px;
-
-height:18px;
-
-accent-color:#d987a0;
-
-cursor:pointer;
-
+.status-card.rejected > span {
+    background: var(--red);
+    color: white;
 }
 
+/* راجع جزئي */
 
-
-
-
-/* =====================
- ICON BUTTONS
-===================== */
-
-
-.control-icons{
-
-display:flex;
-
-gap:8px;
-
-
+.status-card.delayed {
+    background: #fff0f5;
 }
 
-
-
-.control-icons button{
-
-width:40px;
-
-height:40px;
-
-border:none;
-
-border-radius:13px;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-color:white;
-
-cursor:pointer;
-
-font-size:15px;
-
-transition:.3s;
-
-box-shadow:0 5px 15px #0002;
-
-
+.status-card.delayed > i {
+    color: var(--pink-dark);
 }
 
-
-
-#bulkUpdate{
-
-background:linear-gradient(135deg,#8b7cff,#6d5dfc);
-
+.status-card.delayed > span {
+    background: var(--pink-dark);
+    color: white;
 }
 
+/* تحديد الكارت */
 
-
-#bulkDelete{
-
-background:linear-gradient(135deg,#ff7b92,#ff5b75);
-
+.status-card.active::after {
+    content: "✓";
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 27px;
+    height: 27px;
+    background: #059000;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
 }
 
+/* =========================================
+   FINANCE CARDS
+========================================= */
 
-
-
-.control-icons button:hover{
-
-transform:translateY(-3px) scale(1.05);
-
-
+.finance-section {
+    padding: 23px;
+    background: white;
+    border: 1px solid #f3e8ec;
+    border-radius: 26px;
+    box-shadow: 0 8px 25px #0001;
 }
 
-
-
-/* =====================
- MOBILE
-===================== */
-
-
-@media(max-width:700px){
-
-
-.control-bar{
-
-flex-wrap:wrap;
-
-padding:12px;
-
-
+.finance-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
 }
 
-
-
-.search-mini{
-
-width:100%;
-
-flex:none;
-
+.status-card.ready {
+    background: #e8f5ff;
 }
 
-
-
-.select-all{
-
-flex:1;
-
-justify-content:center;
-
+.status-card.ready > i {
+    color: var(--blue);
 }
 
-
-
-.control-icons{
-
-gap:10px;
-
+.status-card.ready > span {
+    background: var(--blue);
+    color: white;
 }
 
-
-
-.control-icons button{
-
-width:42px;
-
-height:42px;
-
+.status-card.net {
+    background: #eeebff;
 }
 
-
+.status-card.net > i {
+    color: var(--purple);
 }
-.control-bar{
 
-display:flex;
+.status-card.net > span {
+    background: var(--purple);
+    color: white;
+}
 
-align-items:center;
+/* =========================================
+   ACCOUNTS SECTION
+========================================= */
 
-justify-content:space-between;
+.card {
+    background: white;
+    border-radius: 25px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.06);
+    border: 1px solid #f3e8ec;
+}
 
-gap:20px;
+.orders-search-card {
+    width: 100%;
+}
 
-flex-wrap:wrap;
+/* =========================================
+   CONTROL BAR
+========================================= */
 
-margin-bottom:25px;
+.control-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+    width: 100%;
+}
 
-width:100%;
+.control-bar h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 19px;
+    font-weight: 900;
+    white-space: nowrap;
+}
 
+.control-bar h2 i {
+    color: var(--pink-dark);
 }
 
 /* البحث */
 
-.search-mini{
-
-flex:1;
-
-min-width:280px;
-
-height:50px;
-
+.search-mini {
+    flex: 1;
+    min-width: 230px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #faf7f8;
+    border: 1px solid #f1e1e6;
+    border-radius: 15px;
+    padding: 0 15px;
+    transition: .3s;
+}
+
+.search-mini:focus-within {
+    background: white;
+    border-color: var(--pink);
+    box-shadow: 0 0 0 4px #f7b6c833;
+}
+
+.search-mini i {
+    color: var(--pink-dark);
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.search-mini input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    height: 100%;
+    font-family: Cairo;
+    font-size: 14px;
+    color: #333;
+    padding: 0;
+    box-shadow: none;
 }
-.products-cell{
-    min-width:220px;
-}
-
-
-.product-box{
-
-background:#f7f7f7;
 
-padding:10px;
-
-border-radius:10px;
-
-margin-bottom:8px;
-
-line-height:1.8;
-
-direction:rtl;
-
-text-align:right;
-
+.search-mini input:focus {
+    box-shadow: none;
 }
-
-
 
-/* خلفية المودال */
+/* تحديد الكل */
 
-#modal{
-
-position:fixed;
-
-inset:0;
-
-background:rgba(0,0,0,0.55);
-
-display:none;
-
-align-items:center;
-
-justify-content:center;
-
-z-index:9999;
-
-padding:20px;
-
+.select-all {
+    height: 45px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    background: #fff6f8;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    transition: .3s;
 }
-
-
-
-/* صندوق المودال */
-
-.modal-box{
-
-width:380px;
-
-max-width:95%;
-
-background:white;
 
-border-radius:22px;
-
-padding:25px;
-
-position:relative;
-
-box-shadow:0 20px 50px rgba(0,0,0,.25);
-
-animation:showModal .25s ease;
-
+.select-all:hover {
+    border-color: var(--pink);
+    background: var(--pink-light);
 }
-
-
-
-/* حركة الفتح */
 
-@keyframes showModal{
-
-from{
-
-transform:scale(.8);
-
-opacity:0;
-
+.select-all input {
+    appearance: none;
+    width: 19px;
+    height: 19px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    position: relative;
+    cursor: pointer;
 }
 
-to{
-
-transform:scale(1);
-
-opacity:1;
-
+.select-all input:checked {
+    background: #111;
+    border-color: #111;
 }
 
+.select-all input:checked::after {
+    content: "✓";
+    position: absolute;
+    color: white;
+    font-size: 13px;
+    font-weight: 900;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -55%);
 }
-
 
+/* أزرار التحكم */
 
-/* زر الاغلاق */
-
-#close{
-
-position:absolute;
-
-top:15px;
-
-left:15px;
-
-width:35px;
-
-height:35px;
-
-border-radius:50%;
-
-border:none;
-
-background:#ff4757;
-
-color:white;
-
-cursor:pointer;
-
-font-size:18px;
-
+.control-icons {
+    display: flex;
+    gap: 8px;
 }
-
-
-
-/* العنوان */
 
-.modal-box h2{
-
-text-align:center;
-
-margin-bottom:20px;
-
-font-size:22px;
-
+.control-icons button {
+    width: 43px;
+    height: 43px;
+    border: none;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: .3s;
+    box-shadow: 0 5px 15px #0002;
 }
-
-
-
-/* تفاصيل الطلب */
-
-#details{
 
-max-height:350px;
-
-overflow-y:auto;
-
-padding:5px;
-
+#receiveMoney {
+    background: linear-gradient(135deg, #65c97a, #26965b);
 }
-
-
-
-/* بيانات الزبون */
-
-#details p{
-
-background:#f7f7f7;
 
-padding:10px;
-
-border-radius:12px;
-
-margin:8px 0;
-
-font-size:14px;
-
+#receiveReturns {
+    background: linear-gradient(135deg, #d987a0, #c66f8c);
 }
-
-
-
-/* كل قطعة */
-
-#details > div{
 
-background:#fafafa;
-
-border-radius:15px;
-
-padding:15px;
-
-margin-bottom:12px;
-
-border:1px solid #eee;
-
-font-size:14px;
-
-line-height:1.8;
-
+#openReturnsScanner {
+    background: linear-gradient(135deg, #8b7cff, #6655db);
 }
-
 
-/* كارت المنتج بالاسترجاع */
-
-.return-product-card{
-
-display:flex;
-
-direction:rtl;
-
-align-items:flex-start;
-
-gap:12px;
-
-background:#fff;
-
-border:1px solid #eee;
-
-padding:10px;
-
-border-radius:18px;
-
-margin-bottom:10px;
-
-box-shadow:0 5px 18px rgba(0,0,0,.06);
-
+.control-icons button:hover {
+    transform: translateY(-3px) scale(1.05);
 }
-
-
-
-/* الصورة + الزر */
-
-.return-image-box{
 
-width:85px;
+/* =========================================
+   TABLE
+========================================= */
 
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-gap:8px;
-
+.table-box {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 17px;
+    border: 1px solid #f1e1e6;
 }
-
-
-
-/* صورة المنتج */
-
-.return-img{
 
-width:85px;
-
-height:85px;
-
-object-fit:cover;
-
-border-radius:16px;
-
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+    background: white;
 }
-
-
-
-/* صندوق الصورة والزر */
-
-.return-image-box{
 
-width:85px;
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-justify-content:center;
-
-gap:8px;
-
+thead {
+    background: #fff0f5;
 }
-
-
 
-/* صورة المنتج */
-
-.return-img{
-
-width:85px;
-
-height:85px;
-
-object-fit:cover;
-
-border-radius:16px;
-
+th {
+    padding: 15px 12px;
+    color: var(--pink-dark);
+    font-size: 13px;
+    font-weight: 900;
+    white-space: nowrap;
+    text-align: right;
 }
-
-
 
-/* زر الاسترجاع */
-
-.return-btn{
-
-width:36px;
-
-height:36px;
-
-border-radius:50%;
-
-border:none;
-
-background:#2563eb;
-
-color:white;
-
-cursor:pointer;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:17px;
-
-transition:.35s;
-
-box-shadow:0 4px 12px rgba(37,99,235,.35);
-
+td {
+    padding: 13px 12px;
+    text-align: right;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+    vertical-align: middle;
 }
-
 
-
-/* حركة السهم */
-
-.return-btn i{
-
-transition:.5s;
-
+tbody tr {
+    transition: .2s;
 }
-
-
-
-.return-btn:hover{
-
-background:#1d4ed8;
 
-transform:translateY(-3px);
-
+tbody tr:hover {
+    background: #fff8fa;
 }
-
-
-
-.return-btn:hover i{
 
-transform:rotate(-180deg);
+/* رقم الطلب */
 
+.order-number {
+    white-space: nowrap;
 }
 
-
-
+.order-select-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    direction: rtl;
+}
 
+.order-id {
+    font-weight: 900;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+}
 
-/* معلومات المنتج */
+.order-id:hover {
+    color: var(--pink-dark);
+}
 
-.return-info{
+/* Checkbox */
 
-flex:1;
+.order-check {
+    appearance: none;
+    width: 19px;
+    height: 19px;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    position: relative;
+    transition: .25s;
+}
 
-text-align:right;
+.order-check:hover {
+    border-color: #111;
+}
 
-padding-top:3px;
+.order-check:checked {
+    background: #111;
+    border-color: #111;
+}
 
+.order-check:checked::after {
+    content: "✓";
+    position: absolute;
+    color: white;
+    font-size: 13px;
+    font-weight: 900;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -55%);
 }
 
+tr:has(.order-check:checked) {
+    background: #fff8e8 !important;
+}
 
+/* المحافظة والعنوان */
 
-.return-info b{
+.governorate-cell {
+    min-width: 130px;
+}
 
-font-size:14px;
+.order-governorate {
+    font-weight: 800;
+}
 
-color:#111;
+.order-address {
+    color: #888;
+    font-size: 11px;
+    margin-top: 5px;
+    line-height: 1.6;
+}
 
-display:block;
+.order-address i {
+    color: var(--pink-dark);
+}
 
-margin-bottom:8px;
+/* Badge */
 
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
 }
-
 
+.badge.completed {
+    background: var(--green);
+}
 
-.return-info p{
+.badge.cancelled {
+    background: var(--red);
+}
 
-font-size:12px;
+.badge.return {
+    background: var(--orange);
+}
 
-margin:4px 0;
+.badge.waiting {
+    background: var(--blue);
+}
 
-color:#555;
+/* أزرار الإجراءات */
 
+.action-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 3px;
+    font-size: 14px;
+    color: white;
+    box-shadow: 0 5px 15px #0002;
+    transition: .25s;
 }
 
+.action-btn:hover {
+    transform: scale(1.1);
+}
 
+.finance-btn {
+    background: linear-gradient(135deg, #65c97a, #26965b);
+}
 
+.receive-return-btn {
+    background: linear-gradient(135deg, #d987a0, #c66f8c);
+}
 
-/* الهيدر */
+.view-btn {
+    background: linear-gradient(135deg, #67b7ff, #398bd3);
+}
 
-.return-modal-header{
+/* =========================================
+   EMPTY STATE
+========================================= */
 
+.empty-accounts {
+    padding: 45px 15px;
+    text-align: center;
+    color: #999;
+    font-weight: 700;
+}
 
-display:flex;
+.empty-accounts i {
+    display: block;
+    font-size: 35px;
+    color: var(--pink);
+    margin-bottom: 10px;
+}
 
-justify-content:space-between;
+/* =========================================
+   PRODUCTS
+========================================= */
 
-align-items:center;
+.product-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    direction: rtl;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 13px;
+    padding: 10px;
+    margin-bottom: 9px;
+    gap: 10px;
+}
 
-direction:rtl;
+.product-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    font-size: 13px;
+}
 
-margin-bottom:15px;
+.product-info b {
+    font-size: 14px;
+    color: #222;
+}
 
+.variant-img {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 12px;
+    flex-shrink: 0;
 }
 
+/* =========================================
+   MAIN DETAILS MODAL
+========================================= */
 
+#modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 18px;
+}
 
-.return-modal-header h2{
+.modal-box {
+    width: 430px;
+    max-width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: white;
+    border-radius: 24px;
+    padding: 28px 23px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    animation: showModal .25s ease;
+}
 
-font-size:18px;
+@keyframes showModal {
+    from {
+        transform: scale(.9) translateY(15px);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
 
-margin:0;
+#close {
+    position: absolute;
+    top: 13px;
+    left: 13px;
+    width: 37px;
+    height: 37px;
+    border: none;
+    background: #ff6b81;
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: .25s;
+}
 
+#close:hover {
+    transform: rotate(90deg);
+    background: #d94b55;
 }
 
+#details {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 5px;
+}
 
+#details h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 21px;
+}
 
-.return-modal-header span{
+#details p {
+    background: #f7f7f7;
+    padding: 10px 12px;
+    border-radius: 12px;
+    margin: 8px 0;
+    font-size: 13px;
+    line-height: 1.7;
+}
 
+#details hr {
+    border: none;
+    border-top: 1px dashed #ddd;
+    margin: 15px 0;
+}
 
-background:#111;
+/* =========================================
+   CONFIRMATION MODAL CONTENT
+========================================= */
 
-color:#fff;
+.confirmation-content {
+    text-align: center;
+    padding-top: 10px;
+}
 
-padding:5px 12px;
+.confirmation-icon {
+    width: 65px;
+    height: 65px;
+    border-radius: 21px;
+    background: #fff0f5;
+    color: var(--pink-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 27px;
+    margin: 0 auto 15px;
+}
 
-border-radius:20px;
+.confirmation-content h2 {
+    font-size: 21px;
+    margin-bottom: 10px;
+}
 
-font-size:12px;
+.confirmation-content > p {
+    background: transparent !important;
+    color: #777;
+    font-size: 13px;
+    padding: 0 !important;
+    margin-bottom: 17px;
+}
 
+.confirmation-details {
+    background: #faf7f8;
+    border: 1px solid #f1e1e6;
+    border-radius: 16px;
+    padding: 12px;
+    margin: 15px 0;
+    text-align: right;
+}
 
+.confirmation-details p {
+    background: transparent !important;
+    padding: 7px 4px !important;
+    margin: 0 !important;
+    border-bottom: 1px solid #eee;
 }
 
+.confirmation-details p:last-child {
+    border-bottom: none;
+}
 
+.confirmation-details strong {
+    color: #222;
+}
 
+.confirmation-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
 
-/* معلومات الزبون */
+.confirmation-actions button {
+    flex: 1;
+    min-height: 47px;
+    border: none;
+    border-radius: 13px;
+    font-family: Cairo;
+    font-weight: 800;
+    font-size: 13px;
+    transition: .25s;
+}
 
-.customer-box{
+.confirm-btn {
+    background: linear-gradient(135deg, #65c97a, #26965b);
+    color: white;
+}
 
+.cancel-btn {
+    background: #f1f1f1;
+    color: #444;
+}
 
-background:#f8fafc;
+.confirmation-actions button:hover {
+    transform: translateY(-2px);
+}
 
-padding:12px;
+/* =========================================
+   RETURNS SCANNER
+========================================= */
 
-border-radius:16px;
+.scanner-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20,15,18,.75);
+    backdrop-filter: blur(12px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+}
 
-font-size:13px;
+.scanner-box {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    max-height: 92vh;
+    overflow-y: auto;
+    background: white;
+    border-radius: 28px;
+    padding: 22px;
+    border: 1px solid var(--pink);
+    box-shadow: 0 35px 90px rgba(0,0,0,.35);
+    animation: showModal .3s ease;
+}
 
-border:1px solid #eee;
+.scanner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
 
+.scanner-header h2 {
+    font-size: 19px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
 
+.scanner-header h2 i {
+    color: var(--pink-dark);
 }
 
+.scanner-header p {
+    color: #999;
+    font-size: 12px;
+    margin-top: 5px;
+}
 
+.scanner-close {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    background: #fff0f2;
+    color: #e44d62;
+    font-size: 17px;
+    transition: .3s;
+}
 
-.customer-box p{
+.scanner-close:hover {
+    transform: rotate(90deg);
+    background: #e44d62;
+    color: white;
+}
 
-margin:5px 0;
+/* اختيار القسم */
 
+.scanner-types {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    margin-bottom: 17px;
 }
 
+.scanner-type {
+    min-height: 45px;
+    border: 1px solid #eee;
+    border-radius: 13px;
+    background: #fafafa;
+    color: #555;
+    font-family: Cairo;
+    font-size: 12px;
+    font-weight: 800;
+    transition: .25s;
+}
 
+.scanner-type i {
+    margin-left: 5px;
+}
 
+.scanner-type.active {
+    background: #fff0f5;
+    border-color: var(--pink-dark);
+    color: var(--pink-dark);
+    box-shadow: 0 4px 12px #d987a022;
+}
 
-/* عنوان المنتجات */
+/* الكاميرا */
 
-.products-title{
+.scanner-camera {
+    position: relative;
+    width: 100%;
+    min-height: 230px;
+    overflow: hidden;
+    border-radius: 22px;
+    background: #151515;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--pink), 0 12px 30px #0002;
+}
 
-font-size:15px;
+#returnsScannerVideo {
+    width: 100%;
+    height: 260px;
+    display: block;
+    object-fit: cover;
+}
 
-margin:15px 0 10px;
+.scanner-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 75%;
+    height: 110px;
+    transform: translate(-50%, -50%);
+    border: 2px solid var(--pink);
+    border-radius: 17px;
+    box-shadow: 0 0 0 9999px rgba(0,0,0,.3);
+    pointer-events: none;
+}
 
+.scanner-frame span {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--pink);
+    box-shadow: 0 0 12px var(--pink);
+    animation: scanLine 2s infinite;
 }
 
+@keyframes scanLine {
+    0% { top: 15%; opacity: .4; }
+    50% { top: 85%; opacity: 1; }
+    100% { top: 15%; opacity: .4; }
+}
 
+.scanner-camera-message {
+    position: absolute;
+    bottom: 12px;
+    left: 10px;
+    right: 10px;
+    text-align: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    text-shadow: 0 2px 5px #000;
+}
 
+/* نتيجة المسح */
 
+.scanner-result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 45px;
+    padding: 10px;
+    margin-top: 16px;
+    background: #fff0f5;
+    color: var(--pink-dark);
+    border: 1px solid var(--pink);
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
 
-/* المجموع */
+/* أزرار الماسح */
 
-.total-box{
+.scanner-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+}
 
+.scanner-actions button {
+    flex: 1;
+    min-height: 47px;
+    border: none;
+    border-radius: 14px;
+    color: white;
+    font-family: Cairo;
+    font-size: 13px;
+    font-weight: 800;
+    transition: .25s;
+}
 
-background:#111;
+.scanner-start-btn {
+    background: linear-gradient(135deg, var(--pink-dark), var(--pink));
+}
 
-color:white;
+.scanner-stop-btn {
+    background: #333;
+}
 
-text-align:center;
+.scanner-actions button:hover {
+    transform: translateY(-2px);
+}
 
+/* الإدخال اليدوي */
 
-padding:12px;
+.manual-scanner-input {
+    margin-top: 20px;
+}
 
+.manual-scanner-input label {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 9px;
+}
 
-border-radius:16px;
+.manual-code-row {
+    display: flex;
+    gap: 8px;
+}
 
+.manual-code-row input {
+    flex: 1;
+    min-width: 0;
+    height: 47px;
+    padding: 0 12px;
+    border: 1px solid #eee;
+    border-radius: 13px;
+    background: #faf7f8;
+    direction: ltr;
+    text-align: center;
+    outline: none;
+}
 
-font-size:15px;
+.manual-code-row input:focus {
+    border-color: var(--pink-dark);
+    box-shadow: 0 0 0 3px #f7b6c855;
+}
 
+.manual-code-row button {
+    min-width: 85px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 13px;
+    background: #111;
+    color: white;
+    font-family: Cairo;
+    font-size: 12px;
+    font-weight: 800;
+}
 
-margin-top:12px;
+/* =========================================
+   RESPONSIVE TABLE - MOBILE CARDS
+========================================= */
 
+@media(max-width:900px) {
 
-}
+    .topbar {
+        height: 75px;
+    }
 
-.product-box{
+    .topbar h1 {
+        font-size: 45px;
+    }
 
-display:flex;
-align-items:stretch;
-justify-content:space-between;
+    .topbar span {
+        font-size: 12px;
+    }
 
-direction:rtl;
+    .back-btn {
+        width: 43px;
+        height: 43px;
+        top: 16px;
+        left: 15px;
+    }
 
-background:#fff;
+    main {
+        padding: 22px 15px;
+    }
 
-border:1px solid #eee;
+    .card {
+        padding: 13px;
+        border-radius: 22px;
+    }
 
-border-radius:12px;
+    .control-bar {
+        gap: 12px;
+    }
 
-padding:10px;
+    .control-bar h2 {
+        width: 100%;
+    }
 
-margin-bottom:10px;
+    .search-mini {
+        min-width: 100%;
+        flex: none;
+    }
 
 }
-
 
-.product-info{
+@media(max-width:600px) {
 
-display:flex;
+    .order-status-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
 
-flex-direction:column;
+    .status-card {
+        min-height: 125px;
+        border-radius: 21px;
+        padding: 10px;
+    }
 
-justify-content:center;
+    .status-card h3 {
+        font-size: 14px;
+    }
 
-gap:6px;
+    .status-card > i {
+        font-size: 22px;
+    }
 
-font-size:14px;
+    .finance-section {
+        padding: 15px;
+    }
 
-}
-
+    .finance-cards {
+        gap: 10px;
+    }
 
+    .finance-cards .status-card {
+        min-height: 125px;
+    }
 
-.product-info b{
+    .control-bar {
+        padding: 12px;
+        background: white;
+        border-radius: 17px;
+        box-shadow: 0 5px 18px #0001;
+        border: 1px solid #f3e8ec;
+    }
 
-font-size:16px;
+    .control-bar h2 {
+        font-size: 17px;
+    }
 
-color:#222;
+    .select-all {
+        flex: 1;
+        justify-content: center;
+    }
 
-}
+    .control-icons {
+        gap: 8px;
+    }
 
+    .control-icons button {
+        width: 42px;
+        height: 42px;
+    }
 
+    /* تحويل الجدول إلى كروت */
 
-.variant-img{
+    .table-box {
+        overflow: visible;
+        border: none;
+    }
 
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+        min-width: 0;
+        width: 100%;
+    }
 
-width:90px;
+    thead {
+        display: none;
+    }
 
-height:90px;
+    tbody tr {
+        background: white;
+        margin-bottom: 17px;
+        border-radius: 23px;
+        padding: 13px 14px;
+        box-shadow: 0 8px 25px #0002;
+        border: 1px solid var(--pink);
+        position: relative;
+    }
 
-object-fit:cover;
+    td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 8px 2px;
+        border: none;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.7;
+        text-align: right;
+    }
 
-border-radius:12px;
+    /* رقم الطلب */
 
-margin-left:10px;
+    td.order-number {
+        display: flex;
+        align-items: center;
+        background: #fff0f5;
+        border-radius: 15px;
+        padding: 11px;
+        margin-bottom: 9px;
+    }
 
+    td.order-number::before {
+        content: "رقم الطلب";
+        color: var(--pink-dark);
+        font-size: 11px;
+        font-weight: 800;
+    }
 
-}
+    .order-select-box {
+        gap: 9px;
+    }
 
-.order-select-box{
+    .order-number .order-check {
+        order: 2;
+        margin-right: auto;
+    }
 
-display:flex;
+    /* أسماء الحقول */
 
-align-items:center;
+    td:nth-child(2)::before {
+        content: "الزبون";
+    }
 
-gap:8px;
+    td:nth-child(3)::before {
+        content: "الهاتف";
+    }
 
-direction:rtl;
+    td:nth-child(4)::before {
+        content: "المحافظة";
+    }
 
-}
+    td:nth-child(5)::before {
+        content: "المبلغ";
+    }
 
+    td:nth-child(6)::before {
+        content: "الرواجع";
+    }
 
+    td:nth-child(7)::before {
+        content: "الحالة";
+    }
 
-.order-id{
+    td:nth-child(8)::before {
+        content: "المالية";
+    }
 
-font-weight:bold;
+    td:nth-child(9)::before {
+        content: "";
+    }
 
-font-size:14px;
+    td:not(.order-number)::before {
+        font-size: 11px;
+        font-weight: 900;
+        color: #888;
+        flex-shrink: 0;
+    }
 
-}
+    /* المحافظة والعنوان */
 
+    td.governorate-cell {
+        display: block;
+    }
 
+    td.governorate-cell::before {
+        display: block;
+        margin-bottom: 5px;
+        content: "المحافظة";
+    }
 
-.return-order-icon{
+    .order-address {
+        margin-top: 5px;
+    }
 
+    /* المبلغ */
 
-width:28px;
+    td:nth-child(5) {
+        background: #faf7f8;
+        border-radius: 12px;
+        padding: 9px;
+        margin: 5px 0;
+    }
 
-height:28px;
+    /* الإجراءات */
 
-border-radius:50%;
+    td:nth-child(9) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        padding-top: 13px;
+        margin-top: 9px;
+        border-top: 1px dashed #e8c7d1;
+    }
 
-display:flex;
+    td:nth-child(9)::before {
+        display: none;
+    }
 
-align-items:center;
+    .action-btn {
+        width: 39px;
+        height: 39px;
+        font-size: 14px;
+        margin: 0;
+    }
 
-justify-content:center;
+    /* المودلات */
 
-background:#fff7ed;
+    .modal-box {
+        width: 95%;
+        max-width: 430px;
+        padding: 25px 17px;
+        border-radius: 21px;
+    }
 
-color:#f97316;
+    .confirmation-actions {
+        flex-direction: column;
+    }
 
-border:1px solid #fed7aa;
+    .scanner-box {
+        padding: 16px;
+        border-radius: 23px;
+    }
 
-font-size:13px;
+    #returnsScannerVideo {
+        height: 230px;
+    }
 
-cursor:pointer;
+}
 
-transition:.3s;
+@media(max-width:360px) {
 
+    main {
+        padding: 18px 10px;
+    }
 
-}
+    .order-status-cards {
+        gap: 9px;
+    }
 
-.order-number{
-display:flex;
-align-items:center;
-gap:8px;
-}
+    .status-card h3 {
+        font-size: 12px;
+    }
 
-.return-order-icon:hover{
+    .finance-section {
+        padding: 11px;
+    }
 
+    .control-icons button {
+        width: 38px;
+        height: 38px;
+    }
 
-background:#f97316;
-
-color:white;
-
-transform:rotate(-20deg) scale(1.1);
-
-
-}
-.order-number-box{
-
-display:flex;
-
-align-items:center;
-
-gap:8px;
-
-direction:rtl;
-
-}
-
-.return-product-card{
-
-display:flex;
-
-direction:rtl;
-
-align-items:center;
-
-gap:12px;
-
-background:white;
-
-padding:10px;
-
-border-radius:18px;
-
-margin-bottom:10px;
-
-box-shadow:0 5px 18px #0001;
-
-}
-
-
-.return-info{
-
-flex:1;
-
-text-align:right;
-
-}
-
-
-.return-image-box{
-
-width:85px;
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-gap:6px;
-
-}
-
-
-.return-img{
-
-width:85px;
-
-height:85px;
-
-object-fit:cover;
-
-border-radius:15px;
-
-}
-
-
-.return-btn{
-
-width:34px;
-
-height:34px;
-
-border-radius:50%;
-
-border:none;
-
-background:#2563eb;
-
-color:white;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-cursor:pointer;
-
-}
-
-
-.return-btn i{
-
-transition:.5s;
-
-}
-
-
-.return-btn:hover i{
-
-transform:rotate(-180deg);
-
-}
-/* =========================
-   NIVRA PREMIUM SCANNER V2
-========================= */
-
-
-#scanModal{
-
-display:none;
-
-position:fixed;
-
-inset:0;
-
-background:rgba(20,15,18,.72);
-
-backdrop-filter:blur(16px);
-
-z-index:9999;
-
-align-items:center;
-
-justify-content:center;
-
-padding:20px;
-
-}
-
-
-
-/* SCANNER CARD */
-
-.scan-box{
-
-position:relative;
-
-width:100%;
-
-max-width:430px;
-
-background:white;
-
-border-radius:32px;
-
-padding:22px;
-
-padding-top:55px;
-
-box-shadow:
-
-0 35px 90px rgba(0,0,0,.35);
-
-
-border:1px solid #f7b6c8;
-
-
-animation:scannerShow .35s ease;
-
-
-}
-
-
-
-
-@keyframes scannerShow{
-
-
-from{
-
-opacity:0;
-
-transform:scale(.85) translateY(30px);
-
-}
-
-
-to{
-
-opacity:1;
-
-transform:scale(1);
-
-}
-
-
-}
-
-
-
-
-
-/* =========================
- CLOSE BUTTON
-========================= */
-
-
-#closeScanner{
-
-
-position:absolute;
-
-
-top:12px;
-
-
-left:50%;
-
-
-transform:translateX(-50%);
-
-
-width:48px;
-
-
-height:48px;
-
-
-border-radius:50%;
-
-
-border:none;
-
-
-background:
-
-linear-gradient(
-135deg,
-#ff0000,
-#333
-);
-
-
-color:#f7b6c8;
-
-
-font-size:20px;
-
-
-display:flex;
-
-
-align-items:center;
-
-
-justify-content:center;
-
-
-cursor:pointer;
-
-
-z-index:20;
-
-
-box-shadow:
-
-0 10px 25px rgba(0,0,0,.25);
-
-
-transition:.35s;
-
-
-}
-
-
-
-#closeScanner:hover{
-
-
-transform:
-
-translateX(-50%)
-rotate(90deg)
-scale(1.1);
-
-
-background:#d987a0;
-
-color:white;
-
-
-}
-
-
-
-
-
-#closeScanner::before{
-
-
-content:"\f00d";
-
-font-family:"Font Awesome 6 Free";
-
-font-weight:900;
-
-
-}
-
-
-
-
-
-/* =========================
- CAMERA AREA
-========================= */
-
-
-#reader{
-
-
-position:relative;
-
-
-width:100%;
-
-
-height:auto;
-
-
-overflow:hidden;
-
-
-border-radius:28px;
-
-
-background:#000;
-
-
-border:3px solid white;
-
-
-box-shadow:
-
-0 0 0 3px #f7b6c8,
-0 15px 35px #0003;
-
-
-}
-
-
-
-
-#reader video{
-
-
-width:100%!important;
-
-
-border-radius:25px;
-
-
-}
-
-
-
-
-/* إطار المسح داخل الكاميرا */
-
-
-#reader::after{
-
-
-content:"";
-
-
-position:absolute;
-
-
-top:50%;
-
-left:50%;
-
-
-width:230px;
-
-
-height:150px;
-
-
-transform:translate(-50%,-50%);
-
-
-border-radius:22px;
-
-
-border:3px solid #f7b6c8;
-
-
-box-shadow:
-
-0 0 0 9999px rgba(0,0,0,.35);
-
-
-pointer-events:none;
-
-
-}
-
-
-
-
-
-/* خطوط المسح */
-
-
-#reader::before{
-
-
-content:"";
-
-
-position:absolute;
-
-
-left:50%;
-
-
-top:50%;
-
-
-width:200px;
-
-
-height:3px;
-
-
-background:#f7b6c8;
-
-
-transform:translate(-50%,-50%);
-
-
-animation:scanLine 2s infinite;
-
-
-z-index:5;
-
-
-}
-
-
-
-@keyframes scanLine{
-
-
-0%{
-
-top:35%;
-
-opacity:.3;
-
-}
-
-
-50%{
-
-top:65%;
-
-opacity:1;
-
-}
-
-
-100%{
-
-top:35%;
-
-opacity:.3;
-
-}
-
-
-}
-
-
-
-
-
-/* =========================
- MANUAL CODE
-========================= */
-
-
-#manualCode{
-
-
-margin-top:20px;
-
-
-height:52px;
-
-
-border-radius:18px;
-
-
-border:2px solid #eee;
-
-
-background:#faf7f8;
-
-
-font-family:Cairo;
-
-
-font-size:17px;
-
-
-font-weight:700;
-
-
-text-align:center;
-
-
-direction:ltr;
-
-
-outline:none;
-
-
-transition:.3s;
-
-
-}
-
-
-
-#manualCode:focus{
-
-
-background:white;
-
-
-border-color:#d987a0;
-
-
-box-shadow:
-
-0 0 0 5px #f7b6c855;
-
-
-}
-
-
-
-
-
-/* ADD BUTTON */
-
-
-#addManualCode{
-
-
-margin-top:12px;
-
-
-height:52px;
-
-
-width:100%;
-
-
-border:none;
-
-
-border-radius:18px;
-
-
-background:
-
-linear-gradient(
-135deg,
-#d987a0,
-#f7b6c8
-);
-
-
-color:white;
-
-
-font-size:22px;
-
-
-cursor:pointer;
-
-
-display:flex;
-
-
-align-items:center;
-
-
-justify-content:center;
-
-
-box-shadow:
-
-0 10px 25px #d987a055;
-
-
-transition:.3s;
-
-
-}
-
-
-
-#addManualCode::before{
-
-
-content:"\f02a";
-
-font-family:"Font Awesome 6 Free";
-
-font-weight:900;
-
-
-}
-
-
-
-#addManualCode:hover{
-
-
-transform:translateY(-3px);
-
-
-box-shadow:
-
-0 15px 35px #d987a077;
-
-
-}
-
-
-
-
-
-/* =========================
- MESSAGE
-========================= */
-
-
-#scanMessage{
-
-
-margin-top:18px;
-
-
-padding:15px;
-
-
-border-radius:18px;
-
-
-background:#fff0f5;
-
-
-color:#d987a0;
-
-
-font-size:16px;
-
-
-font-weight:800;
-
-
-text-align:center;
-
-
-border:1px solid #f7b6c8;
-
-
-display:none;
-
-
-animation:message .3s;
-
-
-}
-
-
-
-
-
-@keyframes message{
-
-
-from{
-
-opacity:0;
-
-transform:scale(.9);
-
-}
-
-
-to{
-
-opacity:1;
-
-}
-
-
-}
-
-
-
-
-
-
-
-@media(max-width:480px){
-
-
-.scan-box{
-
-padding:16px;
-
-padding-top:55px;
-
-border-radius:25px;
-
-}
-
-
-
-#closeScanner{
-
-width:42px;
-
-height:42px;
-
-}
-
-
-#reader::after{
-
-width:200px;
-
-height:130px;
-
-}
-
-
-}
-/* زر استرجاع القطعة */
-.return-btn,
-.cancel-return-btn{
-
-width:35px;
-height:35px;
-
-border:none;
-
-border-radius:50%;
-
-display:inline-flex;
-
-align-items:center;
-
-justify-content:center;
-
-margin-left:5px;
-
-cursor:pointer;
-
-font-size:15px;
-
-transition:0.2s;
-
-}
-
-
-/* ايقونة الاسترجاع */
-.return-btn{
-
-background:#3498db;
-
-color:white;
-
-}
-
-
-
-/* الغاء الاسترجاع */
-.cancel-return-btn{
-
-background:#e74c3c;
-
-color:white;
-
-}
-
-
-
-/* حركة عند المرور */
-.return-btn:hover,
-.cancel-return-btn:hover{
-
-transform:scale(1.1);
-
-}
-
-
-
-/* نخليهم بنفس السطر */
-.return-info{
-
-position:relative;
-
-}
-
-
-
-/* مجموعة الازرار */
-.return-info button{
-
-vertical-align:middle;
-
-}
-.accounts-btn{
-
-position:absolute;
-
-right:20px;
-
-top:50%;
-
-transform:translateY(-50%);
-
-
-width:42px;
-height:42px;
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-border-radius:50%;
-
-background:#2563eb;
-
-color:white;
-
-text-decoration:none;
-
-font-size:18px;
-
-}
-.badge.partial_return{
-background:#ff9800;
-color:#fff;
-}
-.status-card.partial{
-
-    grid-column: 1 / -1;
-
-    height:70px;
-
-    min-height:70px;
-
-    display:flex;
-
-    flex-direction:row;   /* مهم حتى يصير افقي */
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:20px;
-
-    padding:10px 20px;
-
-}
-
-
-/* الايقونة */
-
-.status-card.partial i{
-
-    font-size:24px;
-
-    order:1;
-
-}
-
-
-/* الكتابة */
-
-.status-card.partial h3{
-
-    margin:0;
-
-    font-size:18px;
-
-    order:2;
-
-}
-
-
-/* العدد */
-
-.status-card.partial span{
-
-    font-size:18px;
-
-    font-weight:bold;
-
-    order:3;
-
-}
-.status-card.partial{
-
-    grid-column: 1 / -1;
-
-    height:70px;
-
-    min-height:70px;
-
-    display:flex;
-
-    flex-direction:row;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:20px;
-
-    padding:10px 20px;
-
-
-    /* الألوان */
-
-    background:#fff3e0;
-
-    border:2px solid #005789;
-
-    color:#e65100;
-
-    border-radius:15px;
-
-}
-/* ===========================
-   Redelivery Modal - Mobile Pro
-=========================== */
-
-
-#redeliveryModal{
-
-position:fixed;
-
-inset:0;
-
-display:none;
-
-align-items:center;
-
-justify-content:center;
-
-background:rgba(0,0,0,.45);
-
-backdrop-filter:blur(6px);
-
-z-index:99999;
-
-padding:20px;
-
-
-}
-
-
-
-/* الكارت */
-
-#redeliveryModal .modal-content{
-
-
-width:360px;
-
-max-width:calc(100vw - 40px);
-
-max-height:90vh;
-
-overflow-y:auto;
-
-
-background:#fff;
-
-
-border-radius:22px;
-
-
-padding:22px;
-
-
-box-shadow:
-
-0 15px 45px rgba(0,0,0,.25);
-
-
-display:flex;
-
-flex-direction:column;
-
-
-gap:12px;
-
-
-direction:rtl;
-
-
-animation:
-
-redeliveryOpen .25s ease;
-
-
-}
-
-
-
-
-
-@keyframes redeliveryOpen{
-
-
-from{
-
-opacity:0;
-
-transform:scale(.9) translateY(20px);
-
-}
-
-
-to{
-
-opacity:1;
-
-transform:scale(1) translateY(0);
-
-}
-
-
-}
-
-
-
-/* العنوان */
-
-
-#redeliveryModal h2{
-
-
-margin:0 0 8px;
-
-
-text-align:center;
-
-
-font-size:21px;
-
-
-font-weight:900;
-
-
-color:#222;
-
-
-}
-
-
-
-/* الحقول */
-
-
-#redeliveryModal input,
-
-#redeliveryModal select{
-
-
-width:100%;
-
-
-height:45px;
-
-
-box-sizing:border-box;
-
-
-border-radius:13px;
-
-
-border:1px solid #ddd;
-
-
-background:#f7f7f7;
-
-
-padding:0 14px;
-
-
-font-size:15px;
-
-
-outline:none;
-
-
-}
-
-
-
-#redeliveryModal input:focus,
-
-#redeliveryModal select:focus{
-
-
-background:#fff;
-
-
-border-color:#2563eb;
-
-
-box-shadow:
-
-0 0 0 3px rgba(37,99,235,.12);
-
-
-}
-
-
-
-
-/* صف الجيك بوكس */
-
-
-.check-row{
-
-
-height:42px;
-
-
-background:#f4f4f5;
-
-
-border-radius:13px;
-
-
-display:flex;
-
-
-align-items:center;
-
-
-gap:10px;
-
-
-padding:0 12px;
-
-
-font-size:14px;
-
-
-font-weight:700;
-
-
-}
-
-
-
-.check-row input{
-
-
-width:18px !important;
-
-
-height:18px;
-
-
-accent-color:#2563eb;
-
-
-}
-
-
-
-/* الحقول الاضافية */
-
-
-#returnAmount,
-
-#rdDiscount{
-
-
-height:45px;
-
-
-animation:showField .2s ease;
-
-
-}
-
-
-
-@keyframes showField{
-
-
-from{
-
-opacity:0;
-
-transform:translateY(-5px);
-
-}
-
-
-to{
-
-opacity:1;
-
-transform:none;
-
-}
-
-
-}
-
-
-
-
-
-/* زر الحفظ */
-
-
-#saveRedelivery{
-
-
-height:48px;
-
-
-border:none;
-
-
-border-radius:14px;
-
-
-background:
-
-linear-gradient(135deg,#16a34a,#22c55e);
-
-
-color:white;
-
-
-font-size:16px;
-
-
-font-weight:900;
-
-
-cursor:pointer;
-
-
-margin-top:5px;
-
-
-}
-
-
-
-
-
-/* زر الالغاء */
-
-
-#closeRedelivery{
-
-
-height:45px;
-
-
-border:none;
-
-
-border-radius:14px;
-
-
-background:#ef4444;
-
-
-color:white;
-
-
-font-size:15px;
-
-
-font-weight:800;
-
-
-cursor:pointer;
-
-
-}
-
-
-
-
-/* شاشة صغيرة جدا */
-
-
-@media(max-width:380px){
-
-
-#redeliveryModal .modal-content{
-
-
-width:320px;
-
-
-padding:18px;
-
-
-}
-
-
-#redeliveryModal h2{
-
-
-font-size:19px;
-
-}
-
-
-}
-.cards-group{
-margin-bottom:28px;
-}
-
-.group-title{
-font-size:20px;
-font-weight:700;
-margin-bottom:15px;
-padding-right:8px;
-color:#333;
-}
-
-.finance-cards{
-display:grid;
-gap:15px;
-}
-
-
-.finance-cards{
-grid-template-columns:repeat(2,1fr);
-}
-
-@media(max-width:700px){
-
-
-
-.finance-cards{
-grid-template-columns:1fr;
-}
-
-.group-title{
-text-align:center;
-padding-right:0;
-}
+    .scanner-types {
+        grid-template-columns: 1fr;
+    }
 
 }

@@ -1,601 +1,757 @@
 <!DOCTYPE html>
+
 <html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>NIVRA | أزياء نيفرا</title>
-  <meta name="theme-color" content="#f7b6c8">
-  <meta name="description" content="اكتشفي أناقتك مع NIVRA، تشكيلة مختارة من الأزياء النسائية.">
-  <link rel="manifest" href="./manifest.json">
-  <link rel="stylesheet" href="./css/store.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NIVRA Store</title
+
+<link rel="manifest" href="./manifest.json">
+
+<meta name="theme-color" content="#f7b6c8">
+<link rel="stylesheet" href="./css/store.css">
+
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 <body>
-  <!-- OFFLINE SCREEN -->
-  <div id="offlineScreen" class="offline-screen">
-    <div class="offline-box">
-      <div class="offline-icon">
-        <i class="fa-solid fa-wifi"></i>
-      </div>
-      <h2 id="offlineTitle">لا يوجد اتصال بالإنترنت</h2>
-      <p id="offlineText">يرجى التحقق من الشبكة والمحاولة مجدداً</p>
-      <div class="offline-bar">
-        <div class="offline-bar-fill"></div>
-      </div>
+
+<!-- OFFLINE SCREEN -->
+<div id="offlineScreen">
+  <div class="offline-box">
+    <h2 id="offlineTitle">⚠️ لا يوجد اتصال بالإنترنت</h2>
+    <p id="offlineText">يرجى التحقق من الشبكة</p>
+
+    <div class="offline-bar">
+      <div class="offline-bar-fill"></div>
     </div>
   </div>
-  <!-- SPLASH SCREEN -->
-  <div id="splashScreen" class="splash-screen">
-    <div class="splash-brand">NIVRA</div>
-    <p>Elegance in Every Detail</p>
-    <div class="loader-bar">
-      <div class="loader-fill"></div>
-    </div>
-    <span>جاري تجهيز أناقتك...</span>
+</div>
+
+<!-- SPLASH SCREEN -->
+<div id="splashScreen">
+  <img src="./assets/images/hero.jpg" alt="loading">
+
+  <div class="loader-bar">
+    <div class="loader-fill"></div>
   </div>
-  <!-- TOAST -->
-  <div id="toast" class="toast"></div>
-  <!-- HEADER -->
-  <header class="top-header">
-    <a href="#home" class="logo-link" aria-label="NIVRA الرئيسية">
-      <h1 class="logo">NIVRA</h1>
-    </a>
-    <div class="header-actions">
-      <a id="whatsappLink"
-        class="whatsapp-icon"
-        href="https://wa.me/9647741478145"
-        target="_blank"
-        rel="noopener"
-        aria-label="تواصلي معنا عبر واتساب">
-        <i class="fa-brands fa-whatsapp"></i>
-      </a>
-      <a href="#contact"
-        class="account-icon"
-        aria-label="تواصل معنا"
-        data-open-contact>
-        <i class="fa-regular fa-comment-dots"></i>
-      </a>
-    </div>
-  </header>
-  <!-- DESKTOP NAVIGATION -->
-  <nav class="main-nav">
-    <a href="#home">الرئيسية</a>
-    <a href="#categories">الأصناف</a>
-    <a href="#products">المنتجات</a>
-    <a href="#contact" data-open-contact>تواصل معنا</a>
-  </nav>
-  <!-- HERO -->
-  <section id="home" class="hero">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <span class="hero-label">
-        NIVRA WOMEN'S COLLECTION
-      </span>
-      <h2>
-        أناقتك تبدأ من هنا
-      </h2>
-      <p>
-        تشكيلة مختارة بعناية لتعبّر عن أناقتك
-      </p>
-      <a href="#products" class="hero-shopping-link">
-        اكتشفي التشكيلة
-        <i class="fa-solid fa-arrow-left"></i>
-      </a>
-    </div>
-  </section>
-  <!-- INSTALL APP -->
-  <section class="install-section">
-    <div class="install-info">
-      <div class="install-icon">
-        <i class="fa-solid fa-mobile-screen-button"></i>
-      </div>
-      <div>
-        <h3>تجربة NIVRA على هاتفك</h3>
-        <p>ثبتي التطبيق لتصلك تجربة تسوق أسهل</p>
-      </div>
-    </div>
-    <button id="installApp" class="install-btn" type="button">
-      <span>تثبيت</span>
-      <i class="fa-solid fa-download"></i>
-    </button>
-  </section>
-  <!-- BENEFITS -->
-  <section class="benefits-section">
-    <div class="benefit-item">
-      <div class="benefit-icon">
-        <i class="fa-solid fa-shirt"></i>
-      </div>
-      <span>تشكيلة مختارة</span>
-    </div>
-    <div class="benefit-item">
-      <div class="benefit-icon">
-        <i class="fa-solid fa-truck-fast"></i>
-      </div>
-      <span>توصيل للمحافظات</span>
-    </div>
-    <div class="benefit-item">
-      <div class="benefit-icon">
-        <i class="fa-regular fa-heart"></i>
-      </div>
-      <span>أناقة تليق بك</span>
-    </div>
-  </section>
-  <!-- CATEGORIES -->
-  <section id="categories" class="categories-section">
-    <div class="category-card-box">
-      <div class="category-select-wrap">
-        <i class="fa-solid fa-layer-group"></i>
-        <select id="categorySelect">
-          <option value="all">كل الأصناف</option>
-        </select>
-        <i class="fa-solid fa-chevron-down select-arrow"></i>
-      </div>
-      <!-- تبقى هذه العناصر لأن store.js يحدثها عند اختيار الصنف -->
-      <div class="category-details">
-        <div class="category-image-wrap">
-          <img id="categoryImage" src="" alt="صورة الصنف">
-        </div>
-        <div class="category-text">
-          <span class="category-small-label">
-            NIVRA COLLECTION
-          </span>
-          <h3 id="categoryTitle"></h3>
-          <p id="categoryDescription"></p>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- PRODUCTS -->
-  <section id="products" class="products-section">
-    <div id="productsContainer" class="products-grid">
-      <!-- المنتجات تُحمّل من Supabase بواسطة store.js -->
-    </div>
-  </section>
-  <!-- BRAND STORY -->
-  <section class="brand-story-section">
-    <div class="brand-story-content">
-      <span class="section-kicker">ABOUT NIVRA</span>
-      <h2>تفاصيل تصنع أناقتك</h2>
-      <p>
-        في NIVRA نؤمن أن الأناقة تبدأ من اختيار التفاصيل.
-        اكتشفي قطعاً مختارة لتكون جزءاً من إطلالتك الخاصة.
-      </p>
-      <a href="#products" class="brand-story-link">
-        تسوقي الآن
-        <i class="fa-solid fa-arrow-left"></i>
-      </a>
-    </div>
-  </section>
-  <!-- CONTACT MODAL -->
-  <div id="contact" class="modal contact-modal" role="dialog"
-    aria-modal="true" aria-labelledby="contactModalTitle" tabindex="-1">
-    <div class="modal-content contact-modal-content">
-      <button id="closeContactModal"
-        class="close"
-        type="button"
-        aria-label="إغلاق">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-      <div class="contact-modal-heading">
-        <span class="section-kicker">WE ARE HERE FOR YOU</span>
-        <h2 id="contactModalTitle">تواصلي معنا</h2>
-        <p>
-          نساعدك باختيار المقاس والتصميم المناسب
-        </p>
-      </div>
-      <a class="direct-chat-button"
-        href="https://wa.me/9647741478145"
-        target="_blank"
-        rel="noopener">
-        <i class="fa-brands fa-whatsapp"></i>
-        <span>تحدثي معنا مباشرة</span>
-        <i class="fa-solid fa-arrow-left"></i>
-      </a>
-      <div class="social-icons">
-        <a href="https://www.instagram.com/nivra.iq?igsh=bWE3dTJwajV5bnB5&utm_source=qr"
-          target="_blank"
-          rel="noopener"
-          aria-label="Instagram">
-          <i class="fa-brands fa-instagram"></i>
-        </a>
-        <a href="https://www.tiktok.com/@nivra.iq?_r=1&_t=ZS-97DhSlQPqqX"
-          target="_blank"
-          rel="noopener"
-          aria-label="TikTok">
-          <i class="fa-brands fa-tiktok"></i>
-        </a>
-        <a href="https://wa.me/9647741478145"
-          target="_blank"
-          rel="noopener"
-          aria-label="WhatsApp">
-          <i class="fa-brands fa-whatsapp"></i>
-        </a>
-        <a href="https://www.facebook.com/share/1GP9BwmSSz/?mibextid=wwXIfr"
-          target="_blank"
-          rel="noopener"
-          aria-label="Facebook">
-          <i class="fa-brands fa-facebook"></i>
-        </a>
-      </div>
-    </div>
-  </div>
-  <!-- FOOTER -->
-  <footer class="store-footer">
-    <div class="footer-logo">NIVRA</div>
-    <p>Elegance in Every Detail</p>
-    <span>© NIVRA - جميع الحقوق محفوظة</span>
-  </footer>
-  <!-- PRODUCT ORDER MODAL -->
-  <div id="orderModal" class="modal">
-    <div class="modal-content order-modal-content">
-      <button id="closeOrderModal"
-        class="close"
-        type="button"
-        aria-label="إغلاق">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-      <div class="modal-heading">
-        <span class="section-kicker">YOUR SELECTION</span>
-        <h2>اختاري تفاصيل القطعة</h2>
-        <p>حددي اللون والمقاس المناسب لك</p>
-      </div>
-      <div class="order-product-preview">
-        <img id="orderProductImage"
-          src=""
-          alt="صورة المنتج">
-      </div>
-      <div class="order-product-info">
-        <h3 id="orderProductName"></h3>
-        <div class="order-price">
-          <span>السعر</span>
-          <strong>
-            <span id="productPrice">0</span>
-            <small>دينار</small>
-          </strong>
-        </div>
-      </div>
-      <div class="product-options">
-        <div class="option-field">
-          <label for="orderSize">المقاس</label>
-          <div class="option-select-wrap">
-            <select id="orderSize"></select>
-            <i class="fa-solid fa-chevron-down"></i>
-          </div>
-        </div>
-        <div class="option-field">
-          <label for="orderColor">اللون</label>
-          <div class="option-select-wrap">
-            <select id="orderColor"></select>
-            <i class="fa-solid fa-chevron-down"></i>
-          </div>
-        </div>
-      </div>
-      <button id="addToCart" type="button" class="add-to-cart-btn">
-        <i class="fa-solid fa-bag-shopping"></i>
-        إضافة إلى السلة
-      </button>
-      <p class="modal-secure-note">
-        <i class="fa-solid fa-heart"></i>
-        اختياراتك الأنيقة تبدأ من NIVRA
-      </p>
-    </div>
-  </div>
-  <!-- CART MODAL -->
-  <div id="cartModal" class="modal cart-modal">
-    <div class="modal-content cart-modal-content">
-      <button id="closeCartModal"
-        class="close"
-        type="button"
-        aria-label="إغلاق">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-      <div class="cart-modal-header">
-        <span class="section-kicker">YOUR SHOPPING BAG</span>
-        <h2>سلة التسوق</h2>
-        <p>راجعي اختياراتك قبل تثبيت الحجز</p>
-      </div>
-      <!-- CART STEPS -->
-      <div class="cart-steps">
-        <div class="cart-step-indicator active" data-step-indicator="1">
-          <span>1</span>
-          <small>المنتجات</small>
-        </div>
-        <div class="cart-step-line"></div>
-        <div class="cart-step-indicator" data-step-indicator="2">
-          <span>2</span>
-          <small>التوصيل</small>
-        </div>
-        <div class="cart-step-line"></div>
-        <div class="cart-step-indicator" data-step-indicator="3">
-          <span>3</span>
-          <small>التأكيد</small>
-        </div>
-      </div>
-      <!-- STEP 1 -->
-      <section id="cartStep1" class="cart-step-panel active">
-        <div class="cart-step-title">
-          <h3>منتجاتك المختارة</h3>
-          <span>راجعي القطع والكميات</span>
-        </div>
-        <div id="cartContainer" class="cart-container">
-          <!-- عناصر السلة تُعرض من store.js -->
-        </div>
-        <div class="cart-step-actions">
-          <button id="cartNextToDetails"
-            class="cart-primary-action"
-            type="button">
-            متابعة إلى بيانات التوصيل
-            <i class="fa-solid fa-arrow-left"></i>
-          </button>
-          <button id="continueShopping"
-            class="cart-secondary-action"
-            type="button">
-            <i class="fa-solid fa-plus"></i>
-            إضافة منتجات أخرى
-          </button>
-        </div>
-      </section>
-      <!-- STEP 2 -->
-      <section id="cartStep2" class="cart-step-panel" hidden>
-        <div class="cart-step-title">
-          <h3>بيانات التوصيل</h3>
-          <span>أدخلي معلوماتك لإكمال الحجز</span>
-        </div>
-        <div class="cart-customer-form">
-          <div class="form-field">
-            <label for="customerName">الاسم الكامل</label>
-            <input
-              id="customerName"
-              type="text"
-              placeholder="اكتبي اسمك الكامل"
-              autocomplete="name">
-          </div>
-          <div class="form-field">
-            <label for="customerPhone">رقم الهاتف</label>
-            <input
-              id="customerPhone"
-              type="tel"
-              inputmode="numeric"
-              placeholder="رقم الهاتف 11 رقم"
-              maxlength="11"
-              autocomplete="tel">
-          </div>
-          <div class="form-field">
-            <label for="customerGovernorate">المحافظة</label>
-            <div class="option-select-wrap">
-              <select id="customerGovernorate">
-                <option value="">اختاري المحافظة</option>
-              </select>
-              <i class="fa-solid fa-chevron-down"></i>
-            </div>
-          </div>
-          <div class="form-field">
-            <label for="customerArea">المنطقة</label>
-            <input
-              id="customerArea"
-              type="text"
-              placeholder="اسم المنطقة">
-          </div>
-          <div class="form-field">
-            <label for="nearestPoint">أقرب نقطة دالة</label>
-            <input
-              id="nearestPoint"
-              type="text"
-              placeholder="مثلاً: قرب شارع أو محل معروف">
-          </div>
-        </div>
-        <div class="delivery-preview">
-          <div>
-            <span>كلفة التوصيل</span>
-            <strong>
-              <span id="cartDelivery">0</span>
-              دينار
-            </strong>
-          </div>
-          <i class="fa-solid fa-truck-fast"></i>
-        </div>
-        <div class="cart-step-actions">
-          <button id="cartReviewOrder"
-            class="cart-primary-action"
-            type="button">
-            مراجعة الطلب
-            <i class="fa-solid fa-arrow-left"></i>
-          </button>
-          <button id="cartBackToItems"
-            class="cart-secondary-action"
-            type="button">
-            <i class="fa-solid fa-arrow-right"></i>
-            الرجوع للمنتجات
-          </button>
-        </div>
-      </section>
-      <!-- STEP 3 -->
-      <section id="cartStep3" class="cart-step-panel" hidden>
-        <div class="cart-step-title">
-          <h3>مراجعة الحجز</h3>
-          <span>تأكدي من التفاصيل قبل الانتقال إلى واتساب</span>
-        </div>
-        <div class="final-review-card">
-          <div class="review-row">
-            <span>مجموع المنتجات</span>
-            <strong>
-              <span id="cartProductsTotal">0</span>
-              دينار
-            </strong>
-          </div>
-          <div class="review-row">
-            <span>التوصيل</span>
-            <strong>
-              <span id="cartDeliveryTotal">0</span>
-              دينار
-            </strong>
-          </div>
-          <div class="review-divider"></div>
-          <div class="review-total">
-            <span>المجموع النهائي</span>
-            <strong>
-              <span id="cartFinalTotal">0</span>
-              دينار
-            </strong>
-          </div>
-        </div>
-        <div class="review-note">
-          <i class="fa-solid fa-circle-check"></i>
-          <p>
-            بعد الضغط على زر الحجز، ستنتقلين إلى واتساب لمراجعة وإرسال تفاصيل طلبك.
-          </p>
-        </div>
-        <div class="cart-step-actions">
-          <button id="reserveOrder"
-            class="whatsapp-send"
-            type="button">
-            <i class="fa-brands fa-whatsapp"></i>
-            تأكيد الحجز عبر واتساب
-          </button>
-          <button id="cartBackToDetails"
-            class="cart-secondary-action"
-            type="button">
-            <i class="fa-solid fa-arrow-right"></i>
-            تعديل بيانات التوصيل
-          </button>
-        </div>
-      </section>
-    </div>
-  </div>
-  <!-- IMAGE ZOOM MODAL -->
-  <div id="imageZoomModal" class="img-zoom-modal">
-    <button id="closeZoom"
-      class="zoom-close"
-      type="button"
-      aria-label="إغلاق">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-    <button id="zoomPrev"
-      class="zoom-arrow zoom-prev"
-      type="button"
-      aria-label="الصورة السابقة">
-      <i class="fa-solid fa-chevron-right"></i>
-    </button>
-    <img id="zoomedImage" src="" alt="صورة المنتج">
-    <button id="zoomNext"
-      class="zoom-arrow zoom-next"
-      type="button"
-      aria-label="الصورة التالية">
-      <i class="fa-solid fa-chevron-left"></i>
-    </button>
-  </div>
-  <!-- SCROLL TO TOP -->
-  <button id="scrollTop"
-    class="scroll-top"
-    type="button"
-    aria-label="العودة للأعلى">
-    <i class="fa-solid fa-arrow-up"></i>
+
+  <p>جاري التحميل...</p>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<header class="top-header">
+
+
+<h1 class="logo">
+
+NIVRA
+
+</h1>
+
+
+
+
+<div class="header-actions">
+
+
+<a id="whatsappLink"
+class="whatsapp-icon"
+href="https://wa.me/9647741478145"
+target="_blank">
+
+<i class="fa-brands fa-whatsapp"></i>
+
+</a>
+
+
+
+
+<a href="login.html"
+class="account-icon">
+
+<i class="fa-solid fa-user"></i>
+
+</a>
+
+
+
+
+<button id="cartButton"
+class="cart-icon">
+
+
+<i class="fa-solid fa-cart-shopping"></i>
+
+
+<span id="cartCount">
+
+0
+
+</span>
+
+
+</button>
+
+
+
+</div>
+
+
+</header>
+
+
+
+
+
+
+
+
+
+<nav class="main-nav">
+
+
+<a href="#home">
+
+الرئيسية
+
+</a>
+
+
+<a href="#categories">
+
+الأصناف
+
+</a>
+
+
+<a href="#products">
+
+المنتجات
+
+</a>
+
+
+<a href="#contact">
+
+تواصل معنا
+
+</a>
+
+
+</nav>
+
+
+
+
+
+
+
+
+
+<section id="home"
+class="hero">
+
+
+<div class="hero-content">
+
+
+<h2>
+
+أناقتك تبدأ من هنا
+
+</h2>
+
+
+
+<p>
+
+تشكيلة مصممة لك
+
+</p>
+
+
+
+<button id="installApp" class="install-btn">
+
+<i class="fa-solid fa-mobile-screen-button"></i>
+
+<span>
+تثبيت تطبيق NIVRA
+</span>
+
+<i class="fa-solid fa-download download-icon"></i>
+
+</button>
+
+
+
+</div>
+
+
+</section>
+
+<section id="categories">
+
+<div class="category-card-box">
+
+
+<h2>
+تحديد التصنيف
+</h2>
+
+
+<select id="categorySelect">
+
+<option value="">
+اختاري الصنف
+</option>
+
+</select>
+
+
+
+<div class="category-details">
+
+
+<img id="categoryImage">
+
+
+
+<div class="category-text">
+
+
+<h3 id="categoryTitle"></h3>
+
+
+<p id="categoryDescription"></p>
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+<section id="products">
+
+
+<h2>
+
+المنتجات
+
+</h2>
+
+
+
+
+<div id="productsContainer"
+class="products-grid">
+
+
+
+</div>
+
+</section>
+
+<!-- مودل اختيار المنتج -->
+
+<div id="orderModal"
+class="modal">
+
+<div class="modal-content">
+
+<button id="closeOrderModal"
+class="close">
+
+×
+
+</button>
+
+<h2>
+
+اختيار المنتج
+
+</h2>
+
+
+<img id="orderProductImage">
+
+<h3 id="orderProductName"></h3>
+
+<p>
+
+السعر:
+
+<span id="productPrice">
+
+0
+
+</span>
+
+دينار
+
+</p>
+
+
+
+
+
+<label>
+
+الحجم
+
+</label>
+
+
+<select id="orderSize">
+
+
+</select>
+
+
+<label>
+
+اللون
+
+</label>
+
+
+<select id="orderColor">
+
+
+</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="addToCart">
+
+
+🛒 إضافة للسلة
+
+
+</button>
+
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- مودل السلة -->
+
+
+<div id="cartModal"
+class="modal">
+
+
+
+<div class="modal-content">
+
+
+
+<button id="closeCartModal"
+class="close">
+
+×
+
+</button>
+
+
+
+
+
+<h2>
+
+سلة التسوق
+
+</h2>
+
+
+
+
+
+
+
+<div id="cartContainer">
+
+
+</div>
+
+
+
+
+
+
+<hr>
+
+
+
+
+
+<h3>
+
+بيانات الزبون
+
+</h3>
+
+
+
+
+
+
+
+<input 
+id="customerName"
+
+placeholder="الاسم">
+
+
+
+
+
+
+
+<input
+
+id="customerPhone"
+
+placeholder="رقم الهاتف 11 رقم"
+
+maxlength="11">
+
+
+
+
+
+
+
+<select id="customerGovernorate">
+
+
+
+<option value="">
+
+اختار المحافظة
+
+</option>
+
+
+</select>
+
+
+
+
+
+
+
+<p>
+
+كلفة التوصيل:
+
+<span id="cartDelivery">
+
+0
+
+</span>
+
+دينار
+
+</p>
+
+
+
+
+
+<input
+
+id="customerArea"
+
+placeholder="المنطقة">
+
+
+<input 
+id="nearestPoint"
+type="text"
+placeholder="أقرب نقطة دالة">
+
+
+
+
+<div class="total-box">
+
+
+
+<p>
+
+مجموع المنتجات:
+
+<span id="cartProductsTotal">
+
+0
+
+</span>
+
+دينار
+
+</p>
+
+
+
+
+
+
+
+<p>
+
+التوصيل:
+
+<span id="cartDeliveryTotal">
+
+0
+
+</span>
+
+دينار
+
+</p>
+
+
+
+
+
+
+
+
+<h3>
+
+المجموع النهائي:
+
+<span id="cartFinalTotal">
+
+0
+
+</span>
+
+دينار
+
+
+</h3>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<button id="reserveOrder"
+class="whatsapp-send">
+
+
+<i class="fa-brands fa-whatsapp"></i>
+
+
+حجز الطلب
+
+
+</button>
+
+
+
+
+<button id="continueShopping">
+
+
+➕ إضافة منتج آخر
+
+
+</button>
+
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<section id="contact"
+class="contact-section">
+
+
+
+<h2>
+
+تواصلي معنا 🤍
+
+</h2>
+
+
+
+
+<p>
+
+نساعدك باختيار المقاس والتصميم المناسب
+
+</p>
+
+
+
+
+
+<div class="social-icons">
+
+
+<a href="https://www.instagram.com/nivra.iq?igsh=bWE3dTJwajV5bnB5&utm_source=qr"
+target="_blank">
+
+<i class="fa-brands fa-instagram"></i>
+
+</a>
+
+
+
+<a href="https://www.tiktok.com/@nivra.iq?_r=1&_t=ZS-97DhSlQPqqX"
+target="_blank">
+
+<i class="fa-brands fa-tiktok"></i>
+
+</a>
+
+
+
+
+<a href="https://wa.me/9647741478145"
+target="_blank">
+
+<i class="fa-brands fa-whatsapp"></i>
+
+</a>
+
+
+
+
+
+<a href="https://www.facebook.com/share/1GP9BwmSSz/?mibextid=wwXIfr"
+target="_blank">
+
+<i class="fa-brands fa-facebook"></i>
+
+</a>
+
+
+
+</div>
+
+
+
+<button id="scrollTop" class="scroll-top">
+
+<i class="fa-solid fa-arrow-up"></i>
+
+<span id="cartNotify">0</span>
+
+</button>
+
+<!-- Image Zoom Modal -->
+<div id="imageZoomModal" class="img-zoom-modal">
+
+  <!-- إغلاق -->
+  <span id="closeZoom">&times;</span>
+
+  <!-- السهم السابق -->
+  <button id="zoomPrev" class="zoom-arrow zoom-prev">
+    ‹
   </button>
-  <!-- MOBILE BOTTOM NAVIGATION -->
-  <nav class="mobile-bottom-nav" aria-label="التنقل الرئيسي">
-    <a href="#home" class="mobile-nav-item">
-      <i class="fa-solid fa-house"></i>
-      <span>الرئيسية</span>
-    </a>
-    <a href="#categories" class="mobile-nav-item">
-      <i class="fa-solid fa-layer-group"></i>
-      <span>الأصناف</span>
-    </a>
-    <button id="cartButton"
-      class="mobile-cart-button"
-      type="button"
-      aria-label="سلة التسوق">
-      <span class="mobile-cart-icon">
-        <i class="fa-solid fa-bag-shopping"></i>
-        <span id="cartCount">0</span>
-        <span id="cartNotify">0</span>
-      </span>
-      <span>السلة</span>
-    </button>
-    <a href="#products" class="mobile-nav-item">
-      <i class="fa-solid fa-shirt"></i>
-      <span>المنتجات</span>
-    </a>
-    <a href="#contact"
-      class="mobile-nav-item"
-      data-open-contact>
-      <i class="fa-regular fa-comments"></i>
-      <span>تواصل</span>
-    </a>
-  </nav>
-  <!-- CART STEP NAVIGATION -->
-  <script>
-    (() => {
-      const steps = [
-        document.getElementById("cartStep1"),
-        document.getElementById("cartStep2"),
-        document.getElementById("cartStep3")
-      ];
-      const indicators = document.querySelectorAll("[data-step-indicator]");
-      function showCartStep(number) {
-        steps.forEach((step, index) => {
-          const active = index === number - 1;
-          step.hidden = !active;
-          step.classList.toggle("active", active);
-        });
-        indicators.forEach((indicator) => {
-          const stepNumber = Number(indicator.dataset.stepIndicator);
-          indicator.classList.toggle("active", stepNumber === number);
-          indicator.classList.toggle("completed", stepNumber < number);
-        });
-      }
-      document.getElementById("cartNextToDetails")
-        ?.addEventListener("click", () => {
-          const cartContainer = document.getElementById("cartContainer");
-          if (!cartContainer || !cartContainer.children.length) {
-            alert("الرجاء إضافة منتج واحد على الأقل إلى السلة");
-            return;
-          }
-          showCartStep(2);
-        });
-      document.getElementById("cartReviewOrder")
-        ?.addEventListener("click", () => {
-          const name = document.getElementById("customerName").value.trim();
-          const phone = document.getElementById("customerPhone").value.trim();
-          const governorate = document.getElementById("customerGovernorate").value;
-          const area = document.getElementById("customerArea").value.trim();
-          const nearest = document.getElementById("nearestPoint").value.trim();
-          if (!name || !phone || !governorate || !area || !nearest) {
-            alert("يرجى إكمال جميع بيانات التوصيل أولاً");
-            return;
-          }
-          showCartStep(3);
-        });
-      document.getElementById("cartBackToItems")
-        ?.addEventListener("click", () => showCartStep(1));
-      document.getElementById("cartBackToDetails")
-        ?.addEventListener("click", () => showCartStep(2));
-      document.getElementById("cartButton")
-        ?.addEventListener("click", () => showCartStep(1), true);
-      document.getElementById("closeCartModal")
-        ?.addEventListener("click", () => showCartStep(1));
-      document.getElementById("continueShopping")
-        ?.addEventListener("click", () => showCartStep(1));
-      showCartStep(1);
-    })();
-  </script>
-  <!-- SERVICE WORKER -->
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", async () => {
-        try {
-          const reg = await navigator.serviceWorker.register("./sw.js");
-          console.log("SW OK", reg);
-        } catch (err) {
-          console.log("SW failed", err);
-        }
-      });
-    }
-  </script>
-  <!-- STORE LOGIC -->
-  <script type="module" src="./js/store.js"></script>
+
+  <!-- الصورة -->
+  <img id="zoomedImage" src="">
+
+  <!-- السهم التالي -->
+  <button id="zoomNext" class="zoom-arrow zoom-next">
+    ›
+  </button>
+
+</div>
 </body>
+
+<script>
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      const reg = await navigator.serviceWorker.register("./sw.js");
+      console.log("SW OK", reg);
+    } catch (err) {
+      console.log("SW failed", err);
+    }
+  });
+}
+
+</script>
+
+
+<script type="module" src="./js/store.js"></script>
+
 </html>

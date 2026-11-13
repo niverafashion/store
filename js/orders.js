@@ -1358,7 +1358,7 @@ message +=
 
 message +=
 
-`🛒 زوروا موقعنا للتسوق الإلكتروني: nivraiq.com
+`🛒 زوروا موقعنا للتسوق الإلكتروني: https://niverafashion.github.io/store/index.html
 
 شكراً لثقتكم بـ NIVRA 🤍`;
 
